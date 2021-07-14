@@ -15,7 +15,6 @@
                     current: true
                 }
             ]"></bread-crumb>
-            <loader :show="true"></loader>
             <dashboard>
             </dashboard>
         </div>

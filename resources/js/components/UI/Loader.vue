@@ -1,15 +1,11 @@
 <template>
-  <transition name="fade" v-on:enter="enter">
-    <div class="preloader" v-if="show">
-      <div class="lds-ripple">
-        <div class="lds-pos"></div>
-        <div class="lds-pos"></div>
-      </div>
-    </div>
-  </transition>
+  <div></div>
 </template>
 
 <script>
+import Nprogress from 'nprogress'
+import 'nprogress/nprogress.css';
+
 export default {
   props: {
     show: {
@@ -17,6 +13,7 @@ export default {
       default: false,
     },
   },
+
 };
 </script>
 
