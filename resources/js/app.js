@@ -33,7 +33,10 @@ Vue.component('loader', require('./components/UI/Loader.vue').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+ import store from "./store";
+
 const app = new Vue({
+    store,
     el: "#app"
 });
 

@@ -31,6 +31,7 @@
         "webpack-cli": "^4.7.2"
     },
     "dependencies": {
-        "nprogress": "^0.2.0"
+        "nprogress": "^0.2.0",
+        "vuex": "^3.6.2"
     }
 }

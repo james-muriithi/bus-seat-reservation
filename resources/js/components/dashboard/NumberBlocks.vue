@@ -18,12 +18,13 @@ export default {
   },
   methods: {
     getData() {
+      this.$store.dispatch("startLoading");
       const url = window.location.href.split(/[?#]/)[0];
-      window.axios.get(url).then(res => console.log(res))
+      window.axios.get(url).then((res) => {});
     },
   },
   created() {
-    this.getData()
+    this.getData();
   },
 };
 </script>

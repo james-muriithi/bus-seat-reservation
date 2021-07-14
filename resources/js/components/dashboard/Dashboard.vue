@@ -4,24 +4,23 @@
   </div>
 </template>
 <script>
-import Nprogress from 'nprogress';
-import NumberBlocks from './NumberBlocks.vue';
+import Nprogress from "nprogress";
+import NumberBlocks from "./NumberBlocks.vue";
 
 export default {
   components: { NumberBlocks },
-  data() {
-    return {
-      loading: true,
-    };
+  computed: {
+      loading(){
+          return this.$store.getters.loading
+      }
   },
   mounted() {
     if (this.loading) {
       Nprogress.start();
       Nprogress.set(0.1);
-      setTimeout(() => {
-          this.loading = false;
-          Nprogress.done();
-      }, 1000);
+    //   setTimeout(() => {
+    //     Nprogress.done();
+    //   }, 1000);
     }
   },
 };
