@@ -77,4 +77,10 @@ class Bus extends Model implements HasMedia
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+    // scopes
+    public function scopeActive($query)
+    {
+        $query->where('status', 1);
+    }
 }

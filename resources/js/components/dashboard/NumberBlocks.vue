@@ -1,10 +1,12 @@
 <template>
   <div class="card-group row">
     <number-block-card
+      v-for="block in data.blocks"
+      :key="block.title"
       class="col-md-3 col-sm-6 col-12"
-      title="Users"
-      :number="12"
-      icon='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>'
+      :title="block.title"
+      :number="block.number"
+      :icon="block.icon"
     ></number-block-card>
   </div>
 </template>
@@ -16,11 +18,21 @@ export default {
   components: {
     NumberBlockCard,
   },
+  data() {
+    return {
+      data: [],
+    };
+  },
   methods: {
     getData() {
       this.$store.dispatch("startLoading");
       const url = window.location.href.split(/[?#]/)[0];
-      window.axios.get(url).then((res) => {});
+      window.axios.get(url).then((res) => {
+        this.data = res.data;
+        setTimeout(() => {
+          this.$store.dispatch("stopLoading");
+        }, 1500);
+      });
     },
   },
   created() {

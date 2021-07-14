@@ -14,7 +14,7 @@
                 <li class="nav-small-cap"><span class="hide-menu">{{ trans('cruds.busManagement.title') }}</span></li>
                 @can('bus_management_access')
                     <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
-                            aria-expanded="false"><i class="ti-car"></i><span class="hide-menu">
+                            aria-expanded="false"><i class="fa fa-bus"></i><span class="hide-menu">
                                 {{ trans('cruds.busManagement.title') }}
                             </span></a>
                         <ul aria-expanded="false" class="collapse  first-level base-level-line">
@@ -95,7 +95,8 @@
                             @endcan
                             @can('pickup_point_access')
                                 <li class="sidebar-item">
-                                    <a href="{{ route('admin.pickup-points.index') }}" class="sidebar-link"><span class="hide-menu">
+                                    <a href="{{ route('admin.pickup-points.index') }}" class="sidebar-link"><span
+                                            class="hide-menu">
                                             {{ trans('cruds.pickupPoint.title') }}
                                         </span>
                                     </a>
@@ -104,7 +105,8 @@
 
                             @can('drop_off_point_access')
                                 <li class="sidebar-item">
-                                    <a href="{{ route('admin.drop-off-points.index') }}" class="sidebar-link"><span class="hide-menu">
+                                    <a href="{{ route('admin.drop-off-points.index') }}" class="sidebar-link"><span
+                                            class="hide-menu">
                                             {{ trans('cruds.dropOffPoint.title') }}
                                         </span>
                                     </a>

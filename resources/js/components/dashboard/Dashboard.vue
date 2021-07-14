@@ -10,18 +10,19 @@ import NumberBlocks from "./NumberBlocks.vue";
 export default {
   components: { NumberBlocks },
   computed: {
-      loading(){
-          return this.$store.getters.loading
-      }
+    loading() {
+      return this.$store.getters.loading;
+    },
   },
-  mounted() {
-    if (this.loading) {
-      Nprogress.start();
-      Nprogress.set(0.1);
-    //   setTimeout(() => {
-    //     Nprogress.done();
-    //   }, 1000);
-    }
+  watch: {
+    loading() {
+      if (this.loading) {
+        Nprogress.start();
+        Nprogress.set(0.1);
+      } else {
+        Nprogress.done();
+      }
+    },
   },
 };
 </script>

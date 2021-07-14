@@ -5,6 +5,7 @@
         <div>
           <div class="d-inline-flex align-items-center">
             <h2 class="text-dark mb-1 font-weight-medium">{{ number }}</h2>
+            <!-- d-lg-block d-md-none d-sm-block -->
             <span
               class="
                 badge
@@ -14,7 +15,7 @@
                 font-weight-medium
                 badge-pill
                 ml-2
-                d-lg-block d-md-none d-sm-block
+                d-none
               "
               >+18.33%</span
             >
@@ -24,7 +25,7 @@
           </h6>
         </div>
         <div class="ml-auto mt-md-3 mt-lg-0">
-          <span class="opacity-7 text-muted" v-html="icon"></span>
+          <span class="opacity-7 text-muted icon" v-html="icon"></span>
         </div>
       </div>
     </div>
@@ -48,3 +49,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.card {
+  margin-right: 10px;
+}
+
+span.icon {
+  font-size: 24px!important;
+}
+</style>
