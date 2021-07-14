@@ -1,28 +1,15 @@
-@extends('layouts.admin')
+@extends('layouts.app')
+@section('styles')
+    @parent
+
+@endsection
 @section('content')
-<div class="content">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">
-                    Dashboard
-                </div>
-
-                <div class="card-body">
-                    @if(session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    You are logged in!
-                </div>
-            </div>
-        </div>
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        @include('partials.navbar')
+        @include('partials.sidebar')
     </div>
-</div>
 @endsection
 @section('scripts')
-@parent
-
+    @parent
 @endsection

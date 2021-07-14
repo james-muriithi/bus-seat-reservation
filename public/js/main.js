@@ -1,74 +1,68 @@
-$(document).ready(function () {
-  window._token = $('meta[name="csrf-token"]').attr('content')
-
-  moment.updateLocale('en', {
-    week: {dow: 1} // Monday is the first day of the week
-  })
-
-  $('.date').datetimepicker({
-    format: 'YYYY-MM-DD',
-    locale: 'en',
-    icons: {
-      up: 'fas fa-chevron-up',
-      down: 'fas fa-chevron-down',
-      previous: 'fas fa-chevron-left',
-      next: 'fas fa-chevron-right'
-    }
-  })
-
-  $('.datetime').datetimepicker({
-    format: 'YYYY-MM-DD HH:mm:ss',
-    locale: 'en',
-    sideBySide: true,
-    icons: {
-      up: 'fas fa-chevron-up',
-      down: 'fas fa-chevron-down',
-      previous: 'fas fa-chevron-left',
-      next: 'fas fa-chevron-right'
-    }
-  })
-
-  $('.timepicker').datetimepicker({
-    format: 'HH:mm:ss',
-    icons: {
-      up: 'fas fa-chevron-up',
-      down: 'fas fa-chevron-down',
-      previous: 'fas fa-chevron-left',
-      next: 'fas fa-chevron-right'
-    }
-  })
-
-  $('.select-all').click(function () {
-    let $select2 = $(this).parent().siblings('.select2')
-    $select2.find('option').prop('selected', 'selected')
-    $select2.trigger('change')
-  })
-  $('.deselect-all').click(function () {
-    let $select2 = $(this).parent().siblings('.select2')
-    $select2.find('option').prop('selected', '')
-    $select2.trigger('change')
-  })
-
-  $('.select2').select2()
-
-  $('.treeview').each(function () {
-    var shouldExpand = false
-    $(this).find('li').each(function () {
-      if ($(this).hasClass('active')) {
-        shouldExpand = true
-      }
+$(function() {
+    "use strict";
+    feather.replace(), $(".preloader").fadeOut(), $(".nav-toggler").on("click", function() {
+        $("#main-wrapper").toggleClass("show-sidebar"), $(".nav-toggler i").toggleClass("ti-menu")
+    }), $(function() {
+        $(".service-panel-toggle").on("click", function() {
+            $(".customizer").toggleClass("show-service-panel")
+        }), $(".page-wrapper").on("click", function() {
+            $(".customizer").removeClass("show-service-panel")
+        })
+    }), $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    }), $(function() {
+        $('[data-toggle="popover"]').popover()
+    }), $(".message-center, .customizer-body, .scrollable, .scroll-sidebar").perfectScrollbar({
+        wheelPropagation: !0
+    }), $("body, .page-wrapper").trigger("resize"), $(".page-wrapper").delay(20).show(), $(".list-task li label").click(function() {
+        $(this).toggleClass("task-done")
+    }), $(".show-left-part").on("click", function() {
+        $(".left-part").toggleClass("show-panel"), $(".show-left-part").toggleClass("ti-menu")
+    }), $(".custom-file-input").on("change", function() {
+        var e = $(this).val();
+        $(this).next(".custom-file-label").html(e)
     })
-    if (shouldExpand) {
-      $(this).addClass('active')
-    }
-  })
 
-  $('.c-header-toggler.mfs-3.d-md-down-none').click(function (e) {
-    $('#sidebar').toggleClass('c-sidebar-lg-show');
+    var setsidebartype = function () {
+        var width = (window.innerWidth > 0) ? window.innerWidth : this.screen.width;
+        if (width < 1170) {
+            $("#main-wrapper").attr("data-sidebartype", "mini-sidebar");
+            $("#main-wrapper").addClass("mini-sidebar");
+        } else {
+            $("#main-wrapper").attr("data-sidebartype", "full");
+            $("#main-wrapper").removeClass("mini-sidebar");
+        }
+    };
+    setsidebartype()
+    $(window).on("resize", setsidebartype);
 
-    setTimeout(function () {
-      $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-    }, 400);
-  });
+    //****************************
+    /* Top navbar Theme Change function Start */
+    //****************************
+    function handlenavbarbg() {
+        if ($('#main-wrapper').attr('data-navbarbg') == 'skin6') {
+            // do this
+            $(".topbar .navbar").addClass('navbar-light');
+            $(".topbar .navbar").removeClass('navbar-dark');
+        } else {
+            // do that
 
-})
+        }
+        $('.theme-color .theme-item .theme-link').on("click", function () {
+            var navbarbgskin = $(this).attr("data-navbarbg");
+            $('#main-wrapper').attr("data-navbarbg", navbarbgskin);
+            $('.topbar .navbar-collapse').attr("data-navbarbg", navbarbgskin);
+            if ($('#main-wrapper').attr('data-navbarbg') == 'skin6') {
+                // do this
+                $(".topbar .navbar").addClass('navbar-light');
+                $(".topbar .navbar").removeClass('navbar-dark');
+            } else {
+                // do that
+                $(".topbar .navbar").removeClass('navbar-light');
+                $(".topbar .navbar").addClass('navbar-dark');
+            }
+        });
+
+    };
+    handlenavbarbg();
+});
