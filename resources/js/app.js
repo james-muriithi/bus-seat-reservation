@@ -23,7 +23,9 @@ Vue.component(
     "example-component",
     require("./components/ExampleComponent.vue").default
 );
-// Vue.component('the-navbar', require('./components/UI/TheNavbar.vue').default);
+Vue.component('dashboard', require('./components/dashboard/Dashboard.vue').default);
+Vue.component('bread-crumb', require('./components/UI/BreadCrumb.vue').default);
+Vue.component('loader', require('./components/UI/Loader.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

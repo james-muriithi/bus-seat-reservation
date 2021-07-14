@@ -8,6 +8,17 @@
         data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
         @include('partials.navbar')
         @include('partials.sidebar')
+        <div class="page-wrapper">
+            <bread-crumb :title="`Hello {{ auth()->user()->name }}!`" :items="[
+                {
+                    title: 'Dashboard',
+                    current: true
+                }
+            ]"></bread-crumb>
+            <loader :show="true"></loader>
+            <dashboard>
+            </dashboard>
+        </div>
     </div>
 @endsection
 @section('scripts')

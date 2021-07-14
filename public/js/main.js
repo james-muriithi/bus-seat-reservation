@@ -1,6 +1,6 @@
 $(function() {
     "use strict";
-    feather.replace(), $(".preloader").fadeOut(), $(".nav-toggler").on("click", function() {
+    feather.replace(), $(".nav-toggler").on("click", function() {
         $("#main-wrapper").toggleClass("show-sidebar"), $(".nav-toggler i").toggleClass("ti-menu")
     }), $(function() {
         $(".service-panel-toggle").on("click", function() {

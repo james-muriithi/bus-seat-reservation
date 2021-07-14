@@ -90,7 +90,7 @@ return [
         ],
     ],
     'busType' => [
-        'title'          => 'Bus Type',
+        'title'          => 'Bus Types',
         'title_singular' => 'Bus Type',
         'fields'         => [
             'id'                => 'ID',
@@ -112,8 +112,8 @@ return [
         'title_singular' => 'Bus Management',
     ],
     'bus' => [
-        'title'          => 'Bus',
-        'title_singular' => 'Bu',
+        'title'          => 'Buses',
+        'title_singular' => 'Bus',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => ' ',
