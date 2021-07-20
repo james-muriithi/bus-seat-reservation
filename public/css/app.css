@@ -11311,9 +11311,18 @@ h3 {
   font-size: 80px !important;
 }
 
+.px-10 {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
 a:not([href]):hover,
 a:hover {
   text-decoration: none;
+}
+
+.collapse.in {
+  display: block !important;
 }
 
 html [type=button],

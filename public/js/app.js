@@ -2018,6 +2018,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     limit: {
@@ -49876,7 +49885,8 @@ var render = function() {
             },
             "select-options": {
               enabled: true,
-              clearSelectionText: ""
+              clearSelectionText: "clear",
+              selectOnCheckboxOnly: true
             },
             styleClass: "vgt-table tableOne table-hover"
           },
@@ -49922,6 +49932,22 @@ var render = function() {
                           })
                         ])
                       ])
+                    : props.column.field == "seats"
+                    ? _c(
+                        "span",
+                        _vm._l(props.row.seats.split(","), function(seat) {
+                          return _c(
+                            "span",
+                            {
+                              key: seat,
+                              staticClass:
+                                "badge badge-pill badge-primary mx-1 px-10 py-1"
+                            },
+                            [_vm._v(_vm._s(seat))]
+                          )
+                        }),
+                        0
+                      )
                     : _vm._e()
                 ]
               }

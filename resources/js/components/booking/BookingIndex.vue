@@ -16,7 +16,8 @@
       }"
       :select-options="{
         enabled: true,
-        clearSelectionText: '',
+        clearSelectionText: 'clear',
+        selectOnCheckboxOnly: true
       }"
       styleClass="vgt-table tableOne table-hover"
     >
@@ -49,6 +50,14 @@
           <a title="Delete" href="#">
             <i class="fa fa-trash fs-16 text-danger"></i>
           </a>
+        </span>
+        <span v-else-if="props.column.field == 'seats'">
+          <span
+            class="badge badge-pill badge-primary mx-1 px-10 py-1"
+            v-for="seat in props.row.seats.split(',')"
+            :key="seat"
+            >{{seat}}</span
+          >
         </span>
       </template>
     </vue-good-table>

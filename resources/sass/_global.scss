@@ -2,3 +2,7 @@ a:not([href]):hover,
 a:hover {
     text-decoration: none;
 }
+
+.collapse.in {
+    display: block !important;
+}
