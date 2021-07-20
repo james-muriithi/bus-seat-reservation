@@ -29,9 +29,9 @@ export default {
       const url = window.location.href.split(/[?#]/)[0];
       window.axios.get(url).then((res) => {
         this.data = res.data;
-        setTimeout(() => {
-          this.$store.dispatch("stopLoading");
-        }, 1500);
+        // setTimeout(() => {
+        //   this.$store.dispatch("stopLoading");
+        // }, 1500);
       });
     },
   },

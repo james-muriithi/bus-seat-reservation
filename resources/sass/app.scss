@@ -1,8 +1,18 @@
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url("https://fonts.googleapis.com/css?family=Nunito");
 
 // Variables
-@import 'variables';
+@import "variables";
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
+
+//utilities
+@import "utilities/utilities";
+
+//custom components
+@import "components/button";
+
+// vue good table
+@import "~vue-good-table/dist/vue-good-table.css";
+@import "components/vue-good-table";

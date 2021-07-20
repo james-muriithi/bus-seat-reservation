@@ -35,8 +35,8 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.1/css/perfect-scrollbar.min.css"
         integrity="sha512-ygIxOy3hmN2fzGeNqys7ymuBgwSCet0LVfqQbWY10AszPMn2rB9JY0eoG0m1pySicu+nvORrBmhHVSt7+GI9VA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="{{ mix('css/app.css') }}" type="text/css" rel="stylesheet" />
     <link href="{{ asset('css/style.min.css') }}" rel="stylesheet" />
+    <link href="{{ mix('css/app.css') }}" type="text/css" rel="stylesheet" />
     @yield('styles')
 </head>
 

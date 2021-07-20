@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyReservationRequest;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
+use App\Http\Resources\Admin\ReservationResource;
 use App\Models\Passenger;
 use App\Models\PickupPoint;
 use App\Models\Reservation;
@@ -17,11 +18,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ReservationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('reservation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $reservations = Reservation::with(['passenger', 'route', 'pickup_point', 'seats'])->get();
+
+        if($request->ajax()){
+           return new ReservationResource($reservations);
+        }
 
         return view('admin.reservations.index', compact('reservations'));
     }

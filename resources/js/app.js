@@ -32,8 +32,13 @@ Vue.component('loader', require('./components/UI/Loader.vue').default);
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
+// vuex store
  import store from "./store";
+
+ // vue good table
+ import VueGoodTablePlugin from 'vue-good-table';
+
+Vue.use(VueGoodTablePlugin);
 
 const app = new Vue({
     store,

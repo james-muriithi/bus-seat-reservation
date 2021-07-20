@@ -1,14 +1,16 @@
 <template>
   <div class="container-fluid">
     <number-blocks></number-blocks>
+    <booking-index></booking-index>
   </div>
 </template>
 <script>
 import Nprogress from "nprogress";
 import NumberBlocks from "./NumberBlocks.vue";
+import BookingIndex from "../booking/BookingIndex.vue";
 
 export default {
-  components: { NumberBlocks },
+  components: { NumberBlocks, BookingIndex },
   computed: {
     loading() {
       return this.$store.getters.loading;
