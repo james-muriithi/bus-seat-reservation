@@ -30,7 +30,7 @@
         <button class="btn btn-sm btn-outline-danger ripple m-1">
           <i class="fa fa-file-excel"></i> EXCEL
         </button>
-        <a class="btn-sm btn btn-primary btn-icon m-1" href="#">
+        <a class="btn-sm btn btn-primary btn-icon m-1 ripple" href="#">
           <span class="ul-btn__icon">
             <i data-feather="plus-circle" class="feather-icon"></i>
           </span>
@@ -57,6 +57,12 @@
 
 <script>
 export default {
+  props: {
+    limit: {
+      type: Number,
+      default: null,
+    },
+  },
   data() {
     return {
       reservations: [
@@ -68,6 +74,18 @@ export default {
           pickup_time: "16:30",
           dropoff_point: "Malindi",
           dropoff_time: "11:00",
+          seats: "25",
+          date: "2021-07-21",
+        },
+        {
+          id: 2,
+          bus_name: "Rello",
+          bus_reg: "KCK 234K",
+          pickup_point: "Nairobi",
+          pickup_time: "16:30",
+          dropoff_point: "Malindi",
+          dropoff_time: "11:00",
+          seats: "5, 9",
           date: "2021-07-21",
         },
       ],
@@ -101,6 +119,10 @@ export default {
           label: "Dropoff Point",
           field: "dropoff_point",
         },
+        {
+          label: "Seats",
+          field: "seats",
+        },
         // {
         //   label: "Dropoff Time",
         //   field: "dropoff_time",
@@ -126,10 +148,13 @@ export default {
     },
   },
   methods: {
-    getBookings(limit = null) {
+    getBookings() {
       this.$store.dispatch("startLoading");
+      let url = "/admin/reservations";
+      this.limit != null ? `${url}?limit=${this.limit}` : url;
+
       axios
-        .get("/admin/reservations")
+        .get(url)
         .then((res) => {
           console.log(res.data);
 

@@ -1,9 +1,9 @@
 <template>
-  <div class="card-group row">
+  <div class="card-group row mx-2 my-3">
     <number-block-card
       v-for="block in data.blocks"
       :key="block.title"
-      class="col-md-3 col-sm-6 col-12"
+      class="col-md-3 col-sm-6 col-12 shadow"
       :title="block.title"
       :number="block.number"
       :icon="block.icon"

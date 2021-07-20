@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container">
     <number-blocks></number-blocks>
     <booking-index></booking-index>
   </div>

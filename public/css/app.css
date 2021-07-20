@@ -11311,22 +11311,27 @@ h3 {
   font-size: 80px !important;
 }
 
+a:not([href]):hover,
+a:hover {
+  text-decoration: none;
+}
+
 html [type=button],
 .btn[type=button] {
   -webkit-appearance: none !important;
 }
 
-.btn {
+.btn:not(div, span) {
   padding: 0.5rem 1.25rem !important;
 }
-.btn.rounded, .btn.btn-rounded {
+.btn:not(div, span).rounded, .btn:not(div, span).btn-rounded {
   border-radius: 40px !important;
 }
-.btn.btn-xl {
+.btn:not(div, span).btn-xl {
   padding: 0.75rem 2rem;
   font-size: 1.18rem;
 }
-.btn:focus, .btn:active {
+.btn:not(div, span):focus, .btn:not(div, span):active {
   box-shadow: none !important;
   outline: none !important;
 }
@@ -12449,6 +12454,12 @@ th.line-numbers {
   border-radius: 10px;
 }
 
+@media (max-width: 764px) {
+  .vgt-global-search.vgt-clearfix {
+    display: flex;
+    flex-direction: column;
+  }
+}
 @media only screen and (max-width: 750px) {
   .vgt-wrap__footer .footer__navigation__page-info {
     display: none;

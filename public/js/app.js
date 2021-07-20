@@ -2019,6 +2019,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    limit: {
+      type: Number,
+      "default": null
+    }
+  },
   data: function data() {
     return {
       reservations: [{
@@ -2029,6 +2035,17 @@ __webpack_require__.r(__webpack_exports__);
         pickup_time: "16:30",
         dropoff_point: "Malindi",
         dropoff_time: "11:00",
+        seats: "25",
+        date: "2021-07-21"
+      }, {
+        id: 2,
+        bus_name: "Rello",
+        bus_reg: "KCK 234K",
+        pickup_point: "Nairobi",
+        pickup_time: "16:30",
+        dropoff_point: "Malindi",
+        dropoff_time: "11:00",
+        seats: "5, 9",
         date: "2021-07-21"
       }]
     };
@@ -2055,6 +2072,9 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         label: "Dropoff Point",
         field: "dropoff_point"
+      }, {
+        label: "Seats",
+        field: "seats"
       }, // {
       //   label: "Dropoff Time",
       //   field: "dropoff_time",
@@ -2081,9 +2101,10 @@ __webpack_require__.r(__webpack_exports__);
     getBookings: function getBookings() {
       var _this = this;
 
-      var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       this.$store.dispatch("startLoading");
-      axios.get("/admin/reservations").then(function (res) {
+      var url = "/admin/reservations";
+      this.limit != null ? "".concat(url, "?limit=").concat(this.limit) : url;
+      axios.get(url).then(function (res) {
         console.log(res.data);
 
         _this.$store.dispatch("stopLoading");
@@ -2273,7 +2294,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store */ "./resources/js/store/index.js");
-/* harmony import */ var vue_good_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-good-table */ "./node_modules/vue-good-table/dist/vue-good-table.esm.js");
+/* harmony import */ var vue_good_table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-good-table */ "./node_modules/vue-good-table/dist/vue-good-table.esm.js");
+/* harmony import */ var _mixins_global__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mixins/global */ "./resources/js/mixins/global.js");
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -2305,8 +2327,11 @@ Vue.component('loader', __webpack_require__(/*! ./components/UI/Loader.vue */ ".
 
  // vue good table
 
+ // mixins
 
-Vue.use(vue_good_table__WEBPACK_IMPORTED_MODULE_1__.default);
+
+Vue.mixin(_mixins_global__WEBPACK_IMPORTED_MODULE_1__.default);
+Vue.use(vue_good_table__WEBPACK_IMPORTED_MODULE_2__.default);
 var app = new Vue({
   store: _store__WEBPACK_IMPORTED_MODULE_0__.default,
   el: "#app"
@@ -2316,7 +2341,7 @@ $(function () {
   "use strict";
 
   var url = window.location + "";
-  var path = url.replace(window.location.protocol + "//" + window.location.host + "/", "");
+  var path = [location.protocol, '//', location.host, location.pathname].join('');
   var element = $("ul#sidebarnav a").filter(function () {
     return this.href === url || this.href === path; // || url.href.indexOf(this.href) === 0;
   });
@@ -2395,6 +2420,28 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; // 
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/mixins/global.js":
+/*!***************************************!*\
+  !*** ./resources/js/mixins/global.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var globalMixins = {
+  methods: {
+    formatNumber: function formatNumber(number) {
+      return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+  }
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (globalMixins);
 
 /***/ }),
 
@@ -49924,7 +49971,7 @@ var render = function() {
               _c(
                 "a",
                 {
-                  staticClass: "btn-sm btn btn-primary btn-icon m-1",
+                  staticClass: "btn-sm btn btn-primary btn-icon m-1 ripple",
                   attrs: { href: "#" }
                 },
                 [
@@ -49973,7 +50020,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "container-fluid" },
+    { staticClass: "container" },
     [_c("number-blocks"), _vm._v(" "), _c("booking-index")],
     1
   )
@@ -50010,7 +50057,7 @@ var render = function() {
           _c("div", [
             _c("div", { staticClass: "d-inline-flex align-items-center" }, [
               _c("h2", { staticClass: "text-dark mb-1 font-weight-medium" }, [
-                _vm._v(_vm._s(_vm.number))
+                _vm._v(_vm._s(_vm.formatNumber(_vm.number)))
               ]),
               _vm._v(" "),
               _c(
@@ -50069,11 +50116,11 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "card-group row" },
+    { staticClass: "card-group row mx-2 my-3" },
     _vm._l(_vm.data.blocks, function(block) {
       return _c("number-block-card", {
         key: block.title,
-        staticClass: "col-md-3 col-sm-6 col-12",
+        staticClass: "col-md-3 col-sm-6 col-12 shadow",
         attrs: { title: block.title, number: block.number, icon: block.icon }
       })
     }),

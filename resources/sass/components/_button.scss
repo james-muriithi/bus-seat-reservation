@@ -3,7 +3,7 @@ html [type="button"],
     -webkit-appearance: none !important;
 }
 
-.btn {
+.btn:not(div,span) {
     &.rounded,
     &.btn-rounded {
         border-radius: 40px !important;

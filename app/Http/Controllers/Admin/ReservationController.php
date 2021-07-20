@@ -22,10 +22,15 @@ class ReservationController extends Controller
     {
         abort_if(Gate::denies('reservation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $reservations = Reservation::with(['passenger', 'route', 'pickup_point', 'seats'])->get();
+        $reservations = Reservation::with(['passenger', 'route', 'pickup_point', 'seats'])
+            ->latest()
+            ->get();
 
-        if($request->ajax()){
-           return new ReservationResource($reservations);
+        if ($request->ajax()) {
+            if ($request->query('limit')) {
+                $reservations = $reservations->get($request->query('limit'));
+            }
+            return new ReservationResource($reservations);
         }
 
         return view('admin.reservations.index', compact('reservations'));

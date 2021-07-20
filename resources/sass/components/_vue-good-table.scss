@@ -140,6 +140,13 @@ th.line-numbers {
     }
 }
 
+@media (max-width: 764px) {
+    .vgt-global-search.vgt-clearfix {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
 @media only screen and (max-width: 750px) {
     .vgt-wrap__footer .footer__navigation__page-info {
         display: none;

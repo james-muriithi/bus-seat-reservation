@@ -4,7 +4,7 @@
       <div class="d-flex d-lg-flex d-md-block align-items-center">
         <div>
           <div class="d-inline-flex align-items-center">
-            <h2 class="text-dark mb-1 font-weight-medium">{{ number }}</h2>
+            <h2 class="text-dark mb-1 font-weight-medium">{{ formatNumber(number) }}</h2>
             <!-- d-lg-block d-md-none d-sm-block -->
             <span
               class="

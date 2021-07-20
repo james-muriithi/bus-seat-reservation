@@ -38,6 +38,10 @@ Vue.component('loader', require('./components/UI/Loader.vue').default);
  // vue good table
  import VueGoodTablePlugin from 'vue-good-table';
 
+ // mixins
+ import GlobalMixin from "./mixins/global";
+ Vue.mixin(GlobalMixin);
+
 Vue.use(VueGoodTablePlugin);
 
 const app = new Vue({
@@ -49,10 +53,8 @@ const app = new Vue({
 $(function() {
     "use strict";
     var url = window.location + "";
-    var path = url.replace(
-        window.location.protocol + "//" + window.location.host + "/",
-        ""
-    );
+    var path = [location.protocol, '//', location.host, location.pathname].join('');
+
     var element = $("ul#sidebarnav a").filter(function() {
         return this.href === url || this.href === path; // || url.href.indexOf(this.href) === 0;
     });
