@@ -17,8 +17,7 @@ mix.js('resources/js/app.js', 'public/js')
 
     mix.webpackConfig({
         output: {
-
-            filename:'[name].js',
+            filename:'[name].min.js',
             chunkFilename: 'bundle/[name].js',
           },
     });

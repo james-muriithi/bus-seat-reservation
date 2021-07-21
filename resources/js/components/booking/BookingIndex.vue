@@ -78,12 +78,12 @@ export default {
         {
           id: 1,
           bus_name: "Rello",
-          bus_reg: "KCK 234K",
+          bus_reg: "KCP 234K",
           pickup_point: "Nairobi",
           pickup_time: "16:30",
           dropoff_point: "Malindi",
           dropoff_time: "11:00",
-          seats: "25",
+          seats: "A25",
           date: "2021-07-21",
         },
         {
