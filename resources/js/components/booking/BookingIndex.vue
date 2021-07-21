@@ -165,8 +165,6 @@ export default {
       axios
         .get(url)
         .then((res) => {
-          console.log(res.data);
-
           this.$store.dispatch("stopLoading");
         })
         .catch();

@@ -1,16 +1,19 @@
 <template>
-  <div class="container">
+  <div class="mx-2 mx-md-3">
     <number-blocks></number-blocks>
+    <middle-section></middle-section>
     <booking-index></booking-index>
   </div>
 </template>
 <script>
 import Nprogress from "nprogress";
 import NumberBlocks from "./NumberBlocks.vue";
+const MiddleSection = () => import("./MiddleSection.vue");
 import BookingIndex from "../booking/BookingIndex.vue";
+// import MiddleSection from './MiddleSection.vue';
 
 export default {
-  components: { NumberBlocks, BookingIndex },
+  components: { NumberBlocks, BookingIndex, MiddleSection },
   computed: {
     loading() {
       return this.$store.getters.loading;

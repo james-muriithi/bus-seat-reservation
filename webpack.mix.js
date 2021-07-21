@@ -1,5 +1,5 @@
-const mix = require('laravel-mix');
-
+const mix = require("laravel-mix");
+const dev = process.env.NODE_ENV !== 'production'
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -11,13 +11,14 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
+mix.js("resources/js/app.js", "public/js")
     .vue()
-    .sass('resources/sass/app.scss', 'public/css');
+    .sass("resources/sass/app.scss", "public/css");
 
-    mix.webpackConfig({
-        output: {
-            filename:'[name].min.js',
-            chunkFilename: 'bundle/[name].js',
-          },
-    });
+mix.webpackConfig({
+    output: {
+        filename: "[name].min.js",
+        chunkFilename: "js/bundle/[name].js"
+    },
+    devtool:  dev ? "eval-source-map" : "source-map"
+});
