@@ -1,7 +1,11 @@
 <template>
   <div>
     <div class="m-2">Latest Reservations</div>
+    <div v-if="isLoading" class="mb-5" style="height: 300px">
+      <spinner class="loading_page" :lg="true"></spinner>
+    </div>
     <vue-good-table
+      v-else
       :columns="columns"
       :rows="reservations"
       :search-options="{
@@ -17,7 +21,7 @@
       :select-options="{
         enabled: true,
         clearSelectionText: 'clear',
-        selectOnCheckboxOnly: true
+        selectOnCheckboxOnly: true,
       }"
       styleClass="vgt-table tableOne table-hover"
     >
@@ -56,7 +60,7 @@
             class="badge badge-pill badge-primary mx-1 px-10 py-1"
             v-for="seat in props.row.seats.split(',')"
             :key="seat"
-            >{{seat}}</span
+            >{{ seat }}</span
           >
         </span>
       </template>
@@ -65,7 +69,10 @@
 </template>
 
 <script>
+import Loader from "../UI/Loader.vue";
+import Spinner from "../UI/Spinner.vue";
 export default {
+  components: { Loader, Spinner },
   props: {
     limit: {
       type: Number,
@@ -74,6 +81,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       reservations: [
         {
           id: 1,
@@ -159,6 +167,7 @@ export default {
   methods: {
     getBookings() {
       this.$store.dispatch("startLoading");
+      this.isLoading = true;
       let url = "/admin/reservations";
       this.limit != null ? `${url}?limit=${this.limit}` : url;
 
@@ -166,6 +175,7 @@ export default {
         .get(url)
         .then((res) => {
           this.$store.dispatch("stopLoading");
+          this.isLoading = false;
         })
         .catch();
     },

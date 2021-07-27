@@ -7,7 +7,7 @@
             <h4 class="card-title m-0">This Week Reservations</h4>
             <div class="chart-wrapper">
               <div v-once class="typo__p text-right" v-if="loading">
-                <div class="spinner sm spinner-primary mt-3"></div>
+                <spinner />
               </div>
               <v-chart
                 v-if="!loading"
@@ -23,7 +23,9 @@
 </template>
 
 <script>
+import Spinner from '../UI/Spinner.vue';
 export default {
+  components: { Spinner },
   data() {
     return {
       echartData: {},
@@ -145,6 +147,7 @@ export default {
 </script>
 
 <style scoped>
+.chart-wrapper,
 .echarts {
   height: 400px;
 }

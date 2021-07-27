@@ -9,7 +9,8 @@ Vue.component(
 );
 Vue.component('dashboard', () => import('./components/dashboard/Dashboard.vue'));
 Vue.component('bread-crumb', () => import('./components/UI/BreadCrumb.vue'));
-// Vue.component('loader', require('./components/UI/Loader.vue').default);
+Vue.component('spinner', () => import('./components/UI/Spinner.vue'));
+// Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store
  import store from "./store";
