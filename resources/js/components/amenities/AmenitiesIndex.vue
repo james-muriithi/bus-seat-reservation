@@ -10,6 +10,9 @@ import AmenitiesTable from "./Table.vue";
 
 export default {
   components: { AmenitiesTable },
+  data() {
+    return {};
+  },
   computed: {
     loading() {
       return this.$store.getters.loading;
@@ -17,7 +20,7 @@ export default {
   },
   watch: {
     loading(newValue) {
-        console.log(newValue);
+      console.log(newValue);
       if (newValue) {
         Nprogress.start();
         Nprogress.set(0.1);
@@ -25,6 +28,9 @@ export default {
         Nprogress.done();
       }
     },
+  },
+  methods: {
+    openModal() {},
   },
 };
 </script>
