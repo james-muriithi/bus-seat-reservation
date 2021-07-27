@@ -5,7 +5,8 @@ import {
     ValidationObserver,
     ValidationProvider,
     extend,
-    localize
+    localize,
+    configure
 } from "vee-validate";
 import * as rules from "vee-validate/dist/rules";
 
@@ -26,6 +27,10 @@ localize({
 // Install VeeValidate rules and localization
 Object.keys(rules).forEach(rule => {
     extend(rule, rules[rule]);
+});
+
+configure({
+    events: "change|blur"
 });
 
 // Register it globally

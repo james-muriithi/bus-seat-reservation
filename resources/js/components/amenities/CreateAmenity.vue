@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="create-amenity">
+  <div class="modal" id="create-amenity">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
@@ -13,12 +13,12 @@
         <!-- Modal body -->
         <div class="modal-body">
           <validation-observer ref="createAmenity">
-            <form @submit.prevent="createAmenity">
+            <form @submit.prevent="createAmenity" ref="form">
               <div class="form-row">
                 <div class="col-md-12">
                   <validation-provider
                     name="Amenity Name"
-                    :rules="{ required: true, min: 3, max: 20 }"
+                    :rules="{ required: true, min: 2, max: 20 }"
                     v-slot="validationContext"
                   >
                     <div class="form-group">
@@ -37,28 +37,42 @@
                       </div>
                     </div>
                   </validation-provider>
+
                   <validation-provider
-                    name="Amenity Name"
+                    name="Amenity Icon"
                     :rules="{ required: true }"
                     v-slot="validationContext"
                   >
                     <div class="form-group">
                       <label for="icon">Icon</label>
-                      <input
-                        type="text"
-                        id="icon"
-                        placeholder="Select icon"
-                        aria-describedby="icon-feedback"
-                        v-model.trim="amenity.icon"
-                        :class="`form-control ${getValidationState(
-                          validationContext
-                        )}`"
-                      />
+
+                      <div class="input-group iconpicker-container">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <i class="fas fa-archive"></i>
+                          </div>
+                        </div>
+                        <input
+                          data-placement="bottomRight"
+                          class="
+                            form-control
+                            iconpicker-element iconpicker-input
+                          "
+                          id="icon"
+                          placeholder="Select icon"
+                          aria-describedby="icon-feedback"
+                          v-model.trim="amenity.icon"
+                          :class="`form-control ${getValidationState(
+                            validationContext
+                          )}`"
+                          readonly
+                        />
+                      </div>
+
                       <div id="icon-feed back" class="invalid-feedback w-100">
                         {{ validationContext.errors[0] }}
                       </div>
                     </div>
-                    >
                   </validation-provider>
                 </div>
               </div>
@@ -75,23 +89,47 @@
 </template>
 
 <script>
+import iconpicker from "fontawesome-iconpicker";
+import "fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css";
+
 export default {
+  emits: ["update"],
   data() {
     return {
-      amenity: {},
+      amenity: {
+        name: "",
+        icon: "fas fa-wifi",
+      },
     };
   },
   methods: {
     resetForm() {
       this.amenity = {
         name: "",
-        icon: "",
+        icon: "fas fa-wifi",
       };
+      this.$nextTick(() => {
+        this.$refs.createAmenity.reset();
+      });
     },
     createAmenity() {
       this.$refs.createAmenity.validate().then((valid) => {
         if (valid) {
-          console.log(amenity);
+          //submit data
+          this.$store.dispatch("startLoading");
+          axios
+            .post("/admin/amenities", this.amenity)
+            .then((res) => {
+              //   this.$store.dispatch("stopLoading");
+              this.closeModal();
+
+              this.$nextTick(() => {
+                this.$emit("update");
+              });
+            })
+            .catch((res) => {
+              this.$store.dispatch("stopLoading");
+            });
         }
       });
     },
@@ -102,6 +140,34 @@ export default {
       }
       return "";
     },
+    closeModal() {
+      $("#create-amenity").modal("hide");
+    },
+  },
+  created() {
+    const self = this;
+    $(function () {
+      $(".iconpicker-container").iconpicker({
+        input: ".iconpicker-input", // children input selector
+        inputSearch: false, // use the input as a search box too?
+        container: false, //  Appends the popover to a specific element. If not set, the selected element or element parent is used
+        component: ".input-group-prepend,.iconpicker-element",
+        hideOnSelect: true,
+      });
+
+      $(".iconpicker-container").on("iconpickerSetValue", function (event) {
+        self.amenity.icon = event.iconpickerValue;
+      });
+
+      $("#create-amenity").on("show.bs.modal", function (e) {
+        self.resetForm();
+      });
+    });
   },
 };
 </script>
+<style>
+.fade:not(.show) {
+  opacity: 1;
+}
+</style>

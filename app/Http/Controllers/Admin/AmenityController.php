@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyAmenityRequest;
 use App\Http\Requests\StoreAmenityRequest;
 use App\Http\Requests\UpdateAmenityRequest;
+use App\Http\Resources\Admin\AmenityResource;
 use App\Models\Amenity;
 use Gate;
 use Illuminate\Http\Request;
@@ -13,11 +14,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AmenityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('amenity_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $amenities = Amenity::all();
+        $amenities = Amenity::latest()->get();
+
+        if ($request->ajax()) {
+            return new AmenityResource($amenities);
+        }
 
         return view('admin.amenities.index', compact('amenities'));
     }
@@ -32,6 +37,12 @@ class AmenityController extends Controller
     public function store(StoreAmenityRequest $request)
     {
         $amenity = Amenity::create($request->all());
+
+        if ($request->ajax()) {
+            return (new AmenityResource($amenity))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
+        }
 
         return redirect()->route('admin.amenities.index');
     }

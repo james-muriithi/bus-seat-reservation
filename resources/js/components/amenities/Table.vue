@@ -23,6 +23,10 @@
         clearSelectionText: 'clear',
         selectOnCheckboxOnly: true,
       }"
+      :sort-options="{
+        enabled: true,
+        initialSortBy: { field: 'created_at', type: 'desc' },
+      }"
       styleClass="vgt-table tableOne table-hover"
     >
       <div slot="selected-row-actions">
@@ -43,28 +47,52 @@
 
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
-          <a href="#" title="Edit" class="pr-1">
+          <a
+            href="#"
+            @click.prevent="editAmenity({ ...props.row })"
+            title="Edit"
+            class="pr-1"
+          >
             <i class="fa fa-pencil-alt fs-16 text-success"></i>
           </a>
-          <a title="Delete" href="#">
+          <a
+            title="Delete"
+            href="#"
+            @click.prevent="deleteAmenity({ ...props.row })"
+          >
             <i class="fa fa-trash fs-16 text-danger"></i>
           </a>
+        </span>
+        <span v-else-if="props.column.field == 'icon'">
+          <i :class="props.row.icon"></i>
         </span>
       </template>
     </vue-good-table>
 
-    <create-amenity></create-amenity>
+    <create-amenity @update="fetchAmenities(false)"></create-amenity>
+    <edit-amenity
+      :amenity="selectedAmenity"
+      @update="fetchAmenities(false)"
+    ></edit-amenity>
+    <delete-amenity
+      @update="fetchAmenities(false)"
+      :amenity="selectedAmenity"
+    ></delete-amenity>
   </div>
 </template>
 
 <script>
-const CreateAmenity = () => import('./CreateAmenity.vue');
+const EditAmenity = () => import("./EditAmenity.vue");
+const CreateAmenity = () => import("./CreateAmenity.vue");
+const DeleteAmenity = () => import("./DeleteAmenity.vue");
+
 export default {
-  components: { CreateAmenity },
+  components: { CreateAmenity, EditAmenity, DeleteAmenity },
   data() {
     return {
       isLoading: false,
       amenities: [],
+      selectedAmenity: {},
     };
   },
   computed: {
@@ -72,11 +100,12 @@ export default {
       return [
         {
           label: "Amenity",
-          field: "amenity",
+          field: "name",
         },
         {
           label: "Icon",
           field: "icon",
+          html: true,
         },
         {
           label: "Cretaed At",
@@ -84,8 +113,8 @@ export default {
           type: "date",
           thClass: "text-left",
           tdClass: "text-left",
-          dateInputFormat: "yyyy-MM-dd",
-          dateOutputFormat: "MMM do yyyy",
+          dateInputFormat: "yyyy-MM-dd HH:mm:ss",
+          dateOutputFormat: "MMM do yyyy HH:mm",
         },
         {
           label: "Actions",
@@ -99,25 +128,30 @@ export default {
     },
   },
   methods: {
-    fetchAmenities() {
+    fetchAmenities(pageLoad = true) {
       this.$store.dispatch("startLoading");
-      this.isLoading = true;
+      this.isLoading = pageLoad;
 
       axios
         .get("/admin/amenities")
         .then((res) => {
-          console.log(res);
-          setTimeout(() => {
-            this.$store.dispatch("stopLoading");
-            this.isLoading = false;
-          }, 1000);
+          this.amenities = res.data.data;
+
+          this.$store.dispatch("stopLoading");
+          this.isLoading = false;
         })
         .catch((res) => {
-          setTimeout(() => {
-            this.$store.dispatch("stopLoading");
-            this.isLoading = false;
-          }, 1000);
+          this.$store.dispatch("stopLoading");
+          this.isLoading = false;
         });
+    },
+    editAmenity(amenity) {
+      this.selectedAmenity = amenity;
+      $("#edit-amenity").modal("show");
+    },
+    deleteAmenity(amenity) {
+      this.selectedAmenity = amenity;
+      $("#delete-amenity").modal("show");
     },
   },
   created() {

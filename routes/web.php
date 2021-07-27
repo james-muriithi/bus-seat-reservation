@@ -103,6 +103,7 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 
         Route::post('profile/destroy', 'ChangePasswordController@destroy')->name('password.destroyProfile');
     }
 });
+
 Route::group(['as' => 'frontend.', 'namespace' => 'Frontend', 'middleware' => ['auth']], function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
@@ -155,8 +156,8 @@ Route::group(['as' => 'frontend.', 'namespace' => 'Frontend', 'middleware' => ['
     Route::resource('bus-ratings', 'BusRatingController');
 
     // Seat Layout
-    Route::delete('seat-layouts/destroy', 'SeatLayoutController@massDestroy')->name('seat-layouts.massDestroy');
-    Route::resource('seat-layouts', 'SeatLayoutController');
+    // Route::delete('seat-layouts/destroy', 'SeatLayoutController@massDestroy')->name('seat-layouts.massDestroy');
+    // Route::resource('seat-layouts', 'SeatLayoutController');
 
     // Passenger
     Route::delete('passengers/destroy', 'PassengerController@massDestroy')->name('passengers.massDestroy');

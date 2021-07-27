@@ -20,7 +20,6 @@ export default {
   },
   watch: {
     loading(newValue) {
-      console.log(newValue);
       if (newValue) {
         Nprogress.start();
         Nprogress.set(0.1);

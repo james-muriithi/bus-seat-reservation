@@ -15,6 +15,9 @@ Vue.component("spinner", () => import("./components/UI/Spinner.vue"));
 Vue.component("booking-index", () =>
     import("./components/amenities/AmenitiesIndex.vue")
 );
+Vue.component("bus-type-index", () =>
+    import("./components/bus-type/BusTypeIndex.vue")
+);
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store
