@@ -70,9 +70,8 @@
 
 <script>
 import Loader from "../UI/Loader.vue";
-import Spinner from "../UI/Spinner.vue";
 export default {
-  components: { Loader, Spinner },
+  components: { Loader },
   props: {
     limit: {
       type: Number,

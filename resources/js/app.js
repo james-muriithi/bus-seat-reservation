@@ -3,24 +3,28 @@ require("./echart");
 
 window.Vue = require("vue").default;
 
-Vue.component(
-    "example-component",
-    require("./components/ExampleComponent.vue").default
+Vue.component("example-component", () =>
+    import("./components/ExampleComponent.vue")
 );
-Vue.component('dashboard', () => import('./components/dashboard/Dashboard.vue'));
-Vue.component('bread-crumb', () => import('./components/UI/BreadCrumb.vue'));
-Vue.component('spinner', () => import('./components/UI/Spinner.vue'));
+Vue.component("dashboard", () =>
+    import("./components/dashboard/Dashboard.vue")
+);
+Vue.component("bread-crumb", () => import("./components/UI/BreadCrumb.vue"));
+Vue.component("spinner", () => import("./components/UI/Spinner.vue"));
+Vue.component("booking-index", () =>
+    import("./components/amenities/AmenitiesIndex.vue")
+);
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store
- import store from "./store";
+import store from "./store";
 
- // vue good table
- import VueGoodTablePlugin from 'vue-good-table';
+// vue good table
+import VueGoodTablePlugin from "vue-good-table";
 
- // mixins
- import GlobalMixin from "./mixins/global";
- Vue.mixin(GlobalMixin);
+// mixins
+import GlobalMixin from "./mixins/global";
+Vue.mixin(GlobalMixin);
 
 Vue.use(VueGoodTablePlugin);
 
@@ -33,7 +37,9 @@ const app = new Vue({
 $(function() {
     "use strict";
     var url = window.location + "";
-    var path = [location.protocol, '//', location.host, location.pathname].join('');
+    var path = [location.protocol, "//", location.host, location.pathname].join(
+        ""
+    );
 
     var element = $("ul#sidebarnav a").filter(function() {
         return this.href === url || this.href === path; // || url.href.indexOf(this.href) === 0;

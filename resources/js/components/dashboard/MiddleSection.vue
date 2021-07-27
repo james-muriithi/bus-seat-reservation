@@ -6,14 +6,10 @@
           <div class="card-body">
             <h4 class="card-title m-0">This Week Reservations</h4>
             <div class="chart-wrapper">
-              <div v-once class="typo__p text-right" v-if="loading">
+              <div v-once class="typo__p text-right" v-if="isLoading">
                 <spinner />
               </div>
-              <v-chart
-                v-if="!loading"
-                :option="echartData"
-                :autoresize="true"
-              ></v-chart>
+              <v-chart v-else :option="echartData" :autoresize="true"></v-chart>
             </div>
           </div>
         </div>
@@ -23,18 +19,16 @@
 </template>
 
 <script>
-import Spinner from '../UI/Spinner.vue';
 export default {
-  components: { Spinner },
   data() {
     return {
       echartData: {},
-      loading: false,
+      isLoading: false,
     };
   },
   methods: {
     fetchChartData() {
-      this.loading = true;
+      this.isLoading = true;
       axios
         .get("/admin/reports/dashboard")
         .then((res) => {
@@ -133,7 +127,7 @@ export default {
               },
             ],
           };
-          this.loading = false;
+          this.isLoading = false;
         })
         .catch((res) => {
           console.log(res);
