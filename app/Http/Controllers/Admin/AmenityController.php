@@ -27,13 +27,6 @@ class AmenityController extends Controller
         return view('admin.amenities.index', compact('amenities'));
     }
 
-    public function create()
-    {
-        abort_if(Gate::denies('amenity_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.amenities.create');
-    }
-
     public function store(StoreAmenityRequest $request)
     {
         $amenity = Amenity::create($request->all());
@@ -47,25 +40,11 @@ class AmenityController extends Controller
         return redirect()->route('admin.amenities.index');
     }
 
-    public function edit(Amenity $amenity)
-    {
-        abort_if(Gate::denies('amenity_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.amenities.edit', compact('amenity'));
-    }
-
     public function update(UpdateAmenityRequest $request, Amenity $amenity)
     {
         $amenity->update($request->all());
 
         return redirect()->route('admin.amenities.index');
-    }
-
-    public function show(Amenity $amenity)
-    {
-        abort_if(Gate::denies('amenity_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.amenities.show', compact('amenity'));
     }
 
     public function destroy(Amenity $amenity)

@@ -27,13 +27,6 @@ class BusTypeController extends Controller
         return view('admin.busTypes.index', compact('busTypes'));
     }
 
-    public function create()
-    {
-        abort_if(Gate::denies('bus_type_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.busTypes.create');
-    }
-
     public function store(StoreBusTypeRequest $request)
     {
         $busType = BusType::create($request->all());
@@ -46,13 +39,6 @@ class BusTypeController extends Controller
         return redirect()->route('admin.bus-types.index');
     }
 
-    public function edit(BusType $busType)
-    {
-        abort_if(Gate::denies('bus_type_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.busTypes.edit', compact('busType'));
-    }
-
     public function update(UpdateBusTypeRequest $request, BusType $busType)
     {
         $busType->update($request->all());
@@ -63,13 +49,6 @@ class BusTypeController extends Controller
         }
 
         return redirect()->route('admin.bus-types.index');
-    }
-
-    public function show(BusType $busType)
-    {
-        abort_if(Gate::denies('bus_type_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.busTypes.show', compact('busType'));
     }
 
     public function destroy(BusType $busType)

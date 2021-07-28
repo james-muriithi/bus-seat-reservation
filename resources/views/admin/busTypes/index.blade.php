@@ -9,7 +9,7 @@
         @include('partials.navbar')
         @include('partials.sidebar')
         <div class="page-wrapper">
-            <bread-crumb :title="`Amenities List`" :items="[
+            <bread-crumb :title="`Bus Types`" :items="[
                 {
                     title: 'Home',
                     url: '{{ route('admin.home') }}'

@@ -21,11 +21,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Amenity
     Route::delete('amenities/destroy', 'AmenityController@massDestroy')->name('amenities.massDestroy');
-    Route::resource('amenities', 'AmenityController');
+    Route::resource('amenities', 'AmenityController')->except(['show', 'create', 'edit']);
 
     // Bus Type
     Route::delete('bus-types/destroy', 'BusTypeController@massDestroy')->name('bus-types.massDestroy');
-    Route::resource('bus-types', 'BusTypeController');
+    Route::resource('bus-types', 'BusTypeController')->except(['show', 'create', 'edit']);
 
     // Bus
     Route::delete('buses/destroy', 'BusController@massDestroy')->name('buses.massDestroy');

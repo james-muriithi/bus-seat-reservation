@@ -65,7 +65,7 @@
         </span>
         <span v-else-if="props.column.field == 'status'">
           <span
-            :class="`badge badge-pill py-1 px-2 badge-${
+            :class="`badge py-1 px-2 badge-outline-${
               props.row.status ? 'success' : 'danger'
             }`"
           >

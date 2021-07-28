@@ -7,6 +7,7 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyBusRequest;
 use App\Http\Requests\StoreBusRequest;
 use App\Http\Requests\UpdateBusRequest;
+use App\Http\Resources\Admin\BusResource;
 use App\Models\Amenity;
 use App\Models\Bus;
 use App\Models\BusType;
@@ -26,73 +27,11 @@ class BusController extends Controller
         abort_if(Gate::denies('bus_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
-            $query = Bus::with(['bus_type', 'amenities', 'created_by'])->select(sprintf('%s.*', (new Bus())->table));
-            $table = Datatables::of($query);
+            $buses = Bus::with(['bus_type', 'amenities', 'created_by'])
+                ->select(sprintf('%s.*', (new Bus())->table))
+                ->get();
 
-            $table->addColumn('placeholder', '&nbsp;');
-            $table->addColumn('actions', '&nbsp;');
-
-            $table->editColumn('actions', function ($row) {
-                $viewGate = 'bus_show';
-                $editGate = 'bus_edit';
-                $deleteGate = 'bus_delete';
-                $crudRoutePart = 'buses';
-
-                return view('partials.datatablesActions', compact(
-                'viewGate',
-                'editGate',
-                'deleteGate',
-                'crudRoutePart',
-                'row'
-            ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : '';
-            });
-            $table->editColumn('bus_name', function ($row) {
-                return $row->bus_name ? $row->bus_name : '';
-            });
-            $table->editColumn('bus_reg_no', function ($row) {
-                return $row->bus_reg_no ? $row->bus_reg_no : '';
-            });
-            $table->addColumn('bus_type_bus_type', function ($row) {
-                return $row->bus_type ? $row->bus_type->bus_type : '';
-            });
-
-            $table->editColumn('max_seats', function ($row) {
-                return $row->max_seats ? $row->max_seats : '';
-            });
-            $table->editColumn('amenities', function ($row) {
-                $labels = [];
-                foreach ($row->amenities as $amenity) {
-                    $labels[] = sprintf('<span class="label label-info label-many">%s</span>', $amenity->name);
-                }
-
-                return implode(' ', $labels);
-            });
-            $table->editColumn('status', function ($row) {
-                return '<input type="checkbox" disabled ' . ($row->status ? 'checked' : null) . '>';
-            });
-            $table->addColumn('created_by_name', function ($row) {
-                return $row->created_by ? $row->created_by->name : '';
-            });
-
-            $table->editColumn('images', function ($row) {
-                if (!$row->images) {
-                    return '';
-                }
-                $links = [];
-                foreach ($row->images as $media) {
-                    $links[] = '<a href="' . $media->getUrl() . '" target="_blank"><img src="' . $media->getUrl('thumb') . '" width="50px" height="50px"></a>';
-                }
-
-                return implode(' ', $links);
-            });
-
-            $table->rawColumns(['actions', 'placeholder', 'bus_type', 'amenities', 'status', 'created_by', 'images']);
-
-            return $table->make(true);
+            return new BusResource($buses);
         }
 
         return view('admin.buses.index');

@@ -18,6 +18,15 @@ Vue.component("booking-index", () =>
 Vue.component("bus-type-index", () =>
     import("./components/bus-type/BusTypeIndex.vue")
 );
+// buses
+Vue.component("bus-index", () =>
+    import("./components/buses/BusIndex.vue")
+);
+Vue.component("bus-create", () =>
+    import("./components/buses/CreateBus.vue")
+);
+
+
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store
