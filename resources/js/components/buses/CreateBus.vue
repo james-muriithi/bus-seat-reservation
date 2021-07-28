@@ -61,7 +61,7 @@
                   <div class="col-md-6 mb-2">
                     <validation-provider
                       name="Max seats"
-                      :rules="{ required: true, min_value: 0, double: true }"
+                      :rules="{ required: true, min_value: 1, integer: true }"
                       v-slot="validationContext"
                     >
                       <div class="form-group">
@@ -127,23 +127,19 @@
                     >
                       <div class="form-group">
                         <label for="name">Bus Amenities</label>
-                        <select
+                        <select2
                           id="amenities"
                           aria-describedby="bus-amenities-feedback"
                           v-model.trim="bus.amenities"
-                          :class="`form-control ${getValidationState(
-                            validationContext
-                          )}`"
+                          :options="amenities"
+                          :settings="{
+                            theme: 'bootstrap',
+                            multiple: true,
+                            closeOnSelect: false
+                          }"
+                          required
                         >
-                          <option value="" selected>--Select Amenities--</option>
-                          <option
-                            :value="amenity.id"
-                            v-for="amenity in amenities"
-                            :key="amenity.id"
-                          >
-                            {{ amenity.name }}
-                          </option>
-                        </select>
+                        </select2>
                         <div
                           id="bus-amenities-feedback"
                           class="invalid-feedback w-100"
@@ -191,8 +187,30 @@
 
 <script>
 import Nprogress from "nprogress";
+import Select2 from "v-select2-component";
+import "select2-bootstrap-theme/dist/select2-bootstrap.min.css";
 
 export default {
+  components: { Select2 },
+  data() {
+    return {
+      isLoading: false,
+      busTypes: [],
+      amenities: [
+        {
+          disabled: true,
+          text: "--Select Amenity--",
+        },
+      ],
+      bus: {
+        bus_name: "",
+        bus_reg_no: "",
+        bus_type: "",
+        max_seats: 0,
+        status: 1,
+      },
+    };
+  },
   computed: {
     loading() {
       return this.$store.getters.loading;
@@ -208,35 +226,41 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      isLoading: false,
-      busTypes: [],
-      amenities: [],
-      bus: {
-        bus_name: "",
-        bus_reg_no: "",
-        bus_type: "",
-        max_seats: 0,
-        status: 1,
-      },
-    };
-  },
   methods: {
     fetchBusTypes() {
-      this.$store.dispatch("startLoading");
-      this.isLoading = true;
+      //   this.$store.dispatch("startLoading");
+      //   this.isLoading = true;
       axios
         .get("/admin/bus-types")
         .then((res) => {
           this.busTypes = res.data.data;
-          this.$store.dispatch("stopLoading");
-          this.isLoading = false;
+          //   this.$store.dispatch("stopLoading");
+          //   this.isLoading = false;
         })
         .catch((error) => {
           console.log(error);
-          this.$store.dispatch("stopLoading");
-          this.isLoading = false;
+          //   this.$store.dispatch("stopLoading");
+          //   this.isLoading = false;
+        });
+    },
+    fetchAmenities() {
+      axios
+        .get("/admin/amenities")
+        .then((res) => {
+          this.amenities = [
+            {
+              text: "--Select Amenity--",
+            },
+          ];
+          res.data.data.forEach((amenity) => {
+            this.amenities.push({
+              id: amenity.id,
+              text: amenity.name,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     //---- Validation State Form
@@ -247,14 +271,25 @@ export default {
       return "";
     },
     createBus() {
-      this.$refs.createBus.validate().then((valid) => {
-        if (valid) {
-        }
-      });
+      this.$refs.createBus
+        .validate()
+        .then((valid) => {
+          if (valid) {
+              console.log(this.bus);
+          }
+        })
+        .catch((e) => console.log(e));
     },
   },
-  created() {
-    this.fetchBusTypes();
+  async created() {
+    this.$store.dispatch("startLoading");
+    this.isLoading = true;
+
+    await this.fetchBusTypes();
+    await this.fetchAmenities();
+
+    this.$store.dispatch("stopLoading");
+    this.isLoading = false;
   },
 };
 </script>

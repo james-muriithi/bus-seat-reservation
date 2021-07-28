@@ -11397,6 +11397,11 @@ a:hover {
   display: block !important;
 }
 
+.select2-container--bootstrap .select2-results__option--highlighted[aria-selected] {
+  background-color: #9561e2 !important;
+  color: #fff !important;
+}
+
 .badge {
   font-weight: 600;
 }

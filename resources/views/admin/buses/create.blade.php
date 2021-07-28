@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('styles')
     @parent
-
 @endsection
 @section('content')
     <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"

@@ -6,3 +6,9 @@ a:hover {
 .collapse.in {
     display: block !important;
 }
+
+.select2-container--bootstrap
+    .select2-results__option--highlighted[aria-selected] {
+    background-color: $primary !important;
+    color: $white !important;
+}
