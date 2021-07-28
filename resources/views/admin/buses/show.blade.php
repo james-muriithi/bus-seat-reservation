@@ -22,7 +22,7 @@
                     current: true
                 }
             ]"></bread-crumb>
-            <bus-view></bus-view>
+            <bus-view :bus="{{ $bus }}"></bus-view>
         </div>
     </div>
 @endsection
