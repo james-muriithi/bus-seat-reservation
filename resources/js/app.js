@@ -25,7 +25,12 @@ Vue.component("bus-index", () =>
 Vue.component("bus-create", () =>
     import("./components/buses/CreateBus.vue")
 );
-
+Vue.component("bus-view", () =>
+    import("./components/buses/ViewBus.vue")
+);
+Vue.component("bus-edit", () =>
+    import("./components/buses/EditBus.vue")
+);
 
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 

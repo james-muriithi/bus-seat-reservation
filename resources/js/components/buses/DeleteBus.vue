@@ -43,7 +43,7 @@ export default {
     return {};
   },
   methods: {
-    deleteBusType() {
+    deleteBus() {
       this.$store.dispatch("startLoading");
       axios
         .post(`/admin/buses/${this.bus.id}`, {

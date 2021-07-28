@@ -68,6 +68,12 @@ class Bus extends Model implements HasMedia
             $item->url = $item->getUrl();
             $item->thumbnail = $item->getUrl('thumb');
             $item->preview = $item->getUrl('preview');
+
+            $type = pathinfo($item->getPath(), PATHINFO_EXTENSION);
+            if (file_exists($item->getPath())) {
+                $data = file_get_contents($item->getPath());
+                $item->path = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
         });
 
         return $files;

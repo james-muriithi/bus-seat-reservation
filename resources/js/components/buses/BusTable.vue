@@ -46,13 +46,23 @@
 
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
+            <!-- view bus -->
+            <a
+            :href="`/admin/buses/${props.row.id}`"
+            title="View"
+            class="pr-1"
+          >
+            <i class="ti-eye fs-16 text-info"></i>
+          </a>
+          <!-- edit bus -->
           <a
-            href="#"
+            :href="`/admin/buses/${props.row.id}/edit`"
             title="Edit"
             class="pr-1"
           >
             <i class="fa fa-pencil-alt fs-16 text-success"></i>
           </a>
+          <!-- delete bus -->
           <a
             title="Delete"
             href="#"
@@ -61,15 +71,36 @@
             <i class="fa fa-trash fs-16 text-danger"></i>
           </a>
         </span>
-        <!-- <span v-else-if="props.column.field == 'icon'">
-          <i :class="props.row.icon"></i>
-        </span> -->
+
+        <span v-else-if="props.column.field == 'bus_type'">
+          {{ props.row.bus_type.bus_type }}
+        </span>
+
+        <span v-else-if="props.column.field == 'amenities'">
+          <span
+            class="badge py-1 px-2 badge-primary m-1"
+            v-for="amenity in props.row.amenities"
+            :key="amenity.name"
+          >
+            {{ amenity.name }}
+          </span>
+        </span>
+
+        <span v-else-if="props.column.field == 'status'">
+          <span
+            :class="`badge py-1 px-2 badge-outline-${
+              props.row.status ? 'success' : 'danger'
+            }`"
+          >
+            {{ props.row.status ? "Active" : "Inactive" }}
+          </span>
+        </span>
       </template>
     </vue-good-table>
 
     <delete-bus
-      @update="fetchAmenities(false)"
-      :bus="selectedAmenity"
+      @update="fetchBuses(false)"
+      :bus="selectedBus"
     ></delete-bus>
 
   </div>
@@ -154,7 +185,7 @@ export default {
     },
     deleteBus(bus) {
       this.selectedBus = bus;
-    //   $("#delete-bus").modal("show");
+      $("#delete-bus").modal("show");
     },
   },
   created() {

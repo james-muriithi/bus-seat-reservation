@@ -16,7 +16,6 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
-use Yajra\DataTables\Facades\DataTables;
 
 class BusController extends Controller
 {
@@ -52,14 +51,21 @@ class BusController extends Controller
 
     public function store(StoreBusRequest $request)
     {
+        $request->merge(['status' => (int)$request->input('status')]);
         $bus = Bus::create($request->all());
+        $bus->created_by()->associate(auth()->user());
+        $bus->save();
         $bus->amenities()->sync($request->input('amenities', []));
+
         foreach ($request->input('images', []) as $file) {
-            $bus->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('images');
+            $bus->addMediaFromBase64($file['path'])
+                ->usingFileName(uniqid() . '_' . $file['name'])
+                ->toMediaCollection('images');
         }
 
-        if ($media = $request->input('ck-media', false)) {
-            Media::whereIn('id', $media)->update(['model_id' => $bus->id]);
+        if ($request->ajax()) {
+            return (new BusResource($bus))->response()
+                ->setStatusCode(Response::HTTP_CREATED);
         }
 
         return redirect()->route('admin.buses.index');
@@ -82,19 +88,25 @@ class BusController extends Controller
 
     public function update(UpdateBusRequest $request, Bus $bus)
     {
+        $request->merge(['status' => (bool)$request->input('status', 0)]);
+
         $bus->update($request->all());
+
         $bus->amenities()->sync($request->input('amenities', []));
         if (count($bus->images) > 0) {
             foreach ($bus->images as $media) {
-                if (!in_array($media->file_name, $request->input('images', []))) {
+                $fileNames = collect($request->input('images', []))->pluck('name')->all();
+                if (!in_array($media->file_name, $fileNames)) {
                     $media->delete();
                 }
             }
         }
         $media = $bus->images->pluck('file_name')->toArray();
         foreach ($request->input('images', []) as $file) {
-            if (count($media) === 0 || !in_array($file, $media)) {
-                $bus->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('images');
+            if (count($media) === 0 || !in_array($file['name'], $media)) {
+                $bus->addMediaFromBase64($file['path'])
+                    ->usingFileName(uniqid() . '_' . $file['name'])
+                    ->toMediaCollection('images');
             }
         }
 
