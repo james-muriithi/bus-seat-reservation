@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddRatedByFieldToBusRatingsTable extends Migration
+class AddBusIdFieldToBusRatingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,10 @@ class AddRatedByFieldToBusRatingsTable extends Migration
     public function up()
     {
         Schema::table('bus_ratings', function (Blueprint $table) {
-            $table->unsignedBigInteger('rated_by_id')
-                ->nullable();
-            $table->foreign('rated_by_id', 'rated_by_fk_4376314')
+            $table->unsignedBigInteger('bus_id')->nullable();
+            $table->foreign('bus_id', 'bus_id_fk_4376314')
                 ->references('id')
-                ->on('passengers');
+                ->on('buses');
         });
     }
 

@@ -18,7 +18,10 @@ class BusRatingController extends Controller
     {
         abort_if(Gate::denies('bus_rating_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $busRatings = BusRating::latest()->get();
+        $busRatings = BusRating::query()
+            ->with(['bus', 'rated_by'])
+            ->latest()
+            ->get();
 
         if ($request->ajax()) {
             return new BusRatingResource($busRatings);

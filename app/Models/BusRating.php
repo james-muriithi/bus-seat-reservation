@@ -40,4 +40,9 @@ class BusRating extends Model
     {
         return $this->belongsTo(Passenger::class, 'rated_by_id');
     }
+
+    public function bus()
+    {
+        return $this->belongsTo(Bus::class, 'bus_id');
+    }
 }

@@ -46,7 +46,7 @@ export default {
     deleteRating() {
       this.$store.dispatch("startLoading");
       axios
-        .post(`/admin/ratings/${this.rating.id}`, {
+        .post(`/admin/bus-ratings/${this.rating.id}`, {
           _method: "DELETE",
         })
         .then((res) => {

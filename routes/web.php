@@ -51,7 +51,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Bus Rating
     Route::delete('bus-ratings/destroy', 'BusRatingController@massDestroy')->name('bus-ratings.massDestroy');
-    Route::resource('bus-ratings', 'BusRatingController')->only(['index']);
+    Route::resource('bus-ratings', 'BusRatingController')->only(['index', 'destroy']);
 
     // Seat Layout
     Route::delete('seat-layouts/destroy', 'SeatLayoutController@massDestroy')->name('seat-layouts.massDestroy');

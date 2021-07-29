@@ -10,9 +10,9 @@ class CreateBusRatingsTable extends Migration
     {
         Schema::create('bus_ratings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('bus_quality');
-            $table->integer('punctuality')->nullable();
-            $table->integer('staff_behaviour')->nullable();
+            $table->decimal('bus_quality', 10, 2);
+            $table->decimal('punctuality', 10, 2)->nullable();
+            $table->decimal('staff_behaviour', 10, 2)->nullable();
             $table->longText('comment')->nullable();
             $table->timestamps();
             $table->softDeletes();

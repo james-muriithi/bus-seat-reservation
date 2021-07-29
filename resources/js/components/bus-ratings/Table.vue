@@ -33,14 +33,10 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
 
-      <div slot="table-actions" class="mt-2 mb-3">
-
-      </div>
+      <div slot="table-actions" class="mt-2 mb-3"></div>
 
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
-          class="fa fa-pencil-alt fs-16 text-success"></i>
-          </a>
           <a
             title="Delete"
             href="#"
@@ -50,8 +46,42 @@
           </a>
         </span>
 
-        <span v-else-if="props.column.field == 'icon'">
-          <i :class="props.row.icon"></i>
+        <span v-else-if="props.column.field == 'rated_by'">
+          <span>{{ props.row.rated_by.name }}</span>
+        </span>
+
+        <span v-else-if="props.column.field == 'bus'">
+          <a :href="`/admin/buses/${props.row.bus.id}`">{{
+            props.row.bus.bus_reg_no
+          }}</a>
+        </span>
+
+        <span v-else-if="props.column.field == 'bus_quality'">
+          <star-rating
+            :rating="+props.row.bus_quality"
+            :read-only="true"
+            :increment="0.5"
+            :star-size="20"
+          ></star-rating>
+        </span>
+        <span v-else-if="props.column.field == 'punctuality'">
+          <star-rating
+            v-if="props.row.punctuality"
+            :rating="+props.row.punctuality"
+            :read-only="true"
+            :increment="0.5"
+            :star-size="20"
+          ></star-rating>
+        </span>
+
+        <span v-else-if="props.column.field == 'staff_behaviour'">
+          <star-rating
+            v-if="props.row.staff_behaviour"
+            :rating="+props.row.staff_behaviour"
+            :read-only="true"
+            :increment="0.5"
+            :star-size="20"
+          ></star-rating>
         </span>
       </template>
     </vue-good-table>
@@ -63,10 +93,11 @@
 </template>
 
 <script>
+import StarRating from "vue-star-rating";
 const DeleteRating = () => import("./DeleteRating.vue");
 
 export default {
-  components: { DeleteRating },
+  components: { DeleteRating, StarRating },
   data() {
     return {
       isLoading: false,
@@ -80,6 +111,10 @@ export default {
         {
           label: "Passenger",
           field: "rated_by",
+        },
+        {
+          label: "Bus",
+          field: "bus",
         },
         {
           label: "Bus Quality",
@@ -126,7 +161,7 @@ export default {
       this.isLoading = pageLoad;
 
       axios
-        .get("/admin/ratings")
+        .get("/admin/bus-ratings")
         .then((res) => {
           this.ratings = res.data.data;
 
