@@ -19,22 +19,19 @@ Vue.component("bus-type-index", () =>
     import("./components/bus-type/BusTypeIndex.vue")
 );
 // buses
-Vue.component("bus-index", () =>
-    import("./components/buses/BusIndex.vue")
-);
-Vue.component("bus-create", () =>
-    import("./components/buses/CreateBus.vue")
-);
-Vue.component("bus-view", () =>
-    import("./components/buses/ViewBus.vue")
-);
-Vue.component("bus-edit", () =>
-    import("./components/buses/EditBus.vue")
-);
+Vue.component("bus-index", () => import("./components/buses/BusIndex.vue"));
+Vue.component("bus-create", () => import("./components/buses/CreateBus.vue"));
+Vue.component("bus-view", () => import("./components/buses/ViewBus.vue"));
+Vue.component("bus-edit", () => import("./components/buses/EditBus.vue"));
 
 // bus seat class
 Vue.component("bus-seat-classes-index", () =>
     import("./components/bus-seat-classes/SeatClassIndex.vue")
+);
+
+// bus ratings
+Vue.component("bus-ratings-index", () =>
+    import("./components/bus-ratings/BusRatingsIndex.vue")
 );
 
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
