@@ -25,6 +25,7 @@ class BusRating extends Model
         'punctuality',
         'staff_behaviour',
         'comment',
+        'rated_by_id',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -33,5 +34,10 @@ class BusRating extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function rated_by()
+    {
+        return $this->belongsTo(Passenger::class, 'rated_by_id');
     }
 }

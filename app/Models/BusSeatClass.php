@@ -33,4 +33,10 @@ class BusSeatClass extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+    // scopes
+    public function scopeActive($query, $status = 1)
+    {
+        return $query->where('status', $status);
+    }
 }
