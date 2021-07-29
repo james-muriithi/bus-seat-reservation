@@ -82,6 +82,10 @@
                 />
               </div>
             </div>
+            <div class="my-3">
+                <h5 class="mb-2 font-weight-bold">Ratings and reviews</h5>
+                <rating-histogram></rating-histogram>
+            </div>
           </div>
         </div>
 
@@ -102,8 +106,10 @@
 
 <script>
 import Nprogress from "nprogress";
+const RatingHistogram = () => import("./modules/RatingHistogram.vue");
 
 export default {
+  components: { RatingHistogram },
   props: {
     bus: {
       type: Object,

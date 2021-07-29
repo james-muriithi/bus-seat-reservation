@@ -62,6 +62,7 @@
             :read-only="true"
             :increment="0.5"
             :star-size="20"
+            active-color="var(--primary)"
           ></star-rating>
         </span>
         <span v-else-if="props.column.field == 'punctuality'">
@@ -71,6 +72,7 @@
             :read-only="true"
             :increment="0.5"
             :star-size="20"
+            active-color="var(--primary)"
           ></star-rating>
         </span>
 
@@ -81,6 +83,7 @@
             :read-only="true"
             :increment="0.5"
             :star-size="20"
+            active-color="var(--primary)"
           ></star-rating>
         </span>
       </template>
