@@ -5,9 +5,9 @@
         <h1 class="font-weight-bold">4.2</h1>
         <div>
             <star-rating
-            :rating="4.5"
+            :rating="4.2"
             :read-only="true"
-            :increment="0.5"
+            :increment="0.1"
             :star-size="20"
             active-color="var(--primary)"
             :show-rating="false"

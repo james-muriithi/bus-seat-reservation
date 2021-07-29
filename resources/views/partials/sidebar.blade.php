@@ -115,6 +115,43 @@
                         </ul>
                     </li>
                 @endcan
+
+                @can('setting_access')
+                    <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
+                            aria-expanded="false"><i class="ti-settings"></i><span class="hide-menu">
+                                {{ trans('cruds.setting.title') }}
+                            </span></a>
+                        <ul aria-expanded="false" class="collapse  first-level base-level-line">
+                            @can('currency_access')
+                                <li class="sidebar-item">
+                                    <a href="{{ route('admin.currencies.index') }}" class="sidebar-link"><span class="hide-menu">
+                                            {{ trans('cruds.currency.title') }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('payment_method_access')
+                                <li class="sidebar-item">
+                                    <a href="{{ route('admin.payment-methods.index') }}" class="sidebar-link"><span
+                                            class="hide-menu">
+                                            {{ trans('cruds.paymentMethod.title') }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('system_setting_access')
+                                <li class="sidebar-item">
+                                    <a href="{{ route('admin.system-settings.index') }}" class="sidebar-link"><span
+                                            class="hide-menu">
+                                            {{ trans('cruds.systemSetting.title') }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
             </ul>
         </nav>
         <!-- End Sidebar navigation -->

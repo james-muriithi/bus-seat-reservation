@@ -34,6 +34,11 @@ Vue.component("bus-ratings-index", () =>
     import("./components/bus-ratings/BusRatingsIndex.vue")
 );
 
+//settings
+Vue.component("currency-index", () =>
+    import("./components/currencies/CurrencyIndex.vue")
+);
+
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store

@@ -73,7 +73,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Currency
     Route::delete('currencies/destroy', 'CurrencyController@massDestroy')->name('currencies.massDestroy');
-    Route::resource('currencies', 'CurrencyController');
+    Route::resource('currencies', 'CurrencyController')->only(['index', 'destroy', 'update']);;
 
     // Payment Method
     Route::delete('payment-methods/destroy', 'PaymentMethodController@massDestroy')->name('payment-methods.massDestroy');

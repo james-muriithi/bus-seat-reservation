@@ -4,8 +4,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-8">
-            <h4 class="mb-0">Bus Details</h4>
-            <hr class="mt-2" />
+            <h4 class="font-weight-bold mb-3">Bus Details</h4>
 
             <table class="table table-hover table-bordered table-md">
               <tbody>
@@ -67,8 +66,12 @@
           </div>
 
           <div class="col-md-4">
-            <h4 class="mb-0">Bus Images</h4>
-            <hr class="mt-2" />
+            <div class="mb-3 mt-md-0 mt-3">
+              <h4 class="mb-2 font-weight-bold">Ratings and reviews</h4>
+              <rating-histogram></rating-histogram>
+            </div>
+            <h4 class="my-3 font-weight-bold">Bus Images</h4>
+
             <div class="row">
               <div
                 class="col-md-6 mb-3"
@@ -82,21 +85,15 @@
                 />
               </div>
             </div>
-            <div class="my-3">
-                <h5 class="mb-2 font-weight-bold">Ratings and reviews</h5>
-                <rating-histogram></rating-histogram>
-            </div>
           </div>
         </div>
 
         <div class="row mt-3">
           <div class="col-md-8">
-            <h4 class="mb-0">Bus Routes</h4>
-            <hr class="mt-2" />
+            <h4 class="mb-3 font-weight-bold">Bus Routes</h4>
           </div>
           <div class="col-md-4">
-            <h4 class="mb-0">Seats Layout</h4>
-            <hr class="mt-2" />
+            <h4 class="mb-3 font-weight-bold">Seats Layout</h4>
           </div>
         </div>
       </div>
