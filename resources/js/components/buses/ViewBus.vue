@@ -86,8 +86,12 @@
         </div>
 
         <div class="row mt-3">
-          <div class="col-md-12">
+          <div class="col-md-8">
             <h4 class="mb-0">Bus Routes</h4>
+            <hr class="mt-2" />
+          </div>
+          <div class="col-md-4">
+            <h4 class="mb-0">Seats Layout</h4>
             <hr class="mt-2" />
           </div>
         </div>

@@ -32,6 +32,11 @@ Vue.component("bus-edit", () =>
     import("./components/buses/EditBus.vue")
 );
 
+// bus seat class
+Vue.component("bus-seat-classes-index", () =>
+    import("./components/bus-seat-classes/SeatClassIndex.vue")
+);
+
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyBusSeatClassRequest;
 use App\Http\Requests\StoreBusSeatClassRequest;
 use App\Http\Requests\UpdateBusSeatClassRequest;
+use App\Http\Resources\Admin\BusSeatClassResource;
 use App\Models\BusSeatClass;
 use Gate;
 use Illuminate\Http\Request;
@@ -13,11 +14,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BusSeatClassController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('bus_seat_class_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $busSeatClasses = BusSeatClass::all();
+        $busSeatClasses = BusSeatClass::latest()->get();
+
+        if ($request->ajax()) {
+            return new BusSeatClassResource($busSeatClasses);
+        }
 
         return view('admin.busSeatClasses.index', compact('busSeatClasses'));
     }
@@ -32,6 +37,12 @@ class BusSeatClassController extends Controller
     public function store(StoreBusSeatClassRequest $request)
     {
         $busSeatClass = BusSeatClass::create($request->all());
+
+        if ($request->ajax()) {
+            return (new BusSeatClassResource($busSeatClass))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
+        }
 
         return redirect()->route('admin.bus-seat-classes.index');
     }
