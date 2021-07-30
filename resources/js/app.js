@@ -38,6 +38,9 @@ Vue.component("bus-ratings-index", () =>
 Vue.component("currency-index", () =>
     import("./components/currencies/CurrencyIndex.vue")
 );
+Vue.component("payment-method-index", () =>
+    import("./components/payment-methods/PaymentMethodsIndex.vue")
+);
 
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 

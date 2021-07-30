@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyPaymentMethodRequest;
 use App\Http\Requests\StorePaymentMethodRequest;
 use App\Http\Requests\UpdatePaymentMethodRequest;
+use App\Http\Resources\Admin\PaymentMethodResource;
 use App\Models\PaymentMethod;
 use Gate;
 use Illuminate\Http\Request;
@@ -13,11 +14,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PaymentMethodController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('payment_method_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $paymentMethods = PaymentMethod::all();
+
+        if ($request->ajax()) {
+            return new PaymentMethodResource($paymentMethods);
+        }
 
         return view('admin.paymentMethods.index', compact('paymentMethods'));
     }
