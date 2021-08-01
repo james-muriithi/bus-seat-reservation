@@ -7,6 +7,7 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyPassengerRequest;
 use App\Http\Requests\StorePassengerRequest;
 use App\Http\Requests\UpdatePassengerRequest;
+use App\Http\Resources\Admin\PassengerResource;
 use App\Models\Passenger;
 use Gate;
 use Illuminate\Http\Request;
@@ -17,11 +18,15 @@ class PassengerController extends Controller
 {
     use MediaUploadingTrait;
 
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('passenger_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $passengers = Passenger::with(['media'])->get();
+        $passengers = Passenger::with(['media'])->latest()->get();
+
+        if ($request->ajax()) {
+            return new PassengerResource($passengers);
+        }
 
         return view('admin.passengers.index', compact('passengers'));
     }

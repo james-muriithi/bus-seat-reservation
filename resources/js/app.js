@@ -45,6 +45,12 @@ Vue.component("system-settings-index", () =>
     import("./components/system-settings/SystemSettingsIndex.vue")
 );
 
+//passengers
+Vue.component("passenger-index", () =>
+    import("./components/passengers/PassengerIndex.vue")
+);
+Vue.component("passenger-view", () => import("./components/passengers/ViewPassenger.vue"));
+
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store
@@ -55,6 +61,7 @@ import VueGoodTablePlugin from "vue-good-table";
 
 // mixins
 import GlobalMixin from "./mixins/global";
+import Vue from "vue";
 Vue.mixin(GlobalMixin);
 
 Vue.use(VueGoodTablePlugin);

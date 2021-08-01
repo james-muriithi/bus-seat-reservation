@@ -185,7 +185,7 @@ Route::group(['as' => 'frontend.', 'namespace' => 'Frontend', 'middleware' => ['
     Route::delete('system-settings/destroy', 'SystemSettingController@massDestroy')->name('system-settings.massDestroy');
     Route::post('system-settings/media', 'SystemSettingController@storeMedia')->name('system-settings.storeMedia');
     Route::post('system-settings/ckmedia', 'SystemSettingController@storeCKEditorImages')->name('system-settings.storeCKEditorImages');
-    Route::resource('system-settings', 'SystemSettingController');
+    Route::resource('system-settings', 'SystemSettingController')->only(['index', "update"]);
 
     // Payment
     Route::delete('payments/destroy', 'PaymentController@massDestroy')->name('payments.massDestroy');
