@@ -40,7 +40,7 @@ class PassengerController extends Controller
 
     public function store(StorePassengerRequest $request)
     {
-        $passenger = Passenger::create($request->all());
+        $passenger = Passenger::updateOrCreate($request->only(['email', 'mobile']), $request->all());
 
         if ($request->input('avatar', false)) {
             $passenger->addMedia(storage_path('tmp/uploads/' . basename($request->input('avatar'))))->toMediaCollection('avatar');
@@ -48,6 +48,12 @@ class PassengerController extends Controller
 
         if ($media = $request->input('ck-media', false)) {
             Media::whereIn('id', $media)->update(['model_id' => $passenger->id]);
+        }
+
+        if ($request->ajax()) {
+            return (new PassengerResource($passenger))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
         }
 
         return redirect()->route('admin.passengers.index');

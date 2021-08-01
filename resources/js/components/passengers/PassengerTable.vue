@@ -33,15 +33,16 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
-        <a
+        <button
           class="btn-sm btn btn-primary btn-rounded btn-icon m-1 ripple"
-          href="/admin/passengers/create"
+          data-toggle="modal"
+          data-target="#create-passenger"
         >
           <span class="ul-btn__icon">
             <i data-feather="plus-circle" class="feather-icon"></i>
           </span>
           <span class="ul-btn__text ml-1">Create</span>
-        </a>
+        </button>
       </div>
 
       <template slot="table-row" slot-scope="props">
@@ -84,14 +85,17 @@
       :passenger="selectedPassenger"
     ></delete-passenger>
 
+    <create-passenger @update="fetchPassengers(false)" />
+
   </div>
 </template>
 
 <script>
+const CreatePassenger = () => import('./CreatePassenger.vue');
 const DeletePassenger = () => import("./DeletePassenger.vue");
 
 export default {
-  components: { DeletePassenger },
+  components: { DeletePassenger, CreatePassenger },
   data() {
     return {
       isLoading: false,
