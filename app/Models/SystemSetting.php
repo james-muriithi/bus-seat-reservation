@@ -52,7 +52,19 @@ class SystemSetting extends Model implements HasMedia
 
     public function getCompanyLogoAttribute()
     {
-        return $this->getMedia('company_logo')->last();
+        $logo = $this->getMedia('company_logo')->last();
+        if ($logo) {
+            $logo->url = $logo->getUrl();
+            $logo->thumbnail = $logo->getUrl('thumb');
+            $logo->preview = $logo->getUrl('preview');
+
+            $type = pathinfo($logo->getPath(), PATHINFO_EXTENSION);
+            if (file_exists($logo->getPath())) {
+                $data = file_get_contents($logo->getPath());
+                $logo->path = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+        }
+        return $logo;
     }
 
     protected function serializeDate(DateTimeInterface $date)

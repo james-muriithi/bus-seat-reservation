@@ -14,13 +14,16 @@
                 <!-- Logo icon -->
                 <a href="/">
                     <b class="logo-icon">
-                        <img src="{{ asset('images/bus.webp') }}" alt="homepage" class="dark-logo" width="50"
+                        <?php
+                        $logo = config("settings.company_logo");
+                        ?>
+                        <img src="{{ $logo->thumbnail ?? asset('images/bus.webp') }}" alt="logo" class="dark-logo" width="50"
                             height="50" />
                     </b>
                     <!--End Logo icon -->
                     <!-- Logo text -->
                     <span class="logo-text">
-                        {{ env('APP_NAME') }}
+                        {{ config("settings.company_name", env('APP_NAME')) }}
                     </span>
                 </a>
             </div>

@@ -7,10 +7,12 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroySystemSettingRequest;
 use App\Http\Requests\StoreSystemSettingRequest;
 use App\Http\Requests\UpdateSystemSettingRequest;
+use App\Http\Resources\Admin\SystemSettingResource;
 use App\Models\Currency;
 use App\Models\SystemSetting;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,7 +24,7 @@ class SystemSettingController extends Controller
     {
         abort_if(Gate::denies('system_setting_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $systemSettings = SystemSetting::with(['default_currency', 'media'])->get();
+        $systemSettings = SystemSetting::with(['default_currency', 'media'])->first();
 
         return view('admin.systemSettings.index', compact('systemSettings'));
     }
@@ -41,11 +43,11 @@ class SystemSettingController extends Controller
         $systemSetting = SystemSetting::create($request->all());
 
         if ($request->input('company_logo', false)) {
-            $systemSetting->addMedia(storage_path('tmp/uploads/' . basename($request->input('company_logo'))))->toMediaCollection('company_logo');
-        }
+            $newLogo = $request->input('company_logo');
 
-        if ($media = $request->input('ck-media', false)) {
-            Media::whereIn('id', $media)->update(['model_id' => $systemSetting->id]);
+            $systemSetting->addMediaFromBase64($newLogo['path'])
+                ->usingFileName(uniqid() . '_' . $newLogo['name'])
+                ->toMediaCollection('company_logo');;
         }
 
         return redirect()->route('admin.system-settings.index');
@@ -71,10 +73,22 @@ class SystemSettingController extends Controller
                 if ($systemSetting->company_logo) {
                     $systemSetting->company_logo->delete();
                 }
-                $systemSetting->addMedia(storage_path('tmp/uploads/' . basename($request->input('company_logo'))))->toMediaCollection('company_logo');
+                $newLogo = $request->input('company_logo');
+
+                $systemSetting->addMediaFromBase64($newLogo['path'])
+                    ->usingFileName(uniqid() . '_' . $newLogo['name'])
+                    ->toMediaCollection('company_logo');
             }
         } elseif ($systemSetting->company_logo) {
             $systemSetting->company_logo->delete();
+        }
+
+        Cache::forget('settings');
+
+        if ($request->ajax()) {
+            return (new SystemSettingResource($systemSetting))
+                ->response()
+                ->setStatusCode(Response::HTTP_ACCEPTED);
         }
 
         return redirect()->route('admin.system-settings.index');

@@ -41,6 +41,9 @@ Vue.component("currency-index", () =>
 Vue.component("payment-method-index", () =>
     import("./components/payment-methods/PaymentMethodsIndex.vue")
 );
+Vue.component("system-settings-index", () =>
+    import("./components/system-settings/SystemSettingsIndex.vue")
+);
 
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 

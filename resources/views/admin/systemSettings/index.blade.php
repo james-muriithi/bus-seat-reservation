@@ -23,6 +23,7 @@
                     current: true
                 }
             ]"></bread-crumb>
+            <system-settings-index :settings="{{ $systemSettings ?? '{}' }}"></system-settings-index>
         </div>
     </div>
 @endsection
