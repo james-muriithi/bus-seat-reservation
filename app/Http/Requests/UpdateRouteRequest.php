@@ -20,6 +20,7 @@ class UpdateRouteRequest extends FormRequest
             'bus_id' => [
                 'required',
                 'integer',
+                'exists:buses,id'
             ],
             'board_point' => [
                 'string',
@@ -27,7 +28,7 @@ class UpdateRouteRequest extends FormRequest
             ],
             'board_time' => [
                 'required',
-                'date_format:' . config('panel.time_format'),
+                'date_format:H:i',
             ],
             'drop_point' => [
                 'string',
@@ -35,10 +36,15 @@ class UpdateRouteRequest extends FormRequest
             ],
             'drop_time' => [
                 'required',
-                'date_format:' . config('panel.time_format'),
+                'date_format:H:i',
             ],
             'fare' => [
-                'required',
+                // 'integer',
+                'required_if:seat_classes.*,null',
+            ],
+            'seat_classes' => [
+                'array',
+                'required_if:fare,null'
             ],
         ];
     }

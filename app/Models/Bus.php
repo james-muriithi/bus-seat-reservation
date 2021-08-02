@@ -56,6 +56,11 @@ class Bus extends Model implements HasMedia
         return $this->belongsToMany(Amenity::class);
     }
 
+    public function routes()
+    {
+        return $this->hasMany(Route::class, 'bus_id');
+    }
+
     public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by_id');

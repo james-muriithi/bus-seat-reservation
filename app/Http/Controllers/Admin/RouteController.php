@@ -8,6 +8,8 @@ use App\Http\Requests\StoreRouteRequest;
 use App\Http\Requests\UpdateRouteRequest;
 use App\Http\Resources\Admin\RouteResource;
 use App\Models\Bus;
+use App\Models\DropOffPoint;
+use App\Models\PickupPoint;
 use App\Models\Route;
 use Gate;
 use Illuminate\Http\Request;
@@ -19,7 +21,7 @@ class RouteController extends Controller
     {
         abort_if(Gate::denies('route_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $routes = Route::with(['bus'])->latest()->get();
+        $routes = Route::with(['bus', 'route_seat_classes'])->latest()->get();
 
         if ($request->ajax()) {
             return new RouteResource($routes);
@@ -39,7 +41,53 @@ class RouteController extends Controller
 
     public function store(StoreRouteRequest $request)
     {
-        $route = Route::create($request->all());
+        $bus = Bus::find($request->input('bus_id'));
+        $routeExists = $bus->routes()
+            ->where('drop_point', $request->input('drop_point'))
+            ->where('board_point', $request->input('board_point'))
+            ->first();
+        if ($routeExists) {
+            return "";
+        }
+
+        $route = new Route($request->all());
+
+        if (count($request->input('seat_classes', [])) > 0) {
+            $route->fare = max($request->input('seat_classes'));
+            $route->save();
+
+            $seatClasses = [];
+
+            foreach ($request->input('seat_classes') as $index => $fare) {
+                if ($fare) {
+                    $seatClasses[$index] = ['fare' => $fare];
+                }
+            }
+
+            $route->route_seat_classes()->sync($seatClasses);
+        } else {
+            $route->save();
+        }
+
+        //create dropoff point
+        DropOffPoint::create([
+            'drop_off_point' => $request->input('drop_point'),
+            'drop_time' => $request->input('drop_time'),
+            'route_id' => $route->id,
+        ]);
+        //create board point
+        PickupPoint::create([
+            'pickup_point' => $request->input('board_point'),
+            'pickup_time' => $request->input('board_time'),
+            'status' => 1,
+            'route_id' => $route->id,
+        ]);
+
+        if ($request->ajax()) {
+            return (new RouteResource($route))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
+        }
 
         return redirect()->route('admin.routes.index');
     }
@@ -58,6 +106,42 @@ class RouteController extends Controller
     public function update(UpdateRouteRequest $request, Route $route)
     {
         $route->update($request->all());
+
+        if (count($request->input('seat_classes', [])) > 0) {
+            $route->fare = max($request->input('seat_classes'));
+            $route->save();
+
+            $seatClasses = [];
+
+            foreach ($request->input('seat_classes') as $index => $fare) {
+                if ($fare) {
+                    $seatClasses[$index] = ['fare' => $fare];
+                }
+            }
+
+            $route->route_seat_classes()->sync($seatClasses);
+        }
+        //update dropoff
+        $dropOff = $route->drop_off_points()
+            ->latest()
+            ->get()
+            ->last();
+        $dropOff->drop_off_point = $request->input('drop_point');
+        $dropOff->save();
+
+        //update pickup
+        $pickup = $route->pickup_points()
+            ->latest()
+            ->get()
+            ->last();
+        $pickup->pickup_point = $request->input('board_point');
+        $pickup->save();
+
+        if ($request->ajax()) {
+            return (new RouteResource($route))
+                ->response()
+                ->setStatusCode(Response::HTTP_ACCEPTED);
+        }
 
         return redirect()->route('admin.routes.index');
     }

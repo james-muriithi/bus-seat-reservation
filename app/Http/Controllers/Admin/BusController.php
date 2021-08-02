@@ -115,11 +115,15 @@ class BusController extends Controller
         return redirect()->route('admin.buses.index');
     }
 
-    public function show(Bus $bus)
+    public function show(Request $request, Bus $bus)
     {
         abort_if(Gate::denies('bus_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $bus->load('bus_type', 'amenities', 'created_by', 'seat_classes');
+
+        if ($request->ajax()) {
+            return new BusResource($bus);
+        }
 
         return view('admin.buses.show', compact('bus'));
     }

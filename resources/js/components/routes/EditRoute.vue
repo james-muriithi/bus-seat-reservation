@@ -4,8 +4,8 @@
       <spinner class="loading_page" :lg="true"></spinner>
     </div>
     <div v-else>
-      <validation-observer ref="createRoute">
-        <form @submit.prevent="createRoute">
+      <validation-observer ref="editRoute">
+        <form @submit.prevent="editRoute">
           <div class="row">
             <div class="col-md-12">
               <div class="card">
@@ -27,6 +27,7 @@
                             :class="`form-control ${getValidationState(
                               validationContext
                             )}`"
+                            disabled
                           >
                             <option value="" selected>--Select Bus--</option>
                             <option
@@ -280,6 +281,12 @@ import "vue2-timepicker/dist/VueTimepicker.css";
 
 export default {
   components: { VueTimepicker },
+  props: {
+    route: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       isLoading: false,
@@ -287,12 +294,12 @@ export default {
       seatClasses: [],
       buses: [],
       selectedBus: "",
-      route: {
-        status: 1,
-        seat_classes: [],
-        drop_time: "",
-        board_time: "",
-      },
+      //   route: {
+      //     status: 1,
+      //     seat_classes: [],
+      //     drop_time: "",
+      //     board_time: "",
+      //   },
     };
   },
   computed: {
@@ -309,18 +316,8 @@ export default {
         Nprogress.done();
       }
     },
-    selectedBus(newValue) {
-      if (newValue) {
-        this.route.bus_id = newValue;
-        this.fetchBus(newValue);
-      }
-    },
     setSeatClassesFare(newValue) {
-      if (newValue) {
-        this.seatClasses.forEach((seatClass) => {
-          this.route.seat_classes[seatClass.id] = "";
-        });
-      } else {
+      if (!newValue) {
         this.route.seat_classes = [];
       }
     },
@@ -341,8 +338,8 @@ export default {
           console.log(error);
         });
     },
-    createRoute() {
-      this.$refs.createRoute
+    editRoute() {
+      this.$refs.editRoute
         .validate()
         .then((valid) => {
           if (valid) {
@@ -351,9 +348,17 @@ export default {
             //start loading
             self.$store.dispatch("startLoading");
 
+            //remove timestamps
+            delete self.route.created_at;
+            delete self.route.updated_at;
+            delete self.route.deleted_at;
+
             // post data
             axios
-              .post("/admin/routes", self.route)
+              .post(`/admin/routes/${self.route.id}`, {
+                ...self.route,
+                _method: "PUT",
+              })
               .then((res) => {
                 self.$store.dispatch("stopLoading");
                 self.$nextTick(() => (window.location.href = "/admin/routes"));
@@ -383,30 +388,6 @@ export default {
           this.isLoading = false;
         });
     },
-    fetchBus(busId) {
-      this.$store.dispatch("startLoading");
-
-      axios
-        .get("/admin/buses/" + busId)
-        .then((res) => {
-          const selectedBus = res.data.data;
-
-          console.log(selectedBus);
-
-          this.seatClasses = selectedBus.seat_classes;
-
-          if (this.setSeatClassesFare) {
-            this.seatClasses.forEach((seatClass) => {
-              this.route.seat_classes[seatClass.id] = "";
-            });
-          }
-
-          this.$store.dispatch("stopLoading");
-        })
-        .catch((res) => {
-          this.$store.dispatch("stopLoading");
-        });
-    },
 
     //---- Validation State Form
     getValidationState({ dirty, validated, valid = null }) {
@@ -416,8 +397,25 @@ export default {
       return "";
     },
   },
-  created() {
-    this.fetchBuses();
+  async created() {
+    await this.fetchBuses();
+    this.route.seat_classes = [];
+
+    if (this.route) {
+      this.selectedBus = this.route.bus_id;
+      this.seatClasses = this.route.bus.seat_classes;
+      this.setSeatClassesFare = this.route.route_seat_classes.length > 0;
+    }
+
+    if (this.setSeatClassesFare) {
+      this.seatClasses.forEach((seatClass) => {
+        const sclass = this.route.route_seat_classes.find(
+          (sclass) => sclass.id == seatClass.id
+        );
+
+        this.route.seat_classes[seatClass.id] = sclass ? sclass.fare : "";
+      });
+    }
   },
 };
 </script>

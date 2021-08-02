@@ -25,7 +25,6 @@
       }"
       :sort-options="{
         enabled: true,
-        initialSortBy: { field: 'created_at', type: 'desc' },
       }"
       styleClass="vgt-table tableOne table-hover"
     >
@@ -46,12 +45,8 @@
 
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
-            <!-- view bus -->
-            <a
-            :href="`/admin/routes/${props.row.id}`"
-            title="View"
-            class="pr-1"
-          >
+          <!-- view bus -->
+          <a :href="`/admin/routes/${props.row.id}`" title="View" class="pr-1">
             <i class="ti-eye fs-16 text-info"></i>
           </a>
           <!-- edit bus -->
@@ -72,10 +67,19 @@
           </a>
         </span>
 
-        <span v-else-if="props.column.field == 'bus_type'">
-          {{ props.row.bus_type.bus_type }}
+        <span v-else-if="props.column.field == 'bus_name'">
+          {{ props.row.bus.bus_name }}
         </span>
 
+        <span v-else-if="props.column.field == 'fare'">
+          <span
+          class="badge py-1 px-2 badge-success mr-1"
+            v-for="seatClass in props.row.seatClassesFare"
+            :key="seatClass.id"
+          >
+            {{ seatClass.name }} - {{ seatClass.currencyCode }}{{ seatClass.fare }}
+          </span>
+        </span>
 
         <span v-else-if="props.column.field == 'status'">
           <span
@@ -93,7 +97,6 @@
       @update="fetchBuses(false)"
       :bus="selectedBus"
     ></delete-bus> -->
-
   </div>
 </template>
 
@@ -101,7 +104,7 @@
 // const deleteRoute = () => import("./deleteRoute.vue");
 
 export default {
-//   components: { deleteRoute },
+  //   components: { deleteRoute },
   data() {
     return {
       isLoading: false,
@@ -118,11 +121,11 @@ export default {
         },
         {
           label: "Pickup Point",
-          field: "pickup_point",
+          field: "board_point",
         },
         {
           label: "Pickup Time",
-          field: "pickup_time",
+          field: "board_time",
         },
         {
           label: "Drop Off Point",
@@ -133,22 +136,22 @@ export default {
           field: "drop_time",
         },
         {
-            label: "Fare",
-            field: "fare"
+          label: "Fare",
+          field: "fare",
         },
         {
           label: "Status",
           field: "status",
         },
-        {
-          label: "Cretaed At",
-          field: "created_at",
-          type: "date",
-          thClass: "text-left",
-          tdClass: "text-left",
-          dateInputFormat: "yyyy-MM-dd HH:mm:ss",
-          dateOutputFormat: "MMM do yyyy HH:mm",
-        },
+        // {
+        //   label: "Cretaed At",
+        //   field: "created_at",
+        //   type: "date",
+        //   thClass: "text-left",
+        //   tdClass: "text-left",
+        //   dateInputFormat: "yyyy-MM-dd HH:mm:ss",
+        //   dateOutputFormat: "MMM do yyyy HH:mm",
+        // },
         {
           label: "Actions",
           field: "actions",
