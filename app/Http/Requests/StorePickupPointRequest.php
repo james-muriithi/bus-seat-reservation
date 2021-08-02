@@ -23,7 +23,7 @@ class StorePickupPointRequest extends FormRequest
             ],
             'pickup_time' => [
                 'required',
-                'date_format:' . config('panel.time_format'),
+                'date_format:H:i',
             ],
             'route_id' => [
                 'required',

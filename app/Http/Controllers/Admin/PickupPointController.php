@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyPickupPointRequest;
 use App\Http\Requests\StorePickupPointRequest;
 use App\Http\Requests\UpdatePickupPointRequest;
+use App\Http\Resources\Admin\PickupPointResource;
 use App\Models\PickupPoint;
 use App\Models\Route;
 use Gate;
@@ -14,11 +15,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PickupPointController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('pickup_point_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $pickupPoints = PickupPoint::with(['route'])->get();
+        $pickupPoints = PickupPoint::with(['route']);
+
+        if ($request->query('route', null)) {
+            $pickupPoints = $pickupPoints->where('route_id', $request->query('route'));
+        }
+
+        $pickupPoints = $pickupPoints->latest()->get();
+
+        if ($request->ajax()) {
+            return new PickupPointResource($pickupPoints);
+        }
 
         return view('admin.pickupPoints.index', compact('pickupPoints'));
     }

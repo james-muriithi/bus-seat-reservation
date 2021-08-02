@@ -14,7 +14,7 @@ class Route extends Model
 
     public $table = 'routes';
 
-    public $appends = ['seatClassesFare'];
+    public $appends = ['seatClassesFare', 'route_name'];
 
     protected $dates = [
         'created_at',
@@ -83,5 +83,10 @@ class Route extends Model
     public function getFareAttribute()
     {
         return floatval($this->attributes['fare']);
+    }
+
+    public function getRouteNameAttribute()
+    {
+        return $this->board_point .'-'. $this->drop_point;
     }
 }

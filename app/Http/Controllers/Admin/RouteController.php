@@ -127,6 +127,7 @@ class RouteController extends Controller
             ->get()
             ->last();
         $dropOff->drop_off_point = $request->input('drop_point');
+        $dropOff->drop_time = $request->input('drop_time');
         $dropOff->save();
 
         //update pickup
@@ -135,6 +136,7 @@ class RouteController extends Controller
             ->get()
             ->last();
         $pickup->pickup_point = $request->input('board_point');
+        $pickup->pickup_time = $request->input('board_time');
         $pickup->save();
 
         if ($request->ajax()) {
