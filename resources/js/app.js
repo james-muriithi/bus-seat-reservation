@@ -49,7 +49,15 @@ Vue.component("system-settings-index", () =>
 Vue.component("passenger-index", () =>
     import("./components/passengers/PassengerIndex.vue")
 );
-Vue.component("passenger-view", () => import("./components/passengers/ViewPassenger.vue"));
+Vue.component("passenger-view", () =>
+    import("./components/passengers/ViewPassenger.vue")
+);
+
+// routes
+Vue.component("route-index", () =>
+    import("./components/routes/RoutesIndex.vue")
+);
+Vue.component("route-create", () => import("./components/routes/CreateRoute.vue"));
 
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
@@ -80,7 +88,11 @@ $(function() {
     );
 
     var element = $("ul#sidebarnav a").filter(function() {
-        return this.href === url || this.href === path || url.indexOf(this.href) === 0;
+        return (
+            this.href === url ||
+            this.href === path ||
+            url.indexOf(this.href) === 0
+        );
     });
     element.parentsUntil(".sidebar-nav").each(function(index) {
         if ($(this).is("li") && $(this).children("a").length !== 0) {

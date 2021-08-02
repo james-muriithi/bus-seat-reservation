@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyRouteRequest;
 use App\Http\Requests\StoreRouteRequest;
 use App\Http\Requests\UpdateRouteRequest;
+use App\Http\Resources\Admin\RouteResource;
 use App\Models\Bus;
 use App\Models\Route;
 use Gate;
@@ -14,11 +15,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RouteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('route_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $routes = Route::with(['bus'])->get();
+        $routes = Route::with(['bus'])->latest()->get();
+
+        if ($request->ajax()) {
+            return new RouteResource($routes);
+        }
 
         return view('admin.routes.index', compact('routes'));
     }
