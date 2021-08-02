@@ -86,6 +86,16 @@
           </span>
         </span>
 
+        <span v-else-if="props.column.field == 'seat_classes'">
+          <span
+            class="badge py-1 px-2 badge-success m-1"
+            v-for="seatClass in props.row.seat_classes"
+            :key="seatClass.id"
+          >
+            {{ seatClass.name }}
+          </span>
+        </span>
+
         <span v-else-if="props.column.field == 'status'">
           <span
             :class="`badge py-1 px-2 badge-outline-${
@@ -140,6 +150,10 @@ export default {
         {
           label: "Amenities",
           field: "amenities",
+        },
+        {
+            label: "Seat Classes",
+            field: "seat_classes"
         },
         {
           label: "Status",

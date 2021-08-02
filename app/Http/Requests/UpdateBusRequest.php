@@ -41,6 +41,10 @@ class UpdateBusRequest extends FormRequest
             'amenities' => [
                 'array',
             ],
+            'seat_classes' => [
+                'required',
+                'array',
+            ],
         ];
     }
 }

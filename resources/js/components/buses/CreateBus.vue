@@ -130,6 +130,38 @@
                       </validation-provider>
                     </div>
 
+                    <!-- bus seat classes -->
+                    <div class="col-md-6 mb-2">
+                      <validation-provider
+                        name="SeatClass"
+                        :rules="{ required: true }"
+                        v-slot="validationContext"
+                      >
+                        <div class="form-group">
+                          <label for="seat-classes">Bus Seat Classes</label>
+                          <select2
+                            id="seat-classes"
+                            aria-describedby="bus-seat-classes-feedback"
+                            v-model.trim="bus.seat_classes"
+                            :options="seatClasses"
+                            :settings="{
+                              theme: 'bootstrap',
+                              multiple: true,
+                              closeOnSelect: false,
+                            }"
+                            required
+                          >
+                          </select2>
+                          <div
+                            id="bus-seat-classes-feedback"
+                            class="invalid-feedback w-100"
+                          >
+                            {{ validationContext.errors[0] }}
+                          </div>
+                        </div>
+                      </validation-provider>
+                    </div>
+
                     <!-- bus amenities -->
                     <div class="col-md-6 mb-2">
                       <validation-provider
@@ -149,7 +181,6 @@
                               multiple: true,
                               closeOnSelect: false,
                             }"
-                            required
                           >
                           </select2>
                           <div
@@ -230,10 +261,11 @@ export default {
     return {
       isLoading: false,
       busTypes: [],
+      seatClasses: [],
       amenities: [
         {
           disabled: true,
-          text: "--Select Amenity--",
+          text: "--Select Amenities--",
         },
       ],
       data: new FormData(),
@@ -246,6 +278,7 @@ export default {
         max_seats: 0,
         status: 1,
         images: [],
+        seat_classes: [1]
       },
     };
   },
@@ -265,6 +298,21 @@ export default {
     },
   },
   methods: {
+    fetchSeatClasses() {
+        axios
+        .get("/admin/bus-seat-classes")
+        .then((res) => {
+          res.data.data.forEach((seatClass) => {
+            this.seatClasses.push({
+              id: seatClass.id,
+              text: seatClass.name,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     fetchBusTypes() {
       axios
         .get("/admin/bus-types")
@@ -311,6 +359,12 @@ export default {
                 self.data.append(key, value);
               }
             });
+
+            // seat classes
+            self.data.delete("seat_classes[]");
+            self.bus.seat_classes.forEach((seatClass) =>
+              self.data.append("seat_classes[]", seatClass)
+            );
 
             self.data.delete("amenities[]");
             self.bus.amenities.forEach((amenity) =>
@@ -370,6 +424,7 @@ export default {
 
     await this.fetchBusTypes();
     await this.fetchAmenities();
+    await this.fetchSeatClasses();
 
     this.$store.dispatch("stopLoading");
     this.isLoading = false;

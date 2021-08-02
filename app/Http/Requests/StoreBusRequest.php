@@ -41,6 +41,10 @@ class StoreBusRequest extends FormRequest
             'amenities' => [
                 'array',
             ],
+            'seat_classes' => [
+                'required',
+                'array',
+            ],
         ];
     }
 }

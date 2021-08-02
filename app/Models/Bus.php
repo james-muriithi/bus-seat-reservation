@@ -79,6 +79,11 @@ class Bus extends Model implements HasMedia
         return $files;
     }
 
+    public function seat_classes()
+    {
+        return $this->belongsToMany(BusSeatClass::class);
+    }
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

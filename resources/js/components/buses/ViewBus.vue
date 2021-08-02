@@ -50,6 +50,18 @@
                   </th>
                 </tr>
                 <tr>
+                  <td>Seat Classes</td>
+                  <th>
+                    <span
+                      class="badge py-1 px-2 badge-success m-1"
+                      v-for="seatClass in bus.seat_classes"
+                      :key="seatClass.id"
+                    >
+                      {{ seatClass.name }}
+                    </span>
+                  </th>
+                </tr>
+                <tr>
                   <td>Created By</td>
                   <th>{{ bus.created_by.name }}</th>
                 </tr>

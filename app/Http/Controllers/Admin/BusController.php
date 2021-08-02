@@ -26,7 +26,7 @@ class BusController extends Controller
         abort_if(Gate::denies('bus_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
-            $buses = Bus::with(['bus_type', 'amenities', 'created_by'])
+            $buses = Bus::with(['bus_type', 'amenities', 'created_by', 'seat_classes'])
                 ->select(sprintf('%s.*', (new Bus())->table))
                 ->get();
 
@@ -56,6 +56,7 @@ class BusController extends Controller
         $bus->created_by()->associate(auth()->user());
         $bus->save();
         $bus->amenities()->sync($request->input('amenities', []));
+        $bus->seat_classes()->sync($request->input('seat_classes', []));
 
         foreach ($request->input('images', []) as $file) {
             $bus->addMediaFromBase64($file['path'])
@@ -81,7 +82,7 @@ class BusController extends Controller
 
         $created_bies = User::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $bus->load('bus_type', 'amenities', 'created_by');
+        $bus->load('bus_type', 'amenities', 'created_by', 'seat_classes');
 
         return view('admin.buses.edit', compact('bus_types', 'amenities', 'created_bies', 'bus'));
     }
@@ -93,6 +94,7 @@ class BusController extends Controller
         $bus->update($request->all());
 
         $bus->amenities()->sync($request->input('amenities', []));
+        $bus->seat_classes()->sync($request->input('seat_classes', []));
         if (count($bus->images) > 0) {
             foreach ($bus->images as $media) {
                 $fileNames = collect($request->input('images', []))->pluck('name')->all();
@@ -117,7 +119,7 @@ class BusController extends Controller
     {
         abort_if(Gate::denies('bus_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $bus->load('bus_type', 'amenities', 'created_by');
+        $bus->load('bus_type', 'amenities', 'created_by', 'seat_classes');
 
         return view('admin.buses.show', compact('bus'));
     }
