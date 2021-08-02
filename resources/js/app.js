@@ -59,6 +59,7 @@ Vue.component("route-index", () =>
 );
 Vue.component("route-create", () => import("./components/routes/CreateRoute.vue"));
 Vue.component("route-edit", () => import("./components/routes/EditRoute.vue"));
+Vue.component("route-view", () => import("./components/routes/ViewRoute.vue"));
 
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
