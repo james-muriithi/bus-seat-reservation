@@ -1,10 +1,10 @@
 <template>
-  <div class="modal" id="edit-pickup-point">
+  <div class="modal" id="create-dropoff-point">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Edit Pickup Point</h4>
+          <h4 class="modal-title">Create Dropoff Point</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -12,8 +12,8 @@
 
         <!-- Modal body -->
         <div class="modal-body">
-          <validation-observer ref="editPickupPoint">
-            <form @submit.prevent="editPickupPoint" ref="form">
+          <validation-observer ref="createDropoffPoint">
+            <form @submit.prevent="createDropoffPoint" ref="form">
               <div class="form-row">
                 <div class="col-md-12">
                   <validation-provider
@@ -26,7 +26,7 @@
                       <select
                         id="max-seats"
                         aria-describedby="route-feedback"
-                        v-model.trim="pickupPoint.route_id"
+                        v-model.trim="dropOffPoint.route_id"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
@@ -52,18 +52,18 @@
                     v-slot="validationContext"
                   >
                     <div class="form-group">
-                      <label for="name">Pickup Point</label>
+                      <label for="name">Dropoff Point</label>
                       <input
                         type="text"
-                        placeholder="Enter pickup point"
+                        placeholder="Enter dropoff point"
                         aria-describedby="Pickup-Point-feedback"
-                        v-model.trim="pickupPoint.pickup_point"
+                        v-model.trim="dropOffPoint.drop_off_point"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
                       />
                       <div
-                        id="Pickup-Point-feedback"
+                        id="Dropoff-Point-feedback"
                         class="invalid-feedback w-100"
                       >
                         {{ validationContext.errors[0] }}
@@ -77,11 +77,11 @@
                     v-slot="validationContext"
                   >
                     <div class="form-group">
-                      <label for="board-time">Pickup Time</label>
+                      <label for="board-time">Dropoff Time</label>
                       <vue-timepicker
                         format="HH:mm"
                         aria-describedby="drop-time-feedback"
-                        v-model.trim="pickupPoint.pickup_time"
+                        v-model.trim="dropOffPoint.drop_time"
                         :input-class="`form-control w-100 ${getValidationState(
                           validationContext
                         )}`"
@@ -90,7 +90,7 @@
                       />
 
                       <div
-                        id="board-time-feedback"
+                        id="drop-time-feedback"
                         :class="`invalid-feedback w-100 ${
                           validationContext.errors[0] ? 'd-block' : ''
                         }`"
@@ -109,14 +109,17 @@
                       <label for="name">Address</label>
                       <input
                         type="text"
-                        placeholder="Enter pickup point address"
-                        aria-describedby="Pickup-Point-feedback"
-                        v-model.trim="pickupPoint.address"
+                        placeholder="Enter dropoff point address"
+                        aria-describedby="daddress-feedback"
+                        v-model.trim="dropOffPoint.address"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
                       />
-                      <div id="address-feedback" class="invalid-feedback w-100">
+                      <div
+                        id="daddress-feedback"
+                        class="invalid-feedback w-100"
+                      >
                         {{ validationContext.errors[0] }}
                       </div>
                     </div>
@@ -131,15 +134,15 @@
                       <label for="name">Landmark</label>
                       <input
                         type="text"
-                        placeholder="Enter pickup point nearest landmark"
-                        aria-describedby="Pickup-Point-feedback"
-                        v-model.trim="pickupPoint.landmark"
+                        placeholder="Enter dropoff nearest landmark"
+                        aria-describedby="dlandmark-feedback"
+                        v-model.trim="dropOffPoint.landmark"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
                       />
                       <div
-                        id="landmark-feedback"
+                        id="dlandmark-feedback"
                         class="invalid-feedback w-100"
                       >
                         {{ validationContext.errors[0] }}
@@ -153,8 +156,8 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="status"
-                          v-model="pickupPoint.status"
+                          id="d-status"
+                          v-model="dropOffPoint.status"
                         />
                         Status
                       </label>
@@ -180,35 +183,40 @@ import "vue2-timepicker/dist/VueTimepicker.css";
 
 export default {
   components: { VueTimepicker },
-  props: {
-    pickupPoint: {
-      type: Object,
-      required: true,
-    },
+  props:{
+      defaultRoute: {
+          default: ""
+      },
   },
   emits: ["update"],
   data() {
     return {
+      dropOffPoint: {
+        route_id: this.defaultRoute,
+        status: 1,
+        pickup_time: ""
+      },
       routes: [],
     };
   },
   methods: {
-    editPickupPoint() {
-      this.$refs.editPickupPoint.validate().then((valid) => {
+    resetForm() {
+      this.dropOffPoint = {
+        route_id: this.defaultRoute,
+        status: 1,
+        pickup_time: ""
+      };
+      this.$nextTick(() => {
+        this.$refs.createDropoffPoint.reset();
+      });
+    },
+    createDropoffPoint() {
+      this.$refs.createDropoffPoint.validate().then((valid) => {
         if (valid) {
           //submit data
           this.$store.dispatch("startLoading");
-
-          //remove timestamps
-          delete this.pickupPoint.created_at;
-          delete this.pickupPoint.updated_at;
-          delete this.pickupPoint.deleted_at;
-
           axios
-            .post(`/admin/pickup-points/${this.pickupPoint.id}`, {
-              ...this.pickupPoint,
-              _method: "PUT",
-            })
+            .post("/admin/drop-off-points", this.dropOffPoint)
             .then((res) => {
               //   this.$store.dispatch("stopLoading");
               this.closeModal();
@@ -248,12 +256,17 @@ export default {
       return "";
     },
     closeModal() {
-      $("#edit-pickup-point").modal("hide");
+      $("#create-dropoff-point").modal("hide");
     },
   },
   created() {
     const self = this;
     self.fetchRoutes();
+    $(function () {
+      $("#create-dropoff-point").on("show.bs.modal", function (e) {
+        self.resetForm();
+      });
+    });
   },
 };
 </script>

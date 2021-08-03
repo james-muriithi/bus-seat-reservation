@@ -1,10 +1,10 @@
 <template>
-  <div class="modal" id="edit-pickup-point">
+  <div class="modal" id="edit-dropoff-point">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Edit Pickup Point</h4>
+          <h4 class="modal-title">Edit Dropoff Point</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -12,8 +12,8 @@
 
         <!-- Modal body -->
         <div class="modal-body">
-          <validation-observer ref="editPickupPoint">
-            <form @submit.prevent="editPickupPoint" ref="form">
+          <validation-observer ref="editDropoffPoint">
+            <form @submit.prevent="editDropoffPoint" ref="form">
               <div class="form-row">
                 <div class="col-md-12">
                   <validation-provider
@@ -26,7 +26,7 @@
                       <select
                         id="max-seats"
                         aria-describedby="route-feedback"
-                        v-model.trim="pickupPoint.route_id"
+                        v-model.trim="dropOffPoint.route_id"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
@@ -57,7 +57,7 @@
                         type="text"
                         placeholder="Enter pickup point"
                         aria-describedby="Pickup-Point-feedback"
-                        v-model.trim="pickupPoint.pickup_point"
+                        v-model.trim="dropOffPoint.drop_off_point"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
@@ -77,11 +77,11 @@
                     v-slot="validationContext"
                   >
                     <div class="form-group">
-                      <label for="board-time">Pickup Time</label>
+                      <label for="board-time">Dropoff Time</label>
                       <vue-timepicker
                         format="HH:mm"
                         aria-describedby="drop-time-feedback"
-                        v-model.trim="pickupPoint.pickup_time"
+                        v-model.trim="dropOffPoint.drop_time"
                         :input-class="`form-control w-100 ${getValidationState(
                           validationContext
                         )}`"
@@ -111,7 +111,7 @@
                         type="text"
                         placeholder="Enter pickup point address"
                         aria-describedby="Pickup-Point-feedback"
-                        v-model.trim="pickupPoint.address"
+                        v-model.trim="dropOffPoint.address"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
@@ -133,7 +133,7 @@
                         type="text"
                         placeholder="Enter pickup point nearest landmark"
                         aria-describedby="Pickup-Point-feedback"
-                        v-model.trim="pickupPoint.landmark"
+                        v-model.trim="dropOffPoint.landmark"
                         :class="`form-control ${getValidationState(
                           validationContext
                         )}`"
@@ -154,7 +154,7 @@
                           class="form-check-input"
                           type="checkbox"
                           id="status"
-                          v-model="pickupPoint.status"
+                          v-model="dropOffPoint.status"
                         />
                         Status
                       </label>
@@ -181,7 +181,7 @@ import "vue2-timepicker/dist/VueTimepicker.css";
 export default {
   components: { VueTimepicker },
   props: {
-    pickupPoint: {
+    dropOffPoint: {
       type: Object,
       required: true,
     },
@@ -193,20 +193,20 @@ export default {
     };
   },
   methods: {
-    editPickupPoint() {
-      this.$refs.editPickupPoint.validate().then((valid) => {
+    editDropoffPoint() {
+      this.$refs.editDropoffPoint.validate().then((valid) => {
         if (valid) {
           //submit data
           this.$store.dispatch("startLoading");
 
           //remove timestamps
-          delete this.pickupPoint.created_at;
-          delete this.pickupPoint.updated_at;
-          delete this.pickupPoint.deleted_at;
+          delete this.dropOffPoint.created_at;
+          delete this.dropOffPoint.updated_at;
+          delete this.dropOffPoint.deleted_at;
 
           axios
-            .post(`/admin/pickup-points/${this.pickupPoint.id}`, {
-              ...this.pickupPoint,
+            .post(`/admin/drop-off-points/${this.dropOffPoint.id}`, {
+              ...this.dropOffPoint,
               _method: "PUT",
             })
             .then((res) => {
@@ -248,7 +248,7 @@ export default {
       return "";
     },
     closeModal() {
-      $("#edit-pickup-point").modal("hide");
+      $("#edit-dropoff-point").modal("hide");
     },
   },
   created() {

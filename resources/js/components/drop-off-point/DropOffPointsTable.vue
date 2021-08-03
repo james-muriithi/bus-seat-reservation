@@ -7,7 +7,7 @@
     <vue-good-table
       v-else
       :columns="columns"
-      :rows="pickupPoints"
+      :rows="dropoffPoints"
       :search-options="{
         placeholder: 'Search this table',
         enabled: true,
@@ -35,7 +35,7 @@
         <button
           class="btn-sm btn btn-primary btn-rounded btn-icon m-1 ripple"
           data-toggle="modal"
-          data-target="#create-pickup-point"
+          data-target="#create-dropoff-point"
         >
           <span class="ul-btn__icon">
             <i data-feather="plus-circle" class="feather-icon"></i>
@@ -48,7 +48,7 @@
         <span v-if="props.column.field == 'actions'">
           <a
             href="#"
-            @click.prevent="editPickupPoint({ ...props.row })"
+            @click.prevent="editDropoffPoint({ ...props.row })"
             title="Edit"
             class="pr-1"
           >
@@ -57,7 +57,7 @@
           <a
             title="Delete"
             href="#"
-            @click.prevent="deletePickupPoint({ ...props.row })"
+            @click.prevent="deleteDropoffPoint({ ...props.row })"
           >
             <i class="fa fa-trash fs-16 text-danger"></i>
           </a>
@@ -80,28 +80,30 @@
       </template>
     </vue-good-table>
 
-    <create-pickup-point
+    <create-drop-off-point
       :default-route="defaultCreateRoute"
-      @update="fetchPickupPoints(false)"
-    ></create-pickup-point>
-    <edit-pickup-point
-      :pickupPoint="selectedPickupPoint"
-      @update="fetchPickupPoints(false)"
-    ></edit-pickup-point>
-    <delete-pickup-point
-      @update="fetchPickupPoints(false)"
-      :pickupPoint="selectedPickupPoint"
-    ></delete-pickup-point>
+      @update="fetchDropoffPoints(false)"
+    ></create-drop-off-point>
+
+    <edit-drop-off-point
+      :dropOffPoint="selectedDropoffPoint"
+      @update="fetchDropoffPoints(false)"
+    ></edit-drop-off-point>
+
+    <!-- <delete-drop-off-point
+      @update="fetchDropoffPoints(false)"
+      :dropoffPoint="selectedDropoffPoint"
+    ></delete-drop-off-point> -->
   </div>
 </template>
 
 <script>
-const EditPickupPoint = () => import("./EditPickupPoint.vue");
-const CreatePickupPoint = () => import("./CreatePickupPoint.vue");
-const DeletePickupPoint = () => import("./DeletePickupPoint.vue");
+const EditDropOffPoint = () => import("./EditDropOffPoint.vue");
+const CreateDropOffPoint  = () => import("./CreateDropOffPoint.vue");
+const DeleteDropOffPoint = () => import("./DeleteDropOffPoint.vue");
 
 export default {
-  components: { CreatePickupPoint, EditPickupPoint, DeletePickupPoint },
+  components: { CreateDropOffPoint, EditDropOffPoint, DeleteDropOffPoint },
   props: {
     smallTable: {
       type: Boolean,
@@ -113,8 +115,8 @@ export default {
   data() {
     return {
       isLoading: false,
-      pickupPoints: [],
-      selectedPickupPoint: {},
+      dropoffPoints: [],
+      selectedDropoffPoint: {},
     };
   },
   computed: {
@@ -122,12 +124,12 @@ export default {
       if (this.smallTable) {
         return [
           {
-            label: "Pickup Point",
-            field: "pickup_point",
+            label: "Dropoff Point",
+            field: "drop_off_point",
           },
           {
-            label: "Pickup Time",
-            field: "pickup_time",
+            label: "Dropoff Time",
+            field: "drop_time",
           },
           {
             label: "Status",
@@ -150,12 +152,12 @@ export default {
           field: "route",
         },
         {
-          label: "Pickup Point",
-          field: "pickup_point",
+          label: "Dropoff Point",
+          field: "drop_off_point",
         },
         {
-          label: "Pickup Time",
-          field: "pickup_time",
+          label: "Dropoff Time",
+          field: "drop_time",
         },
         {
           label: "Address",
@@ -191,11 +193,11 @@ export default {
     },
   },
   methods: {
-    fetchPickupPoints(pageLoad = true) {
+    fetchDropoffPoints(pageLoad = true) {
       this.$store.dispatch("startLoading");
       this.isLoading = pageLoad;
 
-      let url = "/admin/pickup-points";
+      let url = "/admin/drop-off-points";
 
       if (this.defaultCreateRoute) {
         url += `?route=${this.defaultCreateRoute}`;
@@ -204,7 +206,7 @@ export default {
       axios
         .get(url)
         .then((res) => {
-          this.pickupPoints = res.data.data;
+          this.dropoffPoints = res.data.data;
 
           this.$store.dispatch("stopLoading");
           this.isLoading = false;
@@ -214,17 +216,17 @@ export default {
           this.isLoading = false;
         });
     },
-    editPickupPoint(pickupPoint) {
-      this.selectedPickupPoint = pickupPoint;
-      $("#edit-pickup-point").modal("show");
+    editDropoffPoint(DropoffPoint) {
+      this.selectedDropoffPoint = DropoffPoint;
+      $("#edit-dropoff-point").modal("show");
     },
-    deletePickupPoint(pickupPoint) {
-      this.selectedPickupPoint = pickupPoint;
-      $("#delete-pickup-point").modal("show");
+    deleteDropoffPoint(DropoffPoint) {
+      this.selectedDropoffPoint= DropoffPoint;
+      $("#delete-dropoff-point").modal("show");
     },
   },
   created() {
-    this.fetchPickupPoints();
+    this.fetchDropoffPoints();
   },
 };
 </script>

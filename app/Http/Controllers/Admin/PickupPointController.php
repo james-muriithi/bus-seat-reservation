@@ -65,6 +65,12 @@ class PickupPointController extends Controller
     {
         $pickupPoint->update($request->all());
 
+        if ($request->ajax()) {
+            return (new PickupPointResource($pickupPoint))
+                ->response()
+                ->setStatusCode(Response::HTTP_ACCEPTED);
+        }
+
         return redirect()->route('admin.pickup-points.index');
     }
 

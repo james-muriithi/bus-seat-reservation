@@ -14,6 +14,7 @@ class CreateDropOffPointsTable extends Migration
             $table->time('drop_time');
             $table->string('landmark')->nullable();
             $table->string('address')->nullable();
+            $table->boolean('status')->default(0)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

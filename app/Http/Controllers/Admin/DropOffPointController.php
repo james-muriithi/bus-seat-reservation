@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyDropOffPointRequest;
 use App\Http\Requests\StoreDropOffPointRequest;
 use App\Http\Requests\UpdateDropOffPointRequest;
+use App\Http\Resources\Admin\DropOffPointResource;
 use App\Models\DropOffPoint;
 use App\Models\Route;
 use Gate;
@@ -14,11 +15,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DropOffPointController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('drop_off_point_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $dropOffPoints = DropOffPoint::with(['route'])->get();
+        $dropOffPoints = DropOffPoint::with(['route']);
+
+        if ($request->query('route', null)) {
+            $dropOffPoints = $dropOffPoints->where('route_id', $request->query('route'));
+        }
+
+        $dropOffPoints = $dropOffPoints->get();
+
+        if ($request->ajax()) {
+            return new DropOffPointResource($dropOffPoints);
+        }
 
         return view('admin.dropOffPoints.index', compact('dropOffPoints'));
     }
@@ -35,6 +46,12 @@ class DropOffPointController extends Controller
     public function store(StoreDropOffPointRequest $request)
     {
         $dropOffPoint = DropOffPoint::create($request->all());
+
+        if ($request->ajax()) {
+            return (new DropOffPointResource($dropOffPoint))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
+        }
 
         return redirect()->route('admin.drop-off-points.index');
     }
@@ -53,6 +70,12 @@ class DropOffPointController extends Controller
     public function update(UpdateDropOffPointRequest $request, DropOffPoint $dropOffPoint)
     {
         $dropOffPoint->update($request->all());
+
+        if ($request->ajax()) {
+            return (new DropOffPointResource($dropOffPoint))
+                ->response()
+                ->setStatusCode(Response::HTTP_ACCEPTED);
+        }
 
         return redirect()->route('admin.drop-off-points.index');
     }

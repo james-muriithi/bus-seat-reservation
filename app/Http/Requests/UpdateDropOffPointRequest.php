@@ -23,7 +23,7 @@ class UpdateDropOffPointRequest extends FormRequest
             ],
             'drop_time' => [
                 'required',
-                'date_format:' . config('panel.time_format'),
+                'date_format:H:i',
             ],
             'landmark' => [
                 'string',

@@ -70,6 +70,9 @@
         <div class="row mt-3">
           <div class="col-md-6">
             <h4 class="mb-3 font-weight-bold">Drop Off Points</h4>
+            <div class="mt-2">
+              <drop-off-points-table :smallTable="true" :defaultCreateRoute="route.id"></drop-off-points-table>
+            </div>
           </div>
           <div class="col-md-6">
             <h4 class="mb-3 font-weight-bold">Pickup Up Points</h4>
@@ -86,9 +89,10 @@
 <script>
 import Nprogress from "nprogress";
 import PickupPointsTable from "../pickup/Table.vue";
+import DropOffPointsTable from "../drop-off-point/DropOffPointsTable.vue";
 
 export default {
-  components: { PickupPointsTable },
+  components: { PickupPointsTable, DropOffPointsTable },
   props: {
     route: {
       type: Object,

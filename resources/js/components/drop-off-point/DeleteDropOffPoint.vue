@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" id="delete-pickup-point">
+  <div class="modal" id="delete-dropoff-point">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->

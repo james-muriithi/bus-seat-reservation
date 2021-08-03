@@ -57,12 +57,21 @@ Vue.component("passenger-view", () =>
 Vue.component("route-index", () =>
     import("./components/routes/RoutesIndex.vue")
 );
-Vue.component("route-create", () => import("./components/routes/CreateRoute.vue"));
+Vue.component("route-create", () =>
+    import("./components/routes/CreateRoute.vue")
+);
 Vue.component("route-edit", () => import("./components/routes/EditRoute.vue"));
 Vue.component("route-view", () => import("./components/routes/ViewRoute.vue"));
 
 //pickup points
-Vue.component("pickup-point-index", () => import("./components/pickup/PickupIndex.vue"));
+Vue.component("pickup-point-index", () =>
+    import("./components/pickup/PickupIndex.vue")
+);
+
+//dropoff points
+Vue.component("dropoff-point-index", () =>
+    import("./components/drop-off-point/DropOffPointIndex.vue")
+);
 
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 

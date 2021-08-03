@@ -25,6 +25,7 @@ class DropOffPoint extends Model
         'drop_time',
         'landmark',
         'address',
+        'status',
         'route_id',
         'created_at',
         'updated_at',
