@@ -90,10 +90,10 @@
       @update="fetchDropoffPoints(false)"
     ></edit-drop-off-point>
 
-    <!-- <delete-drop-off-point
+    <delete-drop-off-point
       @update="fetchDropoffPoints(false)"
-      :dropoffPoint="selectedDropoffPoint"
-    ></delete-drop-off-point> -->
+      :dropOffPoint="selectedDropoffPoint"
+    ></delete-drop-off-point>
   </div>
 </template>
 

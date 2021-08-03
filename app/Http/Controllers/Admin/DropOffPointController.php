@@ -25,7 +25,7 @@ class DropOffPointController extends Controller
             $dropOffPoints = $dropOffPoints->where('route_id', $request->query('route'));
         }
 
-        $dropOffPoints = $dropOffPoints->get();
+        $dropOffPoints = $dropOffPoints->latest()->get();
 
         if ($request->ajax()) {
             return new DropOffPointResource($dropOffPoints);

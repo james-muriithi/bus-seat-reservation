@@ -194,7 +194,7 @@ export default {
       dropOffPoint: {
         route_id: this.defaultRoute,
         status: 1,
-        pickup_time: ""
+        drop_time: ""
       },
       routes: [],
     };
@@ -204,7 +204,7 @@ export default {
       this.dropOffPoint = {
         route_id: this.defaultRoute,
         status: 1,
-        pickup_time: ""
+        drop_time: ""
       };
       this.$nextTick(() => {
         this.$refs.createDropoffPoint.reset();
