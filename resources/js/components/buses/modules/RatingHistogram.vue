@@ -2,10 +2,10 @@
   <div class="row">
     <div class="col-6 justify-content-center d-flex align-items-center">
       <div class="d-block">
-        <h1 class="font-weight-bold">4.2</h1>
+        <h1 class="font-weight-bold">{{ rating.avg_bus_rating }}</h1>
         <div>
-            <star-rating
-            :rating="4.2"
+          <star-rating
+            :rating="rating.avg_bus_rating"
             :read-only="true"
             :increment="0.1"
             :star-size="20"
@@ -13,43 +13,23 @@
             :show-rating="false"
           ></star-rating>
         </div>
-        <span>5,200</span>
+        <span>{{ rating.total_ratings }}</span>
       </div>
     </div>
     <div class="col-6">
       <div class="histo w-100">
-        <div class="five histo-rate">
-          <span class="histo-star"> 5 </span>
+        <div
+          class="histo-rate"
+          :key="index"
+          v-for="(rating_group, index) of rating.bus_rating_groups"
+        >
+          <span class="histo-star"> {{ index }} </span>
           <span class="bar-block">
-            <span id="bar-five" class="bar w-75"></span>
-          </span>
-        </div>
-
-        <div class="four histo-rate">
-          <span class="histo-star"> 4 </span>
-          <span class="bar-block">
-            <span id="bar-four" class="bar w-50"> </span>
-          </span>
-        </div>
-
-        <div class="three histo-rate">
-          <span class="histo-star"> 3 </span>
-          <span class="bar-block">
-            <span id="bar-three" class="bar w-25"> </span>
-          </span>
-        </div>
-
-        <div class="two histo-rate">
-          <span class="histo-star"> 2 </span>
-          <span class="bar-block">
-            <span id="bar-two" class="bar w-0"> </span>
-          </span>
-        </div>
-
-        <div class="one histo-rate">
-          <span class="histo-star"> 1 </span>
-          <span class="bar-block">
-            <span id="bar-one" class="bar w-0"> </span>
+            <span
+              :id="`bar-${index}`"
+              class="bar"
+              :style="{ width: rating_group.percent }"
+            ></span>
           </span>
         </div>
       </div>
@@ -62,12 +42,18 @@ import StarRating from "vue-star-rating";
 
 export default {
   components: { StarRating },
+  props: {
+    rating: {
+      type: Object,
+      required: true,
+    },
+  },
 };
 </script>
 
 <style scoped>
-.font-weight-bold{
-    font-weight: 580;
+.font-weight-bold {
+  font-weight: 580;
 }
 .bar-block {
   margin-left: 5px;

@@ -80,7 +80,7 @@
           <div class="col-md-4">
             <div class="mb-3 mt-md-0 mt-3">
               <h4 class="mb-2 font-weight-bold">Ratings and reviews</h4>
-              <rating-histogram></rating-histogram>
+              <rating-histogram :rating="bus['average-rating']"></rating-histogram>
             </div>
             <h4 class="my-3 font-weight-bold">Bus Images</h4>
 

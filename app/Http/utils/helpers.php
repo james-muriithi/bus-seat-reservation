@@ -3,7 +3,7 @@
 use App\Models\Currency;
 
 if (!function_exists('defaultCurrency')) {
-    function defaultCurrrency($default='Ksh')
+    function defaultCurrrency($default = 'Ksh')
     {
         $defaultCurrencyId = config('settings')['default_currency_id'] ?? null;
         if (!$defaultCurrencyId) {
@@ -16,5 +16,16 @@ if (!function_exists('defaultCurrency')) {
         }
 
         return $default;
+    }
+}
+
+if (!function_exists('getPercent')) {
+    function getPercent($value, $total, $appendPercent=true)
+    {
+        $percent = ($value / $total) * 100;
+        if ($appendPercent) {
+            $percent .= '%';
+        }
+        return $percent;
     }
 }

@@ -20,6 +20,7 @@ class Bus extends Model implements HasMedia
 
     protected $appends = [
         'images',
+        'average-rating'
     ];
 
     protected $dates = [
@@ -66,6 +67,16 @@ class Bus extends Model implements HasMedia
         return $this->belongsTo(User::class, 'created_by_id');
     }
 
+    public function ratings()
+    {
+        return $this->hasMany(BusRating::class, 'bus_id');
+    }
+    public function seat_classes()
+    {
+        return $this->belongsToMany(BusSeatClass::class);
+    }
+
+    //attributes
     public function getImagesAttribute()
     {
         $files = $this->getMedia('images');
@@ -84,9 +95,45 @@ class Bus extends Model implements HasMedia
         return $files;
     }
 
-    public function seat_classes()
+    public function getAverageRatingAttribute()
     {
-        return $this->belongsToMany(BusSeatClass::class);
+        $ratings = $this->ratings;
+        $totalRatings = $ratings->count();
+
+        return [
+            'avg_bus_rating' => $ratings->avg('bus_quality'),
+            'avg_staff_rating' => $ratings->avg('staff_behaviour'),
+            'avg_punctuality_rating' => $ratings->avg('punctuality'),
+            'total_ratings' => $totalRatings,
+            'bus_rating_groups' => [
+                1 => [
+                    'rating' => $ratings->where('bus_quality', '<', 2)->avg('bus_quality'),
+                    'percent' => getPercent($ratings->where('bus_quality', '<', 2)->count(), $totalRatings)
+                ],
+                2 => [
+                    'rating' => $ratings->where('bus_quality', '>=', 2)
+                        ->where('bus_quality', '<', 3)->avg('bus_quality'),
+                    'percent' => getPercent($ratings->where('bus_quality', '>=', 2)
+                        ->where('bus_quality', '<', 3)->count(), $totalRatings)
+                ],
+                3 => [
+                    'rating' => $ratings->where('bus_quality', '>=', 3)
+                        ->where('bus_quality', '<', 4)->avg('bus_quality'),
+                    'percent' => getPercent($ratings->where('bus_quality', '>=', 3)
+                        ->where('bus_quality', '<', 4)->count(), $totalRatings)
+                ],
+                4 => [
+                    'rating' => $ratings->where('bus_quality', '>=', 4)
+                        ->where('bus_quality', '<', 5)->avg('bus_quality'),
+                    'percent' => getPercent($ratings->where('bus_quality', '>=', 4)
+                        ->where('bus_quality', '<', 5)->count(), $totalRatings)
+                ],
+                5 => [
+                    'rating' => $ratings->where('bus_quality', 5)->avg('bus_quality'),
+                    'percent' => getPercent($ratings->where('bus_quality', 5)->avg('bus_quality'), $totalRatings)
+                ],
+            ]
+        ];
     }
 
     protected function serializeDate(DateTimeInterface $date)
