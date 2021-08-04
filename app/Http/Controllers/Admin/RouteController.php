@@ -21,7 +21,13 @@ class RouteController extends Controller
     {
         abort_if(Gate::denies('route_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $routes = Route::with(['bus', 'route_seat_classes'])->latest()->get();
+        $routes = Route::with(['bus', 'route_seat_classes']);
+
+        if ($request->input('bus')) {
+            $routes = $routes->where('bus_id', $request->input('bus'));
+        }
+
+        $routes = $routes->latest()->get();
 
         if ($request->ajax()) {
             return new RouteResource($routes);

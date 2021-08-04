@@ -103,6 +103,9 @@
         <div class="row mt-3">
           <div class="col-md-8">
             <h4 class="mb-3 font-weight-bold">Bus Routes</h4>
+            <div class="mt-2">
+                <routes-table :bus_id="bus.id"></routes-table>
+            </div>
           </div>
           <div class="col-md-4">
             <h4 class="mb-3 font-weight-bold">Seats Layout</h4>
@@ -116,9 +119,10 @@
 <script>
 import Nprogress from "nprogress";
 const RatingHistogram = () => import("./modules/RatingHistogram.vue");
+const RoutesTable = () => import("../routes/RoutesTable.vue");
 
 export default {
-  components: { RatingHistogram },
+  components: { RatingHistogram, RoutesTable },
   props: {
     bus: {
       type: Object,

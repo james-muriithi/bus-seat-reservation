@@ -73,11 +73,12 @@
 
         <span v-else-if="props.column.field == 'fare'">
           <span
-          class="badge py-1 px-2 badge-success mr-1"
+            class="badge py-1 px-2 badge-success mr-1"
             v-for="seatClass in props.row.seatClassesFare"
             :key="seatClass.id"
           >
-            {{ seatClass.name }} - {{ seatClass.currencyCode }}{{ seatClass.fare }}
+            {{ seatClass.name }} - {{ seatClass.currencyCode
+            }}{{ seatClass.fare }}
           </span>
         </span>
 
@@ -105,6 +106,11 @@
 
 export default {
   //   components: { deleteRoute },
+  props: {
+    bus_id: {
+      default: null,
+    },
+  },
   data() {
     return {
       isLoading: false,
@@ -114,7 +120,7 @@ export default {
   },
   computed: {
     columns() {
-      return [
+      let columns = [
         {
           label: "Bus Name",
           field: "bus_name",
@@ -161,6 +167,10 @@ export default {
           sortable: false,
         },
       ];
+      if (this.bus_id) {
+          columns.shift();
+      }
+      return columns;
     },
   },
   methods: {
@@ -168,8 +178,14 @@ export default {
       this.$store.dispatch("startLoading");
       this.isLoading = pageLoad;
 
+      let url = "/admin/routes";
+
+      if (this.bus_id) {
+        url += `?bus=${this.bus_id}`;
+      }
+
       axios
-        .get("/admin/routes")
+        .get(url)
         .then((res) => {
           this.routes = res.data.data;
 
