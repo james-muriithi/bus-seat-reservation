@@ -120,11 +120,13 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast(`${this.amenity.name} updated successfully.`);
               });
             })
             .catch((res) => {
               console.log(res);
               this.$store.dispatch("stopLoading");
+              this.showErrorToast("There was error editing the amenity");
             });
         }
       });

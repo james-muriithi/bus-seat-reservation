@@ -99,10 +99,12 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast(`Bus type ${this.busType.bus_type} was created successfully`);
               });
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
+              this.showErrorToast("There was error creating the bus type");
             });
         }
       });

@@ -54,11 +54,13 @@ export default {
 
           this.$nextTick(() => {
             this.$emit("update");
+            this.showSuccessToast(`Bus type was deleted successfully`);
           });
         })
         .catch((res) => {
           this.closeModal();
           this.$store.dispatch("stopLoading");
+          this.showErrorToast("There was error deleting the bus type");
         });
     },
     closeModal() {

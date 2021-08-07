@@ -92,10 +92,12 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast("Bus type edited successfully");
               });
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
+              this.showErrorToast("There was error editing the bus type");
             });
         }
       });
