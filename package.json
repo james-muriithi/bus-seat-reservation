@@ -41,6 +41,7 @@
         "vue-echarts": "^6.0.0-rc.6",
         "vue-good-table": "^2.21.10",
         "vue-star-rating": "^1.7.0",
+        "vue-toastr": "^2.1.2",
         "vue-upload-multiple-image": "^1.1.6",
         "vue2-timepicker": "^1.1.6",
         "vuex": "^3.6.2"

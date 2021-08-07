@@ -1,6 +1,7 @@
 require("./bootstrap");
 require("./echart");
 require("./vee-validate");
+require("./toastr");
 
 window.Vue = require("vue").default;
 

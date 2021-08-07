@@ -197,7 +197,7 @@ export default {
     updatePassword() {
       this.$store.dispatch("startLoading");
 
-      this.$refs.updateUserDetails
+      this.$refs.updatePassword
         .validate()
         .then((valid) => {
           axios
@@ -206,15 +206,19 @@ export default {
               password_confirmation: this.user.password_confirmation,
             })
             .then((res) => {
-                this.user.password = this.user.password_confirmation = null;
+              this.user.password = this.user.password_confirmation = null;
               this.$store.dispatch("stopLoading");
+              this.showSuccessToast("Your password was updated successfully");
             })
             .catch((res) => {
               console.log(res);
               this.$store.dispatch("stopLoading");
+              this.showErrorToast("There was a problem updating your password");
             });
         })
-        .catch((res) => console.log(res));
+        .catch((res) => {
+          console.log(res);
+        });
     },
     updateUserDetails() {
       this.$store.dispatch("startLoading");
@@ -229,12 +233,13 @@ export default {
               phone: this.user.phone,
             })
             .then((res) => {
-              console.log(res.data);
               this.$store.dispatch("stopLoading");
+              this.showSuccessToast("Your user details were updated successfully");
             })
             .catch((res) => {
               console.log(res);
               this.$store.dispatch("stopLoading");
+              this.showErrorToast("There was a problem updating your details");
             });
         })
         .catch((res) => console.log(res));
