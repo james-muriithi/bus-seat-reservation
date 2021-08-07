@@ -32,6 +32,9 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
+        <button class="btn btn-sm btn-outline-success ripple m-1">
+          <i class="fa fa-file-pdf"></i> PDF
+        </button>
         <a
           class="btn-sm btn btn-primary btn-rounded btn-icon m-1 ripple"
           href="/admin/routes/create"
@@ -168,7 +171,7 @@ export default {
         },
       ];
       if (this.bus_id) {
-          columns.shift();
+        columns.shift();
       }
       return columns;
     },

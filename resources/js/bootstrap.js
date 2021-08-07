@@ -20,6 +20,7 @@ try {
  */
 
 window.axios = require("axios");
+window.moment = require('moment');
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 window.axios.defaults.params = { ajax: 1 };

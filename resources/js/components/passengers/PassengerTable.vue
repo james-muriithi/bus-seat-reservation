@@ -33,6 +33,9 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
+        <button class="btn btn-sm btn-outline-success ripple m-1">
+          <i class="fa fa-file-pdf"></i> PDF
+        </button>
         <button
           class="btn-sm btn btn-primary btn-rounded btn-icon m-1 ripple"
           data-toggle="modal"
@@ -47,8 +50,8 @@
 
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
-            <!-- view passenger -->
-            <a
+          <!-- view passenger -->
+          <a
             :href="`/admin/passengers/${props.row.id}`"
             title="View"
             class="pr-1"
@@ -67,16 +70,16 @@
           </a>
         </span>
         <span v-else-if="props.column.field == 'name'">
-            <img
-              class="img-thumbnail img-fluid"
-              height="50"
-              width="50"
-              :src="props.row.avatar.thumbnail"
-              alt="image"
-              v-if="props.row.avatar"
-            />
-            {{ props.row.name }}
-          </span>
+          <img
+            class="img-thumbnail img-fluid"
+            height="50"
+            width="50"
+            :src="props.row.avatar.thumbnail"
+            alt="image"
+            v-if="props.row.avatar"
+          />
+          {{ props.row.name }}
+        </span>
       </template>
     </vue-good-table>
 
@@ -86,12 +89,11 @@
     ></delete-passenger>
 
     <create-passenger @update="fetchPassengers(false)" />
-
   </div>
 </template>
 
 <script>
-const CreatePassenger = () => import('./CreatePassenger.vue');
+const CreatePassenger = () => import("./CreatePassenger.vue");
 const DeletePassenger = () => import("./DeletePassenger.vue");
 
 export default {

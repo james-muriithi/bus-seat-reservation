@@ -33,6 +33,14 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
+        <!-- eport pdf -->
+        <button
+          class="btn btn-sm btn-outline-success ripple m-1"
+          @click="Amenities_PDF"
+        >
+          <i class="fa fa-file-pdf"></i> PDF
+        </button>
+
         <button
           class="btn-sm btn btn-primary btn-rounded btn-icon m-1 ripple"
           data-toggle="modal"
@@ -82,6 +90,9 @@
 </template>
 
 <script>
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 const EditAmenity = () => import("./EditAmenity.vue");
 const CreateAmenity = () => import("./CreateAmenity.vue");
 const DeleteAmenity = () => import("./DeleteAmenity.vue");
@@ -108,7 +119,7 @@ export default {
           html: true,
         },
         {
-          label: "Cretaed At",
+          label: "Created At",
           field: "created_at",
           type: "date",
           thClass: "text-left",
@@ -152,6 +163,29 @@ export default {
     deleteAmenity(amenity) {
       this.selectedAmenity = amenity;
       $("#delete-amenity").modal("show");
+    },
+    Amenities_PDF() {
+      var self = this;
+
+      let pdf = new jsPDF("p", "pt");
+      let columns = [
+        {
+          title: "Amenity",
+          dataKey: "name",
+        },
+        {
+          title: "Created At",
+          dataKey: "created_at",
+        },
+      ];
+      //   pdf.autoTable(columns, self.amenities);
+      autoTable(pdf, {
+        columns,
+        body: self.amenities,
+      });
+      pdf.text("Amenities List", 40, 25);
+      this.addPdfFooters(pdf);
+      pdf.save(`Amenities_List.pdf`);
     },
   },
   created() {

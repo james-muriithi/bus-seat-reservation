@@ -29,7 +29,10 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
-        <button class="btn btn-sm btn-outline-success ripple m-1">
+        <button
+          class="btn btn-sm btn-outline-success ripple m-1"
+          @click="Reservations_PDF"
+        >
           <i class="fa fa-file-pdf"></i> PDF
         </button>
         <button class="btn btn-sm btn-outline-danger ripple m-1">
@@ -69,6 +72,8 @@
 </template>
 
 <script>
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import Loader from "../UI/Loader.vue";
 export default {
   components: { Loader },
@@ -177,6 +182,50 @@ export default {
           this.isLoading = false;
         })
         .catch();
+    },
+    Reservations_PDF() {
+      var self = this;
+
+      let pdf = new jsPDF("p", "pt");
+      let columns = [
+        {
+          title: "Bus Name",
+          dataKey: "bus_name",
+        },
+        {
+          title: "Bus Reg",
+          dataKey: "bus_reg",
+        },
+        {
+          title: "Pickup Point",
+          dataKey: "pickup_point",
+        },
+        {
+          title: "Pickup Time",
+          dataKey: "pickup_time",
+        },
+        {
+          title: "Dropoff Point",
+          dataKey: "dropoff_point",
+        },
+        {
+          title: "Seats",
+          dataKey: "seats",
+        },
+        {
+          title: "Created At",
+          dataKey: "date",
+        },
+      ];
+      autoTable(pdf, {
+        columns,
+        body: self.reservations,
+      });
+      pdf.text("Reservations List", 40, 25);
+      this.addPdfFooters(pdf);
+      pdf.save(
+        `Reservations_List-${moment().format("YYYY-MM-DD HH_mm_ss")}.pdf`
+      );
     },
   },
   created() {

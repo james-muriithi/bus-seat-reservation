@@ -33,6 +33,12 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
+        <button
+          class="btn btn-sm btn-outline-success ripple m-1"
+          @click="Buses_PDF"
+        >
+          <i class="fa fa-file-pdf"></i> PDF
+        </button>
         <a
           class="btn-sm btn btn-primary btn-rounded btn-icon m-1 ripple"
           href="/admin/buses/create"
@@ -46,12 +52,8 @@
 
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
-            <!-- view bus -->
-            <a
-            :href="`/admin/buses/${props.row.id}`"
-            title="View"
-            class="pr-1"
-          >
+          <!-- view bus -->
+          <a :href="`/admin/buses/${props.row.id}`" title="View" class="pr-1">
             <i class="ti-eye fs-16 text-info"></i>
           </a>
           <!-- edit bus -->
@@ -108,15 +110,13 @@
       </template>
     </vue-good-table>
 
-    <delete-bus
-      @update="fetchBuses(false)"
-      :bus="selectedBus"
-    ></delete-bus>
-
+    <delete-bus @update="fetchBuses(false)" :bus="selectedBus"></delete-bus>
   </div>
 </template>
 
 <script>
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 const DeleteBus = () => import("./DeleteBus.vue");
 
 export default {
@@ -152,8 +152,8 @@ export default {
           field: "amenities",
         },
         {
-            label: "Seat Classes",
-            field: "seat_classes"
+          label: "Seat Classes",
+          field: "seat_classes",
         },
         {
           label: "Status",
@@ -200,6 +200,70 @@ export default {
     deleteBus(bus) {
       this.selectedBus = bus;
       $("#delete-bus").modal("show");
+    },
+    Buses_PDF() {
+      var self = this;
+
+      let pdf = new jsPDF("p", "pt");
+      let columns = [
+        {
+          title: "Bus Name",
+          dataKey: "bus_name",
+        },
+        {
+          title: "Bus Reg",
+          dataKey: "bus_reg_no",
+        },
+        {
+          title: "Bus Type",
+          dataKey: "bus_type",
+        },
+        {
+          title: "Max Seats",
+          dataKey: "max_seats",
+        },
+        {
+          title: "Amenities",
+          dataKey: "amenities",
+        },
+        {
+          title: "Seat Classes",
+          dataKey: "seat_classes",
+        },
+        {
+          title: "Status",
+          dataKey: "status",
+        },
+      ];
+      autoTable(pdf, {
+        columns,
+        body: self.buses,
+        didParseCell: function (data) {
+          if (data.column.dataKey === "bus_type") {
+            if (data.cell.raw.bus_type) {
+              data.cell.text = data.cell.raw.bus_type || "";
+            }
+          } else if (data.column.dataKey === "amenities") {
+            if (data.cell.raw && Array.isArray(data.cell.raw)) {
+              data.cell.text =
+                data.cell.raw.map((amenity) => amenity.name).join(", ") || "";
+            }
+          } else if (data.column.dataKey === "seat_classes") {
+            if (data.cell.raw && Array.isArray(data.cell.raw)) {
+              data.cell.text =
+                data.cell.raw.map((seatClass) => seatClass.name).join(", ") ||
+                "";
+            }
+          } else if (data.column.dataKey === "status") {
+            if (data.cell.raw == 1 || data.cell.raw == 0) {
+              data.cell.text = data.cell.raw ? "Active" : "Inactive";
+            }
+          }
+        },
+      });
+      pdf.text("All Buses", 40, 25);
+      this.addPdfFooters(pdf);
+      pdf.save(`Buses_List-${moment().format("YYYY-MM-DD HH_mm_ss")}.pdf`);
     },
   },
   created() {
