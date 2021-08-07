@@ -73,6 +73,11 @@ Vue.component("dropoff-point-index", () =>
     import("./components/drop-off-point/DropOffPointIndex.vue")
 );
 
+// auth
+Vue.component("password-edit", () =>
+    import("./components/auth/PasswordEdit.vue")
+);
+
 // Vue.component('loader', () => import('./components/UI/Loader.vue'));
 
 // vuex store

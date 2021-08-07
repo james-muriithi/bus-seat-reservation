@@ -18,7 +18,13 @@ class BusTypeController extends Controller
     {
         abort_if(Gate::denies('bus_type_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $busTypes = BusType::latest()->get();
+        $busTypes = BusType::query();
+
+        if ($request->query('active')) {
+            $busTypes = $busTypes->active();
+        }
+
+        $busTypes = $busTypes->latest()->get();
 
         if ($request->ajax()) {
             return new BusTypeResource($busTypes);

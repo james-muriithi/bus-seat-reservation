@@ -173,6 +173,20 @@
                         </ul>
                     </li>
                 @endcan
+
+                @if (file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
+                    @can('profile_password_edit')
+                    <li class="sidebar-item">
+                        <a class="sidebar-link sidebar-link" href="{{ route('profile.password.edit') }}" aria-expanded="false">
+                        <i data-feather="key" class="feather-icon"></i>
+                        <span class="hide-menu">
+                            {{ trans('global.change_password') }}
+                        </span>
+                        </a>
+                    </li>
+                    @endcan
+                @endif
+
             </ul>
         </nav>
         <!-- End Sidebar navigation -->

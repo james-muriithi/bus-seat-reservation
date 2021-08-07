@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\Admin\UserResource;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,10 @@ class ChangePasswordController extends Controller
     {
         auth()->user()->update($request->validated());
 
+        if ($request->ajax()) {
+            return new UserResource(auth()->user());
+        }
+
         return redirect()->route('profile.password.edit')->with('message', __('global.change_password_success'));
     }
 
@@ -30,6 +35,10 @@ class ChangePasswordController extends Controller
         $user = auth()->user();
 
         $user->update($request->validated());
+
+        if ($request->ajax()) {
+            return new UserResource($user);
+        }
 
         return redirect()->route('profile.password.edit')->with('message', __('global.update_profile_success'));
     }

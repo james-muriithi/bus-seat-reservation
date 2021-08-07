@@ -328,7 +328,7 @@ export default {
   methods: {
     fetchSeatClasses() {
       axios
-        .get("/admin/bus-seat-classes")
+        .get("/admin/bus-seat-classes", { params: { active: 1 } })
         .then((res) => {
           res.data.data.forEach((seatClass) => {
             this.seatClasses.push({
@@ -371,7 +371,7 @@ export default {
       this.isLoading = pageLoad;
 
       axios
-        .get("/admin/buses")
+        .get("/admin/buses", { params: { active: 1 } })
         .then((res) => {
           this.buses = res.data.data;
 

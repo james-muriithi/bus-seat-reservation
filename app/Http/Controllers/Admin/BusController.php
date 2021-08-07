@@ -25,11 +25,15 @@ class BusController extends Controller
     {
         abort_if(Gate::denies('bus_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        if ($request->ajax()) {
-            $buses = Bus::with(['bus_type', 'amenities', 'created_by', 'seat_classes'])
-                ->select(sprintf('%s.*', (new Bus())->table))
-                ->get();
+        $buses = Bus::with(['bus_type', 'amenities', 'created_by', 'seat_classes'])
+            ->select(sprintf('%s.*', (new Bus())->table));
 
+        if ($request->query('active')) {
+            $buses = $buses->active();
+        }
+        $buses = $buses->latest()->get();
+
+        if ($request->ajax()) {
             return new BusResource($buses);
         }
 
@@ -89,7 +93,7 @@ class BusController extends Controller
 
     public function update(UpdateBusRequest $request, Bus $bus)
     {
-        $request->merge(['status' => (bool)$request->input('status', 0)]);
+        $request->merge(['status' => (int)(bool)$request->input('status', 0)]);
 
         $bus->update($request->all());
 

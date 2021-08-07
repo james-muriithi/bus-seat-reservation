@@ -18,7 +18,13 @@ class BusSeatClassController extends Controller
     {
         abort_if(Gate::denies('bus_seat_class_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $busSeatClasses = BusSeatClass::latest()->get();
+        $busSeatClasses = BusSeatClass::query();
+
+        if ($request->query('active')) {
+            $busSeatClasses = $busSeatClasses->active();
+        }
+
+        $busSeatClasses = $busSeatClasses->latest()->get();
 
         if ($request->ajax()) {
             return new BusSeatClassResource($busSeatClasses);

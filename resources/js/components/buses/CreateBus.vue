@@ -278,7 +278,7 @@ export default {
         max_seats: 0,
         status: 1,
         images: [],
-        seat_classes: [1]
+        seat_classes: [1],
       },
     };
   },
@@ -299,8 +299,8 @@ export default {
   },
   methods: {
     fetchSeatClasses() {
-        axios
-        .get("/admin/bus-seat-classes")
+      axios
+        .get("/admin/bus-seat-classes", { params: { active: true } })
         .then((res) => {
           res.data.data.forEach((seatClass) => {
             this.seatClasses.push({
@@ -315,7 +315,7 @@ export default {
     },
     fetchBusTypes() {
       axios
-        .get("/admin/bus-types")
+        .get("/admin/bus-types", { params: { active: true } })
         .then((res) => {
           this.busTypes = res.data.data;
         })
