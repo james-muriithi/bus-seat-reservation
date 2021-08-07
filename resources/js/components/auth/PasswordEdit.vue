@@ -206,7 +206,7 @@ export default {
               password_confirmation: this.user.password_confirmation,
             })
             .then((res) => {
-              console.log(res.data);
+                this.user.password = this.user.password_confirmation = null;
               this.$store.dispatch("stopLoading");
             })
             .catch((res) => {
