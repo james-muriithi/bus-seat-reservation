@@ -120,11 +120,13 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast('Bus seat class edited successfully!')
               });
             })
             .catch((res) => {
               console.log(res);
               this.$store.dispatch("stopLoading");
+              this.showErrorToast('There was a problem editing the seat class!')
             });
         }
       });

@@ -54,11 +54,13 @@ export default {
 
           this.$nextTick(() => {
             this.$emit("update");
+            this.showSuccessToast('Bus seat class deleted successfully!')
           });
         })
         .catch((res) => {
           this.closeModal();
           this.$store.dispatch("stopLoading");
+          this.showErrorToast('There was an error deleting the seat class!')
         });
     },
     closeModal() {

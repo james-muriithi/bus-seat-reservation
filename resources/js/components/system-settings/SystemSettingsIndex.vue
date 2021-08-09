@@ -14,6 +14,10 @@ export default {
       settings: {
           type: Object,
           required: true,
+      },
+      session_message:{
+          default: {},
+          type: Object,
       }
   },
   data() {

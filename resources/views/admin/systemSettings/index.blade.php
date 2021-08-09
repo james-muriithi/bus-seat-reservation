@@ -23,7 +23,15 @@
                     current: true
                 }
             ]"></bread-crumb>
-            <system-settings-index :settings="{{ $systemSettings ?? '{}' }}"></system-settings-index>
+            <?php
+            $message = [];
+            if (session()->has('success')) {
+                $message['success'] = session()->get('success');
+            } elseif (session()->has('error')) {
+                $message['error'] = session()->get('error');
+            }
+            ?>
+            <system-settings-index :session_message="{{ json_encode((object)$message) }}" :settings="{{ $systemSettings ?? '{}' }}"></system-settings-index>
         </div>
     </div>
 @endsection
