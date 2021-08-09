@@ -32,7 +32,7 @@
                           validationContext
                         )}`"
                       />
-                      <div id="Name-feed back" class="invalid-feedback w-100">
+                      <div id="Name-feedback" class="invalid-feedback w-100">
                         {{ validationContext.errors[0] }}
                       </div>
                     </div>
