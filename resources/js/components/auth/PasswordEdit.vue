@@ -99,6 +99,33 @@
               <div class="card">
                 <div class="card-body">
                   <validation-provider
+                    name="Old Password"
+                    :rules="{ required: true }"
+                    v-slot="validationContext"
+                    vid="old-password"
+                  >
+                    <div class="form-group">
+                      <label for="name">Old Password</label>
+                      <input
+                        type="password"
+                        placeholder="Old Password"
+                        id="password"
+                        aria-describedby="password-feedback"
+                        v-model.trim="user.old_password"
+                        :class="`form-control ${getValidationState(
+                          validationContext
+                        )}`"
+                      />
+                      <div
+                        id="password-feedback"
+                        class="invalid-feedback w-100"
+                      >
+                        {{ validationContext.errors[0] }}
+                      </div>
+                    </div>
+                  </validation-provider>
+
+                  <validation-provider
                     name="Password"
                     :rules="{ required: true, min: 8 }"
                     v-slot="validationContext"
@@ -204,16 +231,20 @@ export default {
             .post("/profile/password", {
               password: this.user.password,
               password_confirmation: this.user.password_confirmation,
+              old_password: this.user.old_password,
             })
             .then((res) => {
               this.user.password = this.user.password_confirmation = null;
               this.$store.dispatch("stopLoading");
               this.showSuccessToast("Your password was updated successfully");
             })
-            .catch((res) => {
-              console.log(res);
+            .catch((err) => {
+              console.log(err);
               this.$store.dispatch("stopLoading");
-              this.showErrorToast("There was a problem updating your password");
+              const message =
+                err.response.data.message ||
+                "There was a problem updating your password";
+              this.showErrorToast(message);
             });
         })
         .catch((res) => {
@@ -234,7 +265,9 @@ export default {
             })
             .then((res) => {
               this.$store.dispatch("stopLoading");
-              this.showSuccessToast("Your user details were updated successfully");
+              this.showSuccessToast(
+                "Your user details were updated successfully"
+              );
             })
             .catch((res) => {
               console.log(res);

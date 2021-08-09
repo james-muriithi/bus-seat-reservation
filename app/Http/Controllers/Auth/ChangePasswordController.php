@@ -7,7 +7,7 @@ use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\Admin\UserResource;
 use Gate;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class ChangePasswordController extends Controller
@@ -21,6 +21,18 @@ class ChangePasswordController extends Controller
 
     public function update(UpdatePasswordRequest $request)
     {
+        if (!Hash::check($request->input('old_password'), auth()->user()->password)) {
+            return response()
+                ->json(['message' => 'Old password is incorrect'])
+                ->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (Hash::check($request->input('password'), auth()->user()->password)) {
+            return response()
+                ->json(['message' => 'New password cannot be the same as old password'])
+                ->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         auth()->user()->update($request->validated());
 
         if ($request->ajax()) {
