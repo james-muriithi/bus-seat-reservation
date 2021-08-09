@@ -54,11 +54,13 @@ export default {
 
           this.$nextTick(() => {
             this.$emit("update");
+            this.showSuccessToast('Currency deleted successfully')
           });
         })
         .catch((res) => {
           this.closeModal();
           this.$store.dispatch("stopLoading");
+          this.showErorrToast('There was a problem deleting the currency')
         });
     },
     closeModal() {

@@ -139,10 +139,12 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast('Currency edited successfully')
               });
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
+              this.showErrorToast('There was a problem editing the currency')
             });
         }
       });

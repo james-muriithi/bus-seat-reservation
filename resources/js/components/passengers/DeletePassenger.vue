@@ -14,7 +14,9 @@
         <div class="modal-body">
           <div class="mb-2">
             <p>
-              Are you sure you want to delete passenger <b>{{ `${passenger.name}`  }}</b>?
+              Are you sure you want to delete passenger
+              <b>{{ `${passenger.name}` }}</b
+              >?
             </p>
           </div>
 
@@ -54,11 +56,13 @@ export default {
 
           this.$nextTick(() => {
             this.$emit("update");
+            this.showSuccessToast("Passenger deleted successfully");
           });
         })
         .catch((res) => {
           this.closeModal();
           this.$store.dispatch("stopLoading");
+          this.showErrorToast("There was a problem deleting the passenger");
         });
     },
     closeModal() {

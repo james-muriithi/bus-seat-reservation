@@ -80,10 +80,12 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast('Payment method updated successfully')
               });
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
+              this.showErrorToast('There was a problem updating the payment method')
             });
         }
       });

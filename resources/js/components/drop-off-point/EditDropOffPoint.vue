@@ -215,10 +215,12 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast('Drop off point updated successfully')
               });
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
+              this.showErrorToast('There was a problem updating the drop off point')
             });
         }
       });

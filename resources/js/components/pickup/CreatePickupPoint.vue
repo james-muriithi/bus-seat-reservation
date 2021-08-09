@@ -116,10 +116,7 @@
                           validationContext
                         )}`"
                       />
-                      <div
-                        id="address-feedback"
-                        class="invalid-feedback w-100"
-                      >
+                      <div id="address-feedback" class="invalid-feedback w-100">
                         {{ validationContext.errors[0] }}
                       </div>
                     </div>
@@ -183,10 +180,10 @@ import "vue2-timepicker/dist/VueTimepicker.css";
 
 export default {
   components: { VueTimepicker },
-  props:{
-      defaultRoute: {
-          default: ""
-      },
+  props: {
+    defaultRoute: {
+      default: "",
+    },
   },
   emits: ["update"],
   data() {
@@ -194,7 +191,7 @@ export default {
       pickupPoint: {
         route_id: this.defaultRoute,
         status: 1,
-        pickup_time: ""
+        pickup_time: "",
       },
       routes: [],
     };
@@ -204,7 +201,7 @@ export default {
       this.pickupPoint = {
         route_id: this.defaultRoute,
         status: 1,
-        pickup_time: ""
+        pickup_time: "",
       };
       this.$nextTick(() => {
         this.$refs.createPickupPoint.reset();
@@ -223,10 +220,12 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast("Pickup point created successfully");
               });
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
+              this.showErrorToast("There was an error creating the pickup point");
             });
         }
       });

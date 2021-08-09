@@ -54,11 +54,13 @@ export default {
 
           this.$nextTick(() => {
             this.$emit("update");
+            this.showSuccessToast("Pickup point deleted successfully");
           });
         })
         .catch((res) => {
           this.closeModal();
           this.$store.dispatch("stopLoading");
+          this.showSuccessToast("There was a problem deleting the pickup point");
         });
     },
     closeModal() {
