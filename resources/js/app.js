@@ -30,6 +30,11 @@ Vue.component("bus-seat-classes-index", () =>
     import("./components/bus-seat-classes/SeatClassIndex.vue")
 );
 
+//seats layout
+Vue.component("seats-layout-index", () =>
+    import("./components/seat-layout/SeatsLayoutIndex.vue")
+);
+
 // bus ratings
 Vue.component("bus-ratings-index", () =>
     import("./components/bus-ratings/BusRatingsIndex.vue")
