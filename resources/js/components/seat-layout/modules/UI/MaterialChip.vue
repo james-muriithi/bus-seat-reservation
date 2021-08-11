@@ -13,14 +13,11 @@ export default {
       type: String,
       required: true
     },
-    index: {
-      required: true
-    }
   },
   methods: {
     close() {
       if (confirm("Are you sure you want to remove")) {
-        this.$emit("remove", this.index);
+        this.$emit("remove");
       }
     }
   }

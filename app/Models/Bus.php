@@ -75,6 +75,14 @@ class Bus extends Model implements HasMedia
     {
         return $this->belongsToMany(BusSeatClass::class);
     }
+    public function seat_layout()
+    {
+        return $this->hasOne(SeatLayout::class, 'bus_id');
+    }
+    public function seats()
+    {
+        return $this->hasMany(Seat::class, 'bus_id');
+    }
 
     //attributes
     public function getImagesAttribute()

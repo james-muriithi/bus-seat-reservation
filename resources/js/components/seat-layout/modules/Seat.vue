@@ -28,7 +28,16 @@
         :class="classifier(idxr, idxc)"
         d="M90.21,9.94a8.93,8.93,0,0,0-8.74-7H36a8.94,8.94,0,0,0-8.75,6.93H9.15A7.22,7.22,0,0,0,2,17V82.79a7.06,7.06,0,0,0,7.15,7h18a8.85,8.85,0,0,0,8.75,7.26H81.47A8.91,8.91,0,0,0,90,90.9a8.81,8.81,0,0,0,8-8.75V18.58A8.84,8.84,0,0,0,90.21,9.94ZM36,6H81.57a5.77,5.77,0,0,1,5.55,4.06A8.88,8.88,0,0,0,80.4,17.3H36a5.71,5.71,0,0,1-5.76-5.65A5.72,5.72,0,0,1,36,6ZM27.28,86.74H9.15a4,4,0,0,1-4.06-3.95V17a4,4,0,0,1,4.06-4h18a8.85,8.85,0,0,0,8.75,7.47H80.08V79.7H36A8.65,8.65,0,0,0,27.28,86.74ZM81.47,94.1H36a5.66,5.66,0,1,1,0-11.31H80.29a8.77,8.77,0,0,0,6.62,7.9A6.13,6.13,0,0,1,81.47,94.1ZM94.91,82.15a5.76,5.76,0,0,1-11.52,0V18.58a5.76,5.76,0,0,1,11.52,0Z"
       />
-      <text class="seat-label" x="25" y="55">{{ seat.seat_number }}</text>
+      <text
+        class="seat-label"
+        x="30"
+        y="70"
+        text-anchor="middle"
+        dominant-baseline="central"
+        transform="rotate(270, 25, 55)"
+      >
+        {{ seat.seat_number }}
+      </text>
     </svg>
     <v-contextmenu ref="contextmenu1">
       <v-contextmenu-item @click="makeSeatAGap">Remove Seat</v-contextmenu-item>
@@ -55,9 +64,7 @@
                     data-dismiss="modal"
                     aria-label="Close"
                   >
-                    <span aria-hidden="true" @click="closeModal"
-                      >&times;</span
-                    >
+                    <span aria-hidden="true" @click="closeModal">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
@@ -80,10 +87,7 @@
                 </div>
                 <div class="modal-footer">
                   <div class="ml-auto text-right mb-2 me-2 border-top pt-1">
-                    <button
-                      class="btn btn-default"
-                      @click="closeModal"
-                    >
+                    <button class="btn btn-default" @click="closeModal">
                       close
                     </button>
                     <button class="btn btn-primary ml-2" @click="changeClass">
@@ -142,7 +146,7 @@ export default {
   data() {
     return {
       open: false,
-      defaultSeatClassId: this.seat.class.id || '',
+      defaultSeatClassId: this.seat.class.id || "",
     };
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <table class="mx-auto" v-if="cols > 0 && rows > 0">
+  <div v-if="cols > 0 && rows > 0">
+    <table class="mx-auto">
       <tr>
         <th></th>
         <table-header
@@ -29,7 +29,7 @@
         <td
           v-for="(indexc, column) in cols"
           :key="`c-${column}`"
-          style="width: 50px; height: 50px; padding: 3px"
+          style="width: 55px; height: 55px; padding: 5px"
         >
           <seat
             :idxc="indexc"
@@ -41,6 +41,11 @@
         </td>
       </tr>
     </table>
+    <div class="mt-5 pr-3 col-12 text-right">
+      <button class="btn btn-success ripple" @click="saveLayout">
+        Save Layout
+      </button>
+    </div>
   </div>
 </template>
 
@@ -50,45 +55,49 @@ import TableHeader from "./TableHeader.vue";
 export default {
   components: {
     Seat,
-    TableHeader
+    TableHeader,
   },
   inject: ["disableSeat", "getSeatWithRC", "changeSeatClass"],
   props: {
     seats: {
       required: true,
-      type: Array
+      type: Array,
     },
     cols: {
       required: true,
-      type: Number
+      type: Number,
     },
     rows: {
       required: true,
-      type: Number
+      type: Number,
     },
     aisleColumns: {
       default: () => [],
-      type: Array
+      type: Array,
     },
     aisleRows: {
       default: () => [],
-      type: Array
+      type: Array,
     },
     gaps: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     disabledSeats: {
       default: () => [],
-      type: Array
-    }
+      type: Array,
+    },
+    bus: {
+      required: true,
+      type: Object,
+    },
   },
   data() {
     return {};
   },
   methods: {
     getSeat(r, c) {
-      const seat = this.seats.find(seat => {
+      const seat = this.seats.find((seat) => {
         return seat.position.r == r && seat.position.c == c;
       });
 
@@ -101,23 +110,23 @@ export default {
         }
       }
 
-      if (this.aisleColumns.some(column => column == c)) {
-        if (this.aisleRows.some(row => row == r)) {
+      if (this.aisleColumns.some((column) => column == c)) {
+        if (this.aisleRows.some((row) => row == r)) {
           return true;
         }
         if (r >= 1 && r <= this.rows - 1) {
           return true;
         }
-      } else if (this.aisleRows.some(row => row == r)) {
+      } else if (this.aisleRows.some((row) => row == r)) {
         return true;
       }
       return false;
     },
     isAisleRow(index) {
-      return this.aisleRows.some(row => row == index);
+      return this.aisleRows.some((row) => row == index);
     },
     isAisleColumn(index) {
-      return this.aisleColumns.some(col => col == index);
+      return this.aisleColumns.some((col) => col == index);
     },
     isDisabled(row, col) {
       return this.disabledSeats.some(
@@ -152,7 +161,26 @@ export default {
           }
         }
       }
-    }
-  }
+    },
+    saveLayout() {
+      axios
+        .post("/admin/seat-layouts", {
+          bus_id: this.bus.id,
+          rows: this.rows,
+          columns: this.cols,
+          details: {
+            seats: this.seats,
+            cols: this.cols,
+            rows: this.rows,
+            aisleColumns: this.aisleColumns,
+            aisleRows: this.aisleRows,
+            gaps: this.gaps,
+            disabledSeats: this.disabledSeats,
+          },
+        })
+        .then((res) => console.log(res.data))
+        .catch((err) => console.log(err));
+    },
+  },
 };
 </script>

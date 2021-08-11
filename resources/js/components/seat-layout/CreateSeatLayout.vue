@@ -24,6 +24,7 @@
           :aisleRows="aisleRows"
           :disabledSeats="disabledSeats"
           :gaps="gaps"
+          :bus="selectedBusDetails"
         ></seat-section>
       </div>
       </div>
@@ -100,7 +101,7 @@ export default {
           if (!this.isAisle(x, y)) {
             this.seats.push({
               position: { r: y, c: x },
-              status: "RA",
+            //   status: "RA",
               seat_number: `${this.seat_prefix}${seat_number}`,
               disabled: this.isDisabled(y, x),
               class: this.defaultSeatClass ?? null,
@@ -180,7 +181,7 @@ export default {
     },
     removeGap({ row, col }) {
       this.gaps = this.gaps.filter(
-        ({ row: r, col: c }) => r != row && c != col
+        ({ row: r, col: c }) => (r != row || c != col)
       );
       this.generateSeats({});
     },

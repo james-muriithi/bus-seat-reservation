@@ -140,8 +140,7 @@
           <material-chip
             v-for="gap in gaps"
             :text="`Col ${gap.col} Row ${gap.row}`"
-            :index="gap"
-            :key="gap"
+            :key="`Col ${gap.col} Row ${gap.row}`"
             @remove="removeGap(gap)"
           />
         </div>
@@ -150,8 +149,7 @@
           <material-chip
             v-for="col in aisleColumns"
             :text="`Column ${col}`"
-            :index="col"
-            :key="col"
+            :key="`Column ${col}`"
             @remove="removeAisleColumn(col)"
           />
         </div>
@@ -162,8 +160,7 @@
           <material-chip
             v-for="row in aisleRows"
             :text="`Row ${row}`"
-            :index="row"
-            :key="row"
+            :key="`Row ${row}`"
             @remove="removeAisleRow(row)"
           />
         </div>
@@ -225,12 +222,16 @@ export default {
   },
   methods: {
     generate() {
-      this.$emit("generate", {
-        rows: this.rows,
-        cols: this.cols,
-        seat_prefix: this.seat_prefix,
-        defaultSeatClass: this.getSeatClass(this.defaultSeatClass),
-        selectedBusDetails: this.selectedBusDetails,
+      this.$refs.createSeatLayout.validate().then((valid) => {
+        if (valid) {
+          this.$emit("generate", {
+            rows: this.rows,
+            cols: this.cols,
+            seat_prefix: this.seat_prefix,
+            defaultSeatClass: this.getSeatClass(this.defaultSeatClass),
+            selectedBusDetails: this.selectedBusDetails,
+          });
+        }
       });
     },
     getSeatClass(id) {

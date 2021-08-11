@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroySeatLayoutRequest;
 use App\Http\Requests\StoreSeatLayoutRequest;
 use App\Http\Requests\UpdateSeatLayoutRequest;
+use App\Models\Bus;
 use Gate;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\SeatLayout;
 
 class SeatLayoutController extends Controller
 {
@@ -28,7 +29,26 @@ class SeatLayoutController extends Controller
 
     public function store(StoreSeatLayoutRequest $request)
     {
-        $seatLayout = SeatLayout::create($request->all());
+        if ($request->ajax()) {
+            $details = $request->input('details');
+
+            $seats = $details['seats'];
+            return $seats;
+        }
+
+        $bus = Bus::find($request->input('bus_id'));
+
+        $seatLayout = $bus->seat_layout()
+            ->updateOrCreate(['bus_id' => $request->input('bus_id')], $request->all());
+
+        $details = $request->input('details');
+
+        $seats = $details['seats'];
+
+        foreach ($seats as $seat) {
+            $bus->seats()->
+        }
+
 
         return redirect()->route('admin.seat-layouts.index');
     }
