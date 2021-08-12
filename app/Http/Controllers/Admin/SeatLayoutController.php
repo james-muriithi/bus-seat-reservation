@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroySeatLayoutRequest;
 use App\Http\Requests\StoreSeatLayoutRequest;
 use App\Http\Requests\UpdateSeatLayoutRequest;
+use App\Http\Resources\Admin\SeatResource;
 use App\Models\Bus;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\SeatLayout;
+use Illuminate\Support\Facades\DB;
 
 class SeatLayoutController extends Controller
 {
@@ -29,24 +31,57 @@ class SeatLayoutController extends Controller
 
     public function store(StoreSeatLayoutRequest $request)
     {
-        if ($request->ajax()) {
+        // if ($request->ajax()) {
+        //     $details = $request->input('details');
+
+        //     $seats = $details['seats'];
+        //     return $seats;
+        // }
+
+        $seatLayout = null;
+
+        DB::transaction(function () use ($request, &$seatLayout) {
+            $bus = Bus::find($request->input('bus_id'));
+
+            $seatLayout = $bus->seat_layout()
+                ->updateOrCreate(['bus_id' => $request->input('bus_id')], $request->all());
+            // ->updateOrCreate(['bus_id' => $request->input('bus_id')], [
+            //     'rows' => $request->input('rows'),
+            //     'columns' => $request->input('columns'),
+            //     'details' => json_encode($request->input('details')),
+            // ]);
+
             $details = $request->input('details');
 
             $seats = $details['seats'];
-            return $seats;
-        }
 
-        $bus = Bus::find($request->input('bus_id'));
+            $busSeatIds = [];
 
-        $seatLayout = $bus->seat_layout()
-            ->updateOrCreate(['bus_id' => $request->input('bus_id')], $request->all());
+            foreach ($seats as $seat) {
+                $newSeat = $bus->seats()->withTrashed()->updateOrCreate([
+                    'row' => $seat['position']['r'],
+                    'column' => $seat['position']['c'],
+                ], [
+                    'row' => $seat['position']['r'],
+                    'column' => $seat['position']['c'],
+                    'name' => $seat['seat_number'],
+                    'details' => $seat,
+                ]);
 
-        $details = $request->input('details');
+                if ($newSeat->trashed()) {
+                    $newSeat->restore();
+                }
 
-        $seats = $details['seats'];
+                $busSeatIds[] = $newSeat->id;
+            }
 
-        foreach ($seats as $seat) {
-            $bus->seats()->
+            $bus->seats()->whereNotIn('id', $busSeatIds)->delete();
+        });
+
+        if ($request->ajax() && $seatLayout) {
+            return (new SeatResource($seatLayout))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
         }
 
 

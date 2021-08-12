@@ -20,6 +20,10 @@ class Seat extends Model
         'deleted_at',
     ];
 
+    public $casts = [
+        'details' => 'array',
+    ];
+
     protected $fillable = [
         'bus_id',
         'row',
@@ -39,5 +43,11 @@ class Seat extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    // mutators
+    public function setDetailsAttribute($value)
+    {
+        $this->attributes['details'] = json_encode($value);
     }
 }

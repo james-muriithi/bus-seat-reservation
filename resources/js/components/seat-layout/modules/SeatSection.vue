@@ -57,7 +57,7 @@ export default {
     Seat,
     TableHeader,
   },
-  inject: ["disableSeat", "getSeatWithRC", "changeSeatClass"],
+  inject: ["disableSeat", "getSeatWithRC", "changeSeatClass", "resetAll"],
   props: {
     seats: {
       required: true,
@@ -70,6 +70,12 @@ export default {
     rows: {
       required: true,
       type: Number,
+    },
+    seat_prefix: {
+      required: true,
+    },
+    defaultSeatClass: {
+      required: true,
     },
     aisleColumns: {
       default: () => [],
@@ -96,6 +102,9 @@ export default {
     return {};
   },
   methods: {
+    reset() {
+      this.resetAll();
+    },
     getSeat(r, c) {
       const seat = this.seats.find((seat) => {
         return seat.position.r == r && seat.position.c == c;
@@ -163,6 +172,16 @@ export default {
       }
     },
     saveLayout() {
+      this.$store.dispatch("startLoading");
+      let Save = true;
+      if (!_.isEmpty(this.bus.seat_layout)) {
+        Save = confirm("Are you sure you want to update the bus seat layout?");
+      }
+      if (!Save) {
+        this.$store.dispatch("stopLoading");
+        return;
+      }
+
       axios
         .post("/admin/seat-layouts", {
           bus_id: this.bus.id,
@@ -176,10 +195,22 @@ export default {
             aisleRows: this.aisleRows,
             gaps: this.gaps,
             disabledSeats: this.disabledSeats,
+            seat_prefix: this.seat_prefix,
+            defaultSeatClass: this.defaultSeatClass.id,
           },
         })
-        .then((res) => console.log(res.data))
-        .catch((err) => console.log(err));
+        .then((res) => {
+          this.$store.dispatch("stopLoading");
+          this.showSuccessToast(
+            `${this.bus.bus_reg_no} - ${this.bus.bus_name} Seat Layout created successfully`
+          );
+          this.reset();
+        })
+        .catch((err) => {
+          this.$store.dispatch("stopLoading");
+          console.log(err);
+          this.showErrorToast("There was an error creating the seats layout");
+        });
     },
   },
 };

@@ -14,6 +14,10 @@ class SeatLayout extends Model
 
     public $table = 'seat_layouts';
 
+    public $casts = [
+        'details' => 'array',
+    ];
+
     protected $dates = [
         'created_at',
         'updated_at',
@@ -38,5 +42,11 @@ class SeatLayout extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    // mutators
+    public function setDetailsAttribute($value)
+    {
+        $this->attributes['details'] = json_encode($value);
     }
 }

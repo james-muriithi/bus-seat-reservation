@@ -123,7 +123,7 @@ class BusController extends Controller
     {
         abort_if(Gate::denies('bus_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $bus->load('bus_type', 'amenities', 'created_by', 'seat_classes');
+        $bus->load('bus_type', 'amenities', 'created_by', 'seat_classes', 'seat_layout');
 
         if ($request->ajax()) {
             return new BusResource($bus);

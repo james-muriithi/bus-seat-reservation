@@ -83,7 +83,7 @@
               <label for="" class="form-label">Default Seat class</label>
               <select
                 :class="`form-control ${getValidationState(validationContext)}`"
-                v-model="defaultSeatClass"
+                v-model.trim="defaultSeatClass"
               >
                 <option
                   :value="seatClass.id"
@@ -176,7 +176,14 @@ import "select2-bootstrap-theme/dist/select2-bootstrap.min.css";
 export default {
   components: { MaterialChip, Select2 },
   emits: ["generate"],
-  inject: ["removeAisleColumn", "removeAisleRow", "removeGap"],
+  inject: [
+    "removeAisleColumn",
+    "removeAisleRow",
+    "removeGap",
+    "makeAisle",
+    "makeGap",
+    "disableSeat",
+  ],
   props: {
     aisleColumns: {
       default: () => [],
@@ -202,6 +209,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    resetFormFlag: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -211,26 +222,53 @@ export default {
       defaultSeatClass: "1",
       selectedBus: "",
       selectedBusDetails: {},
+      seats: [],
     };
   },
   watch: {
+    resetFormFlag(newValue) {
+      if (newValue) {
+        this.resetForm();
+      }
+    },
     selectedBus(newValue) {
       if (newValue) {
         this.fetchBus(+newValue);
+      } else {
+        this.selectedBusDetails = {};
+      }
+    },
+    selectedBusDetails(newValue) {
+      if (newValue) {
+        if (!_.isEmpty(newValue.seat_layout)) {
+          this.showOldLayout(newValue);
+        }
       }
     },
   },
   methods: {
+    resetForm() {
+      this.rows = "";
+      this.seat_prefix = "";
+      this.cols = "";
+      this.defaultSeatClass = "1";
+      this.selectedBus = "";
+    },
     generate() {
       this.$refs.createSeatLayout.validate().then((valid) => {
         if (valid) {
-          this.$emit("generate", {
-            rows: this.rows,
-            cols: this.cols,
-            seat_prefix: this.seat_prefix,
-            defaultSeatClass: this.getSeatClass(this.defaultSeatClass),
-            selectedBusDetails: this.selectedBusDetails,
-          });
+          this.$emit(
+            "generate",
+            {
+              rows: this.rows,
+              cols: this.cols,
+              seat_prefix: this.seat_prefix,
+              defaultSeatClass: this.getSeatClass(this.defaultSeatClass),
+              selectedBusDetails: this.selectedBusDetails,
+            },
+            this.seats
+          );
+        //   this.seats = [];
         }
       });
     },
@@ -259,6 +297,59 @@ export default {
         return valid ? "is-valid" : "is-invalid";
       }
       return "";
+    },
+
+    showOldLayout(newValue) {
+      let useOldLayout = confirm(
+        "The bus has a layout already, would you like to display the old layout?"
+      );
+      if (!useOldLayout) {
+        return;
+      }
+      //form details
+      this.rows = newValue.seat_layout.rows;
+      this.cols = newValue.seat_layout.columns;
+      this.seat_prefix = newValue.seat_layout.details.seat_prefix ?? "";
+      this.defaultSeatClass = newValue.seat_layout.details.defaultSeatClass;
+      this.seats = newValue.seat_layout.details.seats;
+
+      // other details
+      this.makeAisles(newValue.seat_layout.details.aisleColumns, "column");
+      this.makeAisles(newValue.seat_layout.details.aisleRows, "row");
+      this.disableSeats(newValue.seat_layout.details.disabledSeats);
+      this.makeGaps(newValue.seat_layout.details.gaps);
+
+      this.$nextTick(() => {
+        this.generate();
+      });
+    },
+
+    disableSeats(seats) {
+      seats.forEach(({ col, row }) => {
+        this.disableSeat({
+          row,
+          col,
+        });
+      });
+    },
+    makeGaps(seats) {
+      seats.forEach((seat) => {
+        seat.position = {
+          r: seat.row,
+          c: seat.col,
+        };
+        this.makeGap(seat);
+      });
+    },
+    makeAisles(aisles, target) {
+      aisles.forEach((index) => {
+        let data = {
+          index,
+          target,
+        };
+
+        this.makeAisle(data);
+      });
     },
   },
 };

@@ -19,6 +19,7 @@ class CreateSeatLayoutsTable extends Migration
             $table->integer('columns');
             $table->json('details')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -210,10 +210,12 @@ export default {
 
               this.$nextTick(() => {
                 this.$emit("update");
+                this.showSuccessToast("Passenger created successfully");
               });
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
+              this.showErrorToast("There was an error creating the passenger");
             });
         }
       });

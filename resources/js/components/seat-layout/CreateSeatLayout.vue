@@ -13,20 +13,24 @@
             :gaps="gaps"
             :buses="buses"
             :seatClasses="seatClasses"
+            :selectedBus="selectedBus"
+            :resetFormFlag="resetFormFlag"
           ></form-section>
         </div>
         <div class="col-sm-8 py-5">
-        <seat-section
-          :seats="seats"
-          :cols="cols"
-          :rows="rows"
-          :aisleColumns="aisleColumns"
-          :aisleRows="aisleRows"
-          :disabledSeats="disabledSeats"
-          :gaps="gaps"
-          :bus="selectedBusDetails"
-        ></seat-section>
-      </div>
+          <seat-section
+            :seats="seats"
+            :cols="cols"
+            :rows="rows"
+            :aisleColumns="aisleColumns"
+            :aisleRows="aisleRows"
+            :disabledSeats="disabledSeats"
+            :gaps="gaps"
+            :bus="selectedBusDetails"
+            :seat_prefix="seat_prefix"
+            :defaultSeatClass="defaultSeatClass"
+          ></seat-section>
+        </div>
       </div>
     </div>
   </div>
@@ -54,6 +58,7 @@ export default {
       disableSeat: this.disableSeat,
       seatClasses: this.seatClasses,
       changeSeatClass: this.changeSeatClass,
+      resetAll: this.resetAll,
     };
   },
   data() {
@@ -69,11 +74,24 @@ export default {
       disabledSeats: [],
       defaultSeatClass: null,
       buses: [],
+      selectedBus: "",
       selectedBusDetails: {},
       seatClasses: [],
+      resetFormFlag: false,
     };
   },
   methods: {
+    resetAll() {
+      this.resetFormFlag = true;
+      this.aisleColumns = [];
+      this.aisleRows = [];
+      this.gaps = [];
+      this.disabledSeats = [];
+      this.seats = [];
+      this.rows = 0;
+      this.seat_prefix = "";
+      this.cols = 0;
+    },
     getSeat(r, c) {
       return this.seats.find((seat) => {
         return seat.position.r == r && seat.position.c == c;
@@ -84,27 +102,37 @@ export default {
         return seat.seat_number == seatNumber;
       });
     },
-    generateSeats(data) {
+    generateSeats(data, seats = []) {
+    //   const seats = oldSeats.length > 0 ? oldSeats : this.seats;
       let seat_number = 1;
       // form data
-      this.rows = parseInt(data.rows) || this.rows;
-      this.cols = parseInt(data.cols) || this.cols;
-      this.aisleColumns = data.aisleColumns || this.aisleColumns;
+      this.rows = parseInt(data?.rows ?? this.rows);
+      this.cols = parseInt(data?.cols ?? this.cols);
+      this.aisleColumns = data.aisleColumns ?? this.aisleColumns;
       this.seat_prefix =
-        data.seat_prefix == "" ? "" : data.seat_prefix || this.seat_prefix;
-      this.defaultSeatClass = data.defaultSeatClass || this.defaultSeatClass;
-      this.selectedBusDetails = data.selectedBusDetails || this.selectedBusDetails;
+        (data.seat_prefix == "" ? "" : data.seat_prefix) ?? this.seat_prefix;
+      this.defaultSeatClass = data.defaultSeatClass ?? this.defaultSeatClass;
+      this.selectedBusDetails =
+        data.selectedBusDetails ?? this.selectedBusDetails;
 
-      this.seats = [];
+    //   this.seats = seats;
+    //   if (seats.length > 0) {
+    //     // return;
+    //   }
+    this.seats = [];
       for (let y = 1; y <= this.rows; ++y) {
         for (let x = 1; x <= this.cols; ++x) {
           if (!this.isAisle(x, y)) {
+            const oldSeat = seats.find(
+              (seat) => seat.position.r == y && seat.position.c == x
+            );
             this.seats.push({
               position: { r: y, c: x },
-            //   status: "RA",
-              seat_number: `${this.seat_prefix}${seat_number}`,
-              disabled: this.isDisabled(y, x),
-              class: this.defaultSeatClass ?? null,
+              //   status: "RA",
+              seat_number:
+                oldSeat?.seat_number ?? `${this.seat_prefix}${seat_number}`,
+              disabled: oldSeat?.disabled ?? this.isDisabled(y, x),
+              class: oldSeat?.class ?? this.defaultSeatClass ?? null,
             });
             seat_number++;
           }
@@ -181,7 +209,7 @@ export default {
     },
     removeGap({ row, col }) {
       this.gaps = this.gaps.filter(
-        ({ row: r, col: c }) => (r != row || c != col)
+        ({ row: r, col: c }) => r != row || c != col
       );
       this.generateSeats({});
     },
