@@ -103,7 +103,7 @@ export default {
       });
     },
     generateSeats(data, seats = []) {
-    //   const seats = oldSeats.length > 0 ? oldSeats : this.seats;
+      //   const seats = oldSeats.length > 0 ? oldSeats : this.seats;
       let seat_number = 1;
       // form data
       this.rows = parseInt(data?.rows ?? this.rows);
@@ -115,11 +115,11 @@ export default {
       this.selectedBusDetails =
         data.selectedBusDetails ?? this.selectedBusDetails;
 
-    //   this.seats = seats;
-    //   if (seats.length > 0) {
-    //     // return;
-    //   }
-    this.seats = [];
+      //   this.seats = seats;
+      //   if (seats.length > 0) {
+      //     // return;
+      //   }
+      this.seats = [];
       for (let y = 1; y <= this.rows; ++y) {
         for (let x = 1; x <= this.cols; ++x) {
           if (!this.isAisle(x, y)) {
@@ -132,7 +132,9 @@ export default {
               seat_number:
                 oldSeat?.seat_number ?? `${this.seat_prefix}${seat_number}`,
               disabled: oldSeat?.disabled ?? this.isDisabled(y, x),
-              class: oldSeat?.class ?? this.defaultSeatClass ?? null,
+              class: oldSeat?.class
+                ? this.getSeatClass(oldSeat.class.id)
+                : this.defaultSeatClass ?? null,
             });
             seat_number++;
           }
