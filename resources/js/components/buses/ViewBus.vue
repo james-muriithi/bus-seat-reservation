@@ -25,6 +25,10 @@
                   <th>{{ bus.max_seats }}</th>
                 </tr>
                 <tr>
+                  <td>Seats</td>
+                  <th>{{ busSeats }}</th>
+                </tr>
+                <tr>
                   <td>Status</td>
                   <th>
                     <span
@@ -80,7 +84,9 @@
           <div class="col-md-4">
             <div class="mb-3 mt-md-0 mt-3">
               <h4 class="mb-2 font-weight-bold">Ratings and reviews</h4>
-              <rating-histogram :rating="bus['average-rating']"></rating-histogram>
+              <rating-histogram
+                :rating="bus['average-rating']"
+              ></rating-histogram>
             </div>
             <h4 class="my-3 font-weight-bold">Bus Images</h4>
 
@@ -101,14 +107,26 @@
         </div>
 
         <div class="row mt-3">
-          <div class="col-md-8">
+          <div class="col-lg-8">
             <h4 class="mb-3 font-weight-bold">Bus Routes</h4>
             <div class="mt-2">
-                <routes-table :bus_id="bus.id"></routes-table>
+              <routes-table :bus_id="bus.id"></routes-table>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-lg-4">
             <h4 class="mb-3 font-weight-bold">Seats Layout</h4>
+            <div class="mt-2">
+              <seat-layout
+                :seats="bus.seat_layout.details.seats"
+                :cols="bus.seat_layout.columns"
+                :rows="bus.seat_layout.rows"
+                :aisleColumns="bus.seat_layout.details.aisleColumns"
+                :aisleRows="bus.seat_layout.details.aisleRows"
+                :disabledSeats="bus.seat_layout.details.disabledSeats"
+                :gaps="bus.seat_layout.details.gaps"
+                :seat_prefix="bus.seat_layout.details.seat_prefix"
+              ></seat-layout>
+            </div>
           </div>
         </div>
       </div>
@@ -120,9 +138,15 @@
 import Nprogress from "nprogress";
 const RatingHistogram = () => import("./modules/RatingHistogram.vue");
 const RoutesTable = () => import("../routes/RoutesTable.vue");
+const SeatLayout = () => import("./modules/SeatLayout.vue");
 
 export default {
-  components: { RatingHistogram, RoutesTable },
+  components: { RatingHistogram, RoutesTable, SeatLayout },
+  provide() {
+    return {
+      seatClasses: this.bus.seat_classes,
+    };
+  },
   props: {
     bus: {
       type: Object,
@@ -132,6 +156,9 @@ export default {
   computed: {
     loading() {
       return this.$store.getters.loading;
+    },
+    busSeats() {
+      return this.bus.seats.length ?? 0;
     },
   },
   watch: {

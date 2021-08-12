@@ -64,35 +64,6 @@
         </div>
       </transition>
     </div>
-    <!-- <Modal v-model="open" :close="closeModal">
-      <div class="modal">
-        <div class="pt-2">
-          <p class="border-bottom mb-0">Change Seat Class</p>
-        </div>
-        <div class="modal-body text-start mb-2">
-          <div class="row">
-            <div class="col-12 mb-2">
-              <label for="" class="form-label">Default Seat class</label>
-              <select class="form-control" v-model="defaultSeatsClass">
-                <option
-                  :value="seatClass.id"
-                  v-for="seatClass in seatClasses"
-                  :key="seatClass.id"
-                >
-                  {{ seatClass.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="ml-auto text-right mb-2 me-2 border-top pt-1">
-          <button class="btn btn-secondary" @click="closeModal">close</button>
-          <button class="btn btn-primary ml-2" @click="changeClass">
-            Update
-          </button>
-        </div>
-      </div>
-    </Modal> -->
   </th>
 </template>
 
