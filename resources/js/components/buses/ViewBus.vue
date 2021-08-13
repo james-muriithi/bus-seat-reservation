@@ -117,6 +117,7 @@
             <h4 class="mb-3 font-weight-bold">Seats Layout</h4>
             <div class="mt-2">
               <seat-layout
+                v-if="showBusSeatLayout"
                 :seats="bus.seat_layout.details.seats"
                 :cols="bus.seat_layout.columns"
                 :rows="bus.seat_layout.rows"
@@ -159,6 +160,9 @@ export default {
     },
     busSeats() {
       return this.bus.seats.length ?? 0;
+    },
+    showBusSeatLayout() {
+      return !_.isEmpty(this.bus.seat_layout);
     },
   },
   watch: {
