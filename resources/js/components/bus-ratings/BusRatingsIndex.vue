@@ -18,6 +18,7 @@ export default {
       return this.$store.getters.loading;
     },
   },
+
   watch: {
     loading(newValue) {
       if (newValue) {

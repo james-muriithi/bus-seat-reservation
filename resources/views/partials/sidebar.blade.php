@@ -116,6 +116,40 @@
                     </li>
                 @endcan
 
+                @can('booking_management_access')
+                    <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
+                            aria-expanded="false"><i class="ti-book"></i><span class="hide-menu">
+                                {{ trans('cruds.bookingManagement.title') }}
+                            </span></a>
+                        <ul aria-expanded="false" class="collapse  first-level base-level-line">
+                            @can('currency_access')
+                                <li class="sidebar-item">
+                                    <a href="{{ route('admin.reservations.index') }}" class="sidebar-link"><span
+                                            class="hide-menu">
+                                            Reserve
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a href="{{ route("admin.reservations.index") }}" class="sidebar-link"><span
+                                            class="hide-menu">
+                                            {{ trans('cruds.reservation.title') }}s
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a href="{{ route("admin.payments.index") }}" class="sidebar-link"><span
+                                            class="hide-menu">
+                                            {{ trans('cruds.payment.title') }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endcan
+
+                        </ul>
+                    </li>
+                @endcan
+
                 @can('passenger_management_access')
                     <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
                             aria-expanded="false"><i class="ti-user"></i><span class="hide-menu">
@@ -176,14 +210,15 @@
 
                 @if (file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
                     @can('profile_password_edit')
-                    <li class="sidebar-item">
-                        <a class="sidebar-link sidebar-link" href="{{ route('profile.password.edit') }}" aria-expanded="false">
-                        <i data-feather="key" class="feather-icon"></i>
-                        <span class="hide-menu">
-                            {{ trans('global.change_password') }}
-                        </span>
-                        </a>
-                    </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link sidebar-link" href="{{ route('profile.password.edit') }}"
+                                aria-expanded="false">
+                                <i data-feather="key" class="feather-icon"></i>
+                                <span class="hide-menu">
+                                    {{ trans('global.change_password') }}
+                                </span>
+                            </a>
+                        </li>
                     @endcan
                 @endif
 

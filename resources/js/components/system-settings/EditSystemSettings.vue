@@ -100,7 +100,7 @@
                   <div class="row">
                     <div class="col-md-12 text-right">
                       <button class="btn btn-primary" type="submit">
-                        Submit
+                        Save
                       </button>
                     </div>
                   </div>
@@ -159,8 +159,8 @@ export default {
             if (self.logo.length > 0) {
               self.data.delete("company_logo");
               for (var k = 0; k < self.logo.length; k++) {
-                  self.data.append("company_logo[name]", self.logo[0].name);
-                  self.data.append("company_logo[path]", self.logo[0].path);
+                self.data.append("company_logo[name]", self.logo[0].name);
+                self.data.append("company_logo[path]", self.logo[0].path);
               }
             }
 
@@ -170,13 +170,14 @@ export default {
               .post(`/admin/system-settings/${self.settings.id}`, self.data)
               .then((res) => {
                 self.$store.dispatch("stopLoading");
-                self.$nextTick(() => (window.location.href = "/admin/system-settings"));
+                self.$nextTick(
+                  () => (window.location.href = "/admin/system-settings")
+                );
               })
               .catch((err) => {
                 self.$store.dispatch("stopLoading");
                 console.log(err);
               });
-
           } else {
             console.log("kkkk");
           }

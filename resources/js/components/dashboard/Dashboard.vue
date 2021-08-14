@@ -9,11 +9,11 @@
 import Nprogress from "nprogress";
 import NumberBlocks from "./NumberBlocks.vue";
 const MiddleSection = () => import("./MiddleSection.vue");
-import BookingIndex from "../booking/BookingIndex.vue";
+const BookingTable = () => import("../booking/BookingTable.vue");
 // import MiddleSection from './MiddleSection.vue';
 
 export default {
-  components: { NumberBlocks, BookingIndex, MiddleSection },
+  components: { NumberBlocks, MiddleSection, BookingTable },
   computed: {
     loading() {
       return this.$store.getters.loading;

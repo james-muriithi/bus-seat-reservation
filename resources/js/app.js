@@ -14,7 +14,7 @@ Vue.component("dashboard", () =>
 Vue.component("bread-crumb", () => import("./components/UI/BreadCrumb.vue"));
 Vue.component("spinner", () => import("./components/UI/Spinner.vue"));
 Vue.component("booking-index", () =>
-    import("./components/amenities/AmenitiesIndex.vue")
+    import("./components/booking/BookingIndex.vue")
 );
 Vue.component("bus-type-index", () =>
     import("./components/bus-type/BusTypeIndex.vue")
@@ -84,7 +84,8 @@ Vue.component("password-edit", () =>
     import("./components/auth/PasswordEdit.vue")
 );
 
-// Vue.component('loader', () => import('./components/UI/Loader.vue'));
+//global components
+Vue.component('FilterSidebar', () => import('./components/UI/FilterSidebar.vue'));
 
 // vuex store
 import store from "./store";

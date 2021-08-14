@@ -1,0 +1,36 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    width: 320px;
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100%;
+    margin: 0;
+    outline: 0;
+    z-index: 100;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    &.sidebar-right {
+        left: auto;
+        right: 0;
+    }
+    .sidebar-header {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        display: flex;
+        flex-direction: row;
+        flex-grow: 0;
+        align-items: center;
+    }
+    .sidebar-body {
+        flex-grow: 1;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    @media screen and (max-width: 320px) {
+        width: 100%;
+    }
+}
