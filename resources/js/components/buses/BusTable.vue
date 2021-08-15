@@ -34,6 +34,12 @@
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
         <button
+          class="btn btn-sm btn-outline-info ripple m-1"
+          @click="openFilter"
+        >
+          <i class="ti-filter"></i> Filter
+        </button>
+        <button
           class="btn btn-sm btn-outline-success ripple m-1"
           @click="Buses_PDF"
         >
@@ -111,6 +117,79 @@
     </vue-good-table>
 
     <delete-bus @update="fetchBuses(false)" :bus="selectedBus"></delete-bus>
+
+    <!-- filter -->
+    <filter-sidebar :open="filterOpen" @close="closeFilter">
+      <div class="px-3 py-2">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="Bus">Bus Name</label>
+              <input
+                type="text"
+                name="bus_reg"
+                v-model="filter.bus_name"
+                class="form-control"
+                placeholder="Filter by bus name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="Bus">Bus Reg No</label>
+              <input
+                type="text"
+                name="bus_reg"
+                v-model="filter.bus_reg_no"
+                class="form-control"
+                placeholder="Filter by bus registration"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="Bus">Bus Type</label>
+              <select2
+                id="pp"
+                aria-describedby="bus-feedback"
+                :options="bus_types"
+                v-model="filter.bus_type"
+                :settings="{
+                  theme: 'bootstrap',
+                  multiple: false,
+                  closeOnSelect: true,
+                }"
+              >
+              </select2>
+            </div>
+            <div class="form-group">
+              <label for="Bus">Status</label>
+              <select class="form-control" v-model="filter.status">
+                <option value="">--Filter by status--</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-12 mt-3">
+            <div class="row">
+              <div
+                class="col-md-6 mt-md-0 mt-3 order-md-first"
+                @click="resetFilter"
+              >
+                <button class="btn btn-danger btn-block ripple">Reset</button>
+              </div>
+              <div class="col-md-6 mt-md-0 mt-3 order-first">
+                <button
+                  class="btn btn-primary btn-block ripple"
+                  @click="filterReservations"
+                >
+                  <i class="ti-filter"></i>Filter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </filter-sidebar>
   </div>
 </template>
 
@@ -118,14 +197,24 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 const DeleteBus = () => import("./DeleteBus.vue");
+import Select2 from "v-select2-component";
+import "select2-bootstrap-theme/dist/select2-bootstrap.min.css";
 
 export default {
-  components: { DeleteBus },
+  components: { DeleteBus, Select2 },
   data() {
     return {
       isLoading: false,
       buses: [],
       selectedBus: {},
+      filterOpen: false,
+      bus_types: [],
+      filter: {
+        bus_name: "",
+        bus_reg_no: "",
+        bus_type: "",
+        status: "",
+      },
     };
   },
   computed: {
@@ -184,8 +273,12 @@ export default {
       this.$store.dispatch("startLoading");
       this.isLoading = pageLoad;
 
+      const params = {
+        ...this.filter,
+      };
+
       axios
-        .get("/admin/buses")
+        .get("/admin/buses", { params })
         .then((res) => {
           this.buses = res.data.data;
 
@@ -195,6 +288,21 @@ export default {
         .catch((res) => {
           this.$store.dispatch("stopLoading");
           this.isLoading = false;
+        });
+    },
+    fetchBusTypes() {
+      axios
+        .get("/admin/bus-types", { params: { active: 1 } })
+        .then((res) => {
+          res.data.data.forEach((bus_type) => {
+            this.bus_types.push({
+              id: bus_type.id,
+              text: bus_type.bus_type,
+            });
+          });
+        })
+        .catch((res) => {
+          console.log(res);
         });
     },
     deleteBus(bus) {
@@ -265,9 +373,33 @@ export default {
       this.addPdfFooters(pdf);
       pdf.save(`Buses_List-${moment().format("YYYY-MM-DD HH_mm_ss")}.pdf`);
     },
+    openFilter() {
+      this.filterOpen = true;
+    },
+    closeFilter() {
+      this.filterOpen = false;
+    },
+    async resetFilter() {
+      this.filter = {
+        bus_name: "",
+        bus_reg_no: "",
+        bus_type: "",
+        status: "",
+      };
+
+      this.$store.dispatch("startLoading");
+      await this.fetchBuses();
+      this.$store.dispatch("stopLoading");
+    },
+    async filterReservations() {
+      this.$store.dispatch("startLoading");
+      await this.fetchBuses();
+      this.$store.dispatch("stopLoading");
+    },
   },
   created() {
     this.fetchBuses();
+    this.fetchBusTypes();
   },
 };
 </script>

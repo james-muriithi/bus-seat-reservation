@@ -25,8 +25,22 @@ class BusController extends Controller
     {
         abort_if(Gate::denies('bus_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $buses = Bus::with(['bus_type', 'amenities', 'created_by', 'seat_classes'])
-            ->select(sprintf('%s.*', (new Bus())->table));
+        $buses = Bus::with(['bus_type', 'amenities', 'created_by', 'seat_classes']);
+
+        if ($request->query("bus_name")) {
+            $buses->where("bus_name", $request->query("bus_name"));
+        }
+        if ($request->query("bus_reg_no")) {
+            $buses->where("bus_reg_no", $request->query("bus_reg_no"));
+        }
+        if (null !== $request->query("status")) {
+            $buses = $buses->where("status", $request->query("status"));
+        }
+        if ($request->query("bus_type")) {
+            $buses->where("bus_type_id", $request->query("bus_type"));
+        }
+
+        $buses = $buses->select(sprintf('%s.*', (new Bus())->table));
 
         if ($request->query('active')) {
             $buses = $buses->active();

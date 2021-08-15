@@ -19,7 +19,7 @@
                     current: true
                 }
             ]"></bread-crumb>
-            <booking-index></booking-index>
+            <amenities-index></amenities-index>
         </div>
     </div>
 @endsection

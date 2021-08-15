@@ -133,11 +133,17 @@
           </div>
           <div class="col-md-12 mt-3">
             <div class="row">
-              <div class="col-md-6 mt-md-0 mt-3 order-md-first">
+              <div
+                class="col-md-6 mt-md-0 mt-3 order-md-first"
+                @click="resetFilter"
+              >
                 <button class="btn btn-danger btn-block ripple">Reset</button>
               </div>
               <div class="col-md-6 mt-md-0 mt-3 order-first">
-                <button class="btn btn-primary btn-block ripple">
+                <button
+                  class="btn btn-primary btn-block ripple"
+                  @click="filterReservations"
+                >
                   <i class="ti-filter"></i>Filter
                 </button>
               </div>
@@ -166,7 +172,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      filterOpen: true,
+      filterOpen: false,
       buses: [],
       pickup_points: [],
       filter: {
@@ -361,6 +367,24 @@ export default {
     },
     closeFilter() {
       this.filterOpen = false;
+    },
+    async resetFilter() {
+      this.filter = {
+        bus: "",
+        drop_point: "",
+        pickup_point: "",
+        travel_date: "",
+        reservation_date: "",
+      };
+
+      this.$store.dispatch("startLoading");
+      await this.getBookings();
+      this.$store.dispatch("stopLoading");
+    },
+    async filterReservations() {
+      this.$store.dispatch("startLoading");
+      await this.getBookings();
+      this.$store.dispatch("stopLoading");
     },
   },
   async created() {

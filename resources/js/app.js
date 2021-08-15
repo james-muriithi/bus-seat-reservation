@@ -83,6 +83,10 @@ Vue.component("dropoff-point-index", () =>
 Vue.component("password-edit", () =>
     import("./components/auth/PasswordEdit.vue")
 );
+//amenities
+Vue.component("amenities-index", () =>
+    import("./components/amenities/AmenitiesIndex.vue")
+);
 
 //global components
 Vue.component('FilterSidebar', () => import('./components/UI/FilterSidebar.vue'));
