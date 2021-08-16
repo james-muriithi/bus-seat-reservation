@@ -88,8 +88,13 @@ Vue.component("amenities-index", () =>
     import("./components/amenities/AmenitiesIndex.vue")
 );
 
+// trips
+Vue.component("trips-index", () => import("./components/trips/TripsIndex.vue"));
+
 //global components
-Vue.component('FilterSidebar', () => import('./components/UI/FilterSidebar.vue'));
+Vue.component("FilterSidebar", () =>
+    import("./components/UI/FilterSidebar.vue")
+);
 
 // vuex store
 import store from "./store";

@@ -89,6 +89,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('payments/destroy', 'PaymentController@massDestroy')->name('payments.massDestroy');
     Route::resource('payments', 'PaymentController');
 
+    //Trips
+    Route::resource('trips', 'TripController');
+
     // Reports
     Route::get('reports/dashboard', 'ReportsController@dashboard')->name('reports.dashboard');
 

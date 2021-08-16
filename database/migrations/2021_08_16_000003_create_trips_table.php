@@ -4,13 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReservationsTable extends Migration
+class CreateTripsTable extends Migration
 {
     public function up()
     {
-        Schema::create('reservations', function (Blueprint $table) {
+        Schema::create('trips', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->date('reservation_date');
+            $table->string('trip_id')->nullable();
+            $table->date('travel_date');
+            $table->integer('status')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

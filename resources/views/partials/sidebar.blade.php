@@ -131,14 +131,20 @@
                                     </a>
                                 </li>
                                 <li class="sidebar-item">
-                                    <a href="{{ route("admin.reservations.index") }}" class="sidebar-link"><span
+                                    <a href="{{ route('admin.reservations.index') }}" class="sidebar-link"><span
                                             class="hide-menu">
                                             {{ trans('cruds.reservation.title') }}s
                                         </span>
                                     </a>
                                 </li>
                                 <li class="sidebar-item">
-                                    <a href="{{ route("admin.payments.index") }}" class="sidebar-link"><span
+                                    <a href="{{ route('admin.trips.index') }}" class="sidebar-link"><span class="hide-menu">
+                                            Trips
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a href="{{ route('admin.payments.index') }}" class="sidebar-link"><span
                                             class="hide-menu">
                                             {{ trans('cruds.payment.title') }}
                                         </span>

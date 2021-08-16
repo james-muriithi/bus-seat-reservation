@@ -17,17 +17,24 @@ class StoreReservationRequest extends FormRequest
     public function rules()
     {
         return [
-            'passenger_id' => [
-                'required',
+            'ref' => [
+                'string',
+                'nullable',
+            ],
+            'passengers.*' => [
                 'integer',
+            ],
+            'passengers' => [
+                'required',
+                'array',
             ],
             'pickup_point_id' => [
                 'required',
                 'integer',
             ],
-            'reservation_date' => [
+            'trip_id' => [
                 'required',
-                'date_format:' . config('panel.date_format'),
+                'integer',
             ],
             'seats.*' => [
                 'integer',
@@ -35,6 +42,10 @@ class StoreReservationRequest extends FormRequest
             'seats' => [
                 'required',
                 'array',
+            ],
+            'reservation_date' => [
+                'required',
+                'date_format:' . config('panel.date_format'),
             ],
         ];
     }
