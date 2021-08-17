@@ -420,6 +420,26 @@ class PermissionsTableSeeder extends Seeder
             ],
             [
                 'id'    => 103,
+                'title' => 'trip_create',
+            ],
+            [
+                'id'    => 104,
+                'title' => 'trip_edit',
+            ],
+            [
+                'id'    => 105,
+                'title' => 'trip_show',
+            ],
+            [
+                'id'    => 106,
+                'title' => 'trip_delete',
+            ],
+            [
+                'id'    => 107,
+                'title' => 'trip_access',
+            ],
+            [
+                'id'    => 108,
                 'title' => 'profile_password_edit',
             ],
         ];
