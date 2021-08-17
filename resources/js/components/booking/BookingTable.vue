@@ -63,12 +63,39 @@
             <i class="fa fa-trash fs-16 text-danger"></i>
           </a>
         </span>
+
+        <span v-else-if="props.column.field == 'passenger'">
+          {{ firstPassenger(props.row.seats) }}
+        </span>
+
+        <span v-else-if="props.column.field == 'trip_id'">
+          <a :href="`/admin/trips/${ props.row.trip.id }`">
+            {{ props.row.trip.trip_id }}
+          </a>
+        </span>
+
+        <span v-else-if="props.column.field == 'bus_name'">
+          <a :href="`/admin/buses/${ props.row.trip.route.bus.id }`">
+            {{ props.row.trip.route.bus.bus_name }} - {{ props.row.trip.route.bus.bus_reg_no }}
+          </a>
+        </span>
+
+        <span v-else-if="props.column.field == 'route'">
+          <a :href="`/admin/routes/${props.row.trip.route.id}`">
+            {{ props.row.trip.route.board_point }} - {{ props.row.trip.route.drop_point }}
+          </a>
+        </span>
+
+        <span v-else-if="props.column.field == 'pickup_time'">
+          {{ props.row.trip.route.board_time }}
+        </span>
+
         <span v-else-if="props.column.field == 'seats'">
           <span
             class="badge badge-pill badge-primary mx-1 px-10 py-1"
-            v-for="seat in props.row.seats.split(',')"
+            v-for="seat in props.row.seats"
             :key="seat"
-            >{{ seat }}</span
+            >{{ seat.name }}</span
           >
         </span>
       </template>
@@ -186,17 +213,17 @@ export default {
         reservation_date: "",
       },
       reservations: [
-        {
-          id: 1,
-          passenger: "James Muriithi",
-          trip_id: "TR-23SJ349",
-          bus_name: "Rello - KCP 234K",
-          route: "Nairobi - Malindi",
-          pickup_time: "16:30",
-          seats: "A25",
-          travel_date: "2021-07-21",
-          reservation_date: "2021-07-21",
-        },
+        // {
+        //   id: 1,
+        //   passenger: "James Muriithi",
+        //   trip_id: "TR-23SJ349",
+        //   bus_name: "Rello - KCP 234K",
+        //   route: "Nairobi - Malindi",
+        //   pickup_time: "16:30",
+        //   seats: "A25",
+        //   travel_date: "2021-07-21",
+        //   reservation_date: "2021-07-21",
+        // },
       ],
     };
   },
@@ -247,12 +274,12 @@ export default {
         },
         {
           label: "Reservation Date",
-          field: "reservation_date",
+          field: "created_at",
           type: "date",
           thClass: "text-left",
           tdClass: "text-left",
-          dateInputFormat: "yyyy-MM-dd",
-          dateOutputFormat: "MMM do yyyy",
+          dateInputFormat: "yyyy-MM-dd HH:mm:ss",
+          dateOutputFormat: "MMM do yyyy HH:mm",
         },
         {
           label: "Actions",
@@ -266,6 +293,9 @@ export default {
     },
   },
   methods: {
+    firstPassenger(reservation){
+      return reservation[0]?.reservation?.passenger.name;
+    },
     getBookings() {
       let url = "/admin/reservations";
 
@@ -278,7 +308,7 @@ export default {
       axios
         .get(url, { params })
         .then((res) => {
-          console.log(res);
+          this.reservations = res.data.data
         })
         .catch((err) => console.log(err));
     },

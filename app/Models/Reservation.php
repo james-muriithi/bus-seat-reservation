@@ -34,12 +34,15 @@ class Reservation extends Model
 
     public function trip()
     {
-        return $this->belongsTo(Trip::class, 'trip_id');
+        return $this->belongsTo(Trip::class, 'trip_id')->with('route','route.bus');
     }
 
     public function seats()
     {
-        return $this->belongsToMany(Seat::class)->withPivot("amount_paid", "ticket_number");
+        return $this->belongsToMany(Seat::class)
+            ->using(ReservationSeat::class)
+            ->as("reservation")
+            ->withPivot("amount_paid", "ticket_number", "passenger_id");
     }
 
     public function pickup_point()

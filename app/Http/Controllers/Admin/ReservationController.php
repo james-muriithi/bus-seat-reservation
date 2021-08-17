@@ -22,7 +22,7 @@ class ReservationController extends Controller
     {
         abort_if(Gate::denies('reservation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $reservations = Reservation::with(['passengers', 'pickup_point', 'trip']);
+        $reservations = Reservation::with(['seats', 'pickup_point', 'trip']);
         
         if ($request->query("trip")) {
             $reservations = $reservations->where("trip_id", $request->query("trip"));
