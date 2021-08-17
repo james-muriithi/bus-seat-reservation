@@ -100,7 +100,7 @@
 
     <create-trip
       :default-route="defaultCreateRoute"
-      @update="fetchPickupPoints(false)"
+      @update="fetchTrips(false)"
     ></create-trip>
   </div>
 </template>

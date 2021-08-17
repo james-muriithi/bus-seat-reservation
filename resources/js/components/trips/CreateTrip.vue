@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     resetForm() {
-      this.pickupPoint = {
+      this.trip = {
         route_id: this.defaultRoute,
         status: 1,
         pickup_time: "",
@@ -143,6 +143,8 @@ export default {
             .post("/admin/trips", this.trip)
             .then((res) => {
               this.closeModal();
+
+              console.log(res.data);
 
               this.$nextTick(() => {
                 this.$emit("update");

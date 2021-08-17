@@ -80,6 +80,7 @@ class RouteController extends Controller
             'drop_off_point' => $request->input('drop_point'),
             'drop_time' => $request->input('drop_time'),
             'route_id' => $route->id,
+            'status' => 1,
         ]);
         //create board point
         PickupPoint::create([

@@ -23,7 +23,7 @@ class Trip extends Model
     ];
 
     protected $fillable = [
-        'trip',
+        'trip_id',
         'route_id',
         'travel_date',
         'status',

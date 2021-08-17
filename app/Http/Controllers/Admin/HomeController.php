@@ -25,13 +25,13 @@ class HomeController
                         "icon" => '<i class="fa fa-bus"></i>'
                     ],
                     [
-                        "title" => "Customers",
-                        "number" => $routes->count(),
+                        "title" => "Passengers",
+                        "number" => $passengers->count(),
                         "icon" => '<i class="fa fa-users"></i>'
                     ],
                     [
                         "title" => "Routes",
-                        "number" => $passengers->count(),
+                        "number" => $routes->count(),
                         "icon" => '<i class="ti-vector"></i>'
                     ],
                 ],

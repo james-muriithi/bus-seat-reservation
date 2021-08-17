@@ -42,6 +42,9 @@ class TripController extends Controller
 
     public function store(StoreTripRequest $request)
     {
+        $request->merge(["trip_id" => $this->generateTripId()]);
+        return $request->all();
+
         $trip = Trip::create($request->all());
 
         return redirect()->route('admin.trips.index');
@@ -90,5 +93,14 @@ class TripController extends Controller
         Trip::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function generateTripId($length = 7, $prefix = 'TR-', $uppercase = true)
+    {
+        $random = substr(str_shuffle(MD5(microtime())), 0, $length);
+        if ($uppercase) {
+           $random = strtoupper($random);
+        }
+        return $prefix.$random;
     }
 }

@@ -102,11 +102,11 @@ class ReportsController extends Controller
         $date_range = \Carbon\Carbon::today()->subDays(6);
 
         $reservations = Reservation::query()
-        ->where('reservation_date', '>=', $date_range)
-        ->groupBy(DB::raw("DATE_FORMAT(reservation_date,'%Y-%m-%d')"))
+        ->where('travel_date', '>=', $date_range)
+        ->groupBy(DB::raw("DATE_FORMAT(travel_date,'%Y-%m-%d')"))
         ->orderBy('date', 'asc')
         ->get([
-            DB::raw(DB::raw("DATE_FORMAT(reservation_date,'%Y-%m-%d') as date")),
+            DB::raw(DB::raw("DATE_FORMAT(travel_date,'%Y-%m-%d') as date")),
             DB::raw('SUM(id) AS count'),
         ])
         ->pluck('count', 'date');
