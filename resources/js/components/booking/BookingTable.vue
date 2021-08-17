@@ -69,21 +69,27 @@
         </span>
 
         <span v-else-if="props.column.field == 'trip_id'">
-          <a :href="`/admin/trips/${ props.row.trip.id }`">
+          <a :href="`/admin/trips/${props.row.trip.id}`">
             {{ props.row.trip.trip_id }}
           </a>
         </span>
 
         <span v-else-if="props.column.field == 'bus_name'">
-          <a :href="`/admin/buses/${ props.row.trip.route.bus.id }`">
-            {{ props.row.trip.route.bus.bus_name }} - {{ props.row.trip.route.bus.bus_reg_no }}
+          <a :href="`/admin/buses/${props.row.trip.route.bus.id}`">
+            {{ props.row.trip.route.bus.bus_name }} -
+            {{ props.row.trip.route.bus.bus_reg_no }}
           </a>
         </span>
 
         <span v-else-if="props.column.field == 'route'">
           <a :href="`/admin/routes/${props.row.trip.route.id}`">
-            {{ props.row.trip.route.board_point }} - {{ props.row.trip.route.drop_point }}
+            {{ props.row.trip.route.board_point }} -
+            {{ props.row.trip.route.drop_point }}
           </a>
+        </span>
+
+        <span v-else-if="props.column.field == 'pickup_point'">
+          {{ props.row.pickup_point.pickup_point }}
         </span>
 
         <span v-else-if="props.column.field == 'pickup_time'">
@@ -94,7 +100,7 @@
           <span
             class="badge badge-pill badge-primary mx-1 px-10 py-1"
             v-for="seat in props.row.seats"
-            :key="seat"
+            :key="seat.id"
             >{{ seat.name }}</span
           >
         </span>
@@ -252,6 +258,10 @@ export default {
           field: "route",
         },
         {
+          label: "Pickup Point",
+          field: "pickup_point",
+        },
+        {
           label: "Pickup Time",
           field: "pickup_time",
         },
@@ -293,7 +303,7 @@ export default {
     },
   },
   methods: {
-    firstPassenger(reservation){
+    firstPassenger(reservation) {
       return reservation[0]?.reservation?.passenger.name;
     },
     getBookings() {
@@ -308,7 +318,7 @@ export default {
       axios
         .get(url, { params })
         .then((res) => {
-          this.reservations = res.data.data
+          this.reservations = res.data.data;
         })
         .catch((err) => console.log(err));
     },
@@ -353,12 +363,20 @@ export default {
       let pdf = new jsPDF("p", "pt");
       let columns = [
         {
+          title: "Passenger",
+          dataKey: "passenger",
+        },
+        {
+          title: "Trip",
+          dataKey: "trip_id",
+        },
+        {
           title: "Bus Name",
           dataKey: "bus_name",
         },
         {
-          title: "Bus Reg",
-          dataKey: "bus_reg",
+          title: "route",
+          dataKey: "route",
         },
         {
           title: "Pickup Point",
@@ -369,25 +387,57 @@ export default {
           dataKey: "pickup_time",
         },
         {
-          title: "Dropoff Point",
-          dataKey: "dropoff_point",
-        },
-        {
           title: "Seats",
           dataKey: "seats",
         },
         {
-          title: "Travel At",
+          title: "Travel Date",
           dataKey: "travel_date",
         },
         {
           title: "Created At",
-          dataKey: "reservation_date",
+          dataKey: "created_at",
         },
       ];
       autoTable(pdf, {
         columns,
         body: self.reservations,
+        didParseCell: function (data) {
+          if (data.column.dataKey === "passenger") {
+            if (data.row.raw.seats && typeof data.row.raw.seats === "object") {
+              data.cell.text = self.firstPassenger(data.row.raw.seats) || "";
+            }
+          } else if (data.column.dataKey === "trip_id") {
+            if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
+              data.cell.text = data.row.raw.trip.trip_id;
+            } 
+          } else if (data.column.dataKey === "route") {
+            if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
+              data.cell.text = `${data.row.raw.trip.route.board_point} - ${data.row.raw.trip.route.drop_point}`;
+            }
+          } else if (data.column.dataKey === "bus_name") {
+            if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
+              data.cell.text = `${data.row.raw.trip.route.bus.bus_name} - ${data.row.raw.trip.route.bus.bus_reg_no}`;
+            }
+          } else if (data.column.dataKey === "pickup_point") {
+            if (data.row.raw.pickup_point && typeof data.row.raw.pickup_point === "object") {
+              data.cell.text = `${data.row.raw.pickup_point.pickup_point}`;
+            }
+          }else if (data.column.dataKey === "pickup_time") {
+            if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
+              data.cell.text = `${data.row.raw.trip.route.board_time}`;
+            }
+          } else if (data.column.dataKey === "seats") {
+            if (data.row.raw.seats && Array.isArray(data.row.raw.seats)) {
+              data.cell.text =
+                data.row.raw.seats.map((seat) => seat.name).join(", ");
+            }
+          } else if (data.column.dataKey === "status") {
+            if (data.cell.raw == 1 || data.cell.raw == 0) {
+              data.cell.text = data.cell.raw ? "Active" : "Inactive";
+            }
+          }
+        },
       });
       pdf.text("Reservations List", 40, 25);
       this.addPdfFooters(pdf);
