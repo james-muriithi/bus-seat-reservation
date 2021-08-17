@@ -1,79 +1,32 @@
-@extends('layouts.admin')
+@extends('layouts.app')
+@section('styles')
+    @parent
+
+@endsection
 @section('content')
-
-<div class="card">
-    <div class="card-header">
-        {{ trans('global.show') }} {{ trans('cruds.trip.title') }}
-    </div>
-
-    <div class="card-body">
-        <div class="form-group">
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.trips.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
-            <table class="table table-bordered table-striped">
-                <tbody>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.trip.fields.id') }}
-                        </th>
-                        <td>
-                            {{ $trip->id }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.trip.fields.trip') }}
-                        </th>
-                        <td>
-                            {{ $trip->trip }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.trip.fields.route') }}
-                        </th>
-                        <td>
-                            {{ $trip->route->board_point ?? '' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.trip.fields.travel_date') }}
-                        </th>
-                        <td>
-                            {{ $trip->travel_date }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.trip.fields.status') }}
-                        </th>
-                        <td>
-                            {{ $trip->status }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.trip.fields.created_by') }}
-                        </th>
-                        <td>
-                            {{ $trip->created_by->name ?? '' }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.trips.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        @include('partials.navbar')
+        @include('partials.sidebar')
+        <div class="page-wrapper">
+            <bread-crumb title="{{ $trip->trip_id }}" :items="[
+                {
+                    title: 'Home',
+                    url: '{{ route('admin.home') }}'
+                },
+                {
+                    title: 'Trips',
+                    url: '{{ route('admin.trips.index') }}'
+                },
+                {
+                    title: 'Trip View',
+                    current: true
+                }
+            ]"></bread-crumb>
+            <trips-view :trip="{{$trip}}" />
         </div>
     </div>
-</div>
-
-
-
+@endsection
+@section('scripts')
+    @parent
 @endsection

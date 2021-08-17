@@ -6,94 +6,105 @@ require("./toastr");
 window.Vue = require("vue").default;
 
 Vue.component("example-component", () =>
-    import("./components/ExampleComponent.vue")
+    import ("./components/ExampleComponent.vue")
 );
 Vue.component("dashboard", () =>
-    import("./components/dashboard/Dashboard.vue")
+    import ("./components/dashboard/Dashboard.vue")
 );
-Vue.component("bread-crumb", () => import("./components/UI/BreadCrumb.vue"));
-Vue.component("spinner", () => import("./components/UI/Spinner.vue"));
+Vue.component("bread-crumb", () =>
+    import ("./components/UI/BreadCrumb.vue"));
+Vue.component("spinner", () =>
+    import ("./components/UI/Spinner.vue"));
 Vue.component("booking-index", () =>
-    import("./components/booking/BookingIndex.vue")
+    import ("./components/booking/BookingIndex.vue")
 );
 Vue.component("bus-type-index", () =>
-    import("./components/bus-type/BusTypeIndex.vue")
+    import ("./components/bus-type/BusTypeIndex.vue")
 );
 // buses
-Vue.component("bus-index", () => import("./components/buses/BusIndex.vue"));
-Vue.component("bus-create", () => import("./components/buses/CreateBus.vue"));
-Vue.component("bus-view", () => import("./components/buses/ViewBus.vue"));
-Vue.component("bus-edit", () => import("./components/buses/EditBus.vue"));
+Vue.component("bus-index", () =>
+    import ("./components/buses/BusIndex.vue"));
+Vue.component("bus-create", () =>
+    import ("./components/buses/CreateBus.vue"));
+Vue.component("bus-view", () =>
+    import ("./components/buses/ViewBus.vue"));
+Vue.component("bus-edit", () =>
+    import ("./components/buses/EditBus.vue"));
 
 // bus seat class
 Vue.component("bus-seat-classes-index", () =>
-    import("./components/bus-seat-classes/SeatClassIndex.vue")
+    import ("./components/bus-seat-classes/SeatClassIndex.vue")
 );
 
 //seats layout
 Vue.component("seats-layout-index", () =>
-    import("./components/seat-layout/SeatsLayoutIndex.vue")
+    import ("./components/seat-layout/SeatsLayoutIndex.vue")
 );
 
 // bus ratings
 Vue.component("bus-ratings-index", () =>
-    import("./components/bus-ratings/BusRatingsIndex.vue")
+    import ("./components/bus-ratings/BusRatingsIndex.vue")
 );
 
 //settings
 Vue.component("currency-index", () =>
-    import("./components/currencies/CurrencyIndex.vue")
+    import ("./components/currencies/CurrencyIndex.vue")
 );
 Vue.component("payment-method-index", () =>
-    import("./components/payment-methods/PaymentMethodsIndex.vue")
+    import ("./components/payment-methods/PaymentMethodsIndex.vue")
 );
 Vue.component("system-settings-index", () =>
-    import("./components/system-settings/SystemSettingsIndex.vue")
+    import ("./components/system-settings/SystemSettingsIndex.vue")
 );
 
 //passengers
 Vue.component("passenger-index", () =>
-    import("./components/passengers/PassengerIndex.vue")
+    import ("./components/passengers/PassengerIndex.vue")
 );
 Vue.component("passenger-view", () =>
-    import("./components/passengers/ViewPassenger.vue")
+    import ("./components/passengers/ViewPassenger.vue")
 );
 
 // routes
 Vue.component("route-index", () =>
-    import("./components/routes/RoutesIndex.vue")
+    import ("./components/routes/RoutesIndex.vue")
 );
 Vue.component("route-create", () =>
-    import("./components/routes/CreateRoute.vue")
+    import ("./components/routes/CreateRoute.vue")
 );
-Vue.component("route-edit", () => import("./components/routes/EditRoute.vue"));
-Vue.component("route-view", () => import("./components/routes/ViewRoute.vue"));
+Vue.component("route-edit", () =>
+    import ("./components/routes/EditRoute.vue"));
+Vue.component("route-view", () =>
+    import ("./components/routes/ViewRoute.vue"));
 
 //pickup points
 Vue.component("pickup-point-index", () =>
-    import("./components/pickup/PickupIndex.vue")
+    import ("./components/pickup/PickupIndex.vue")
 );
 
 //dropoff points
 Vue.component("dropoff-point-index", () =>
-    import("./components/drop-off-point/DropOffPointIndex.vue")
+    import ("./components/drop-off-point/DropOffPointIndex.vue")
 );
 
 // auth
 Vue.component("password-edit", () =>
-    import("./components/auth/PasswordEdit.vue")
+    import ("./components/auth/PasswordEdit.vue")
 );
 //amenities
 Vue.component("amenities-index", () =>
-    import("./components/amenities/AmenitiesIndex.vue")
+    import ("./components/amenities/AmenitiesIndex.vue")
 );
 
 // trips
-Vue.component("trips-index", () => import("./components/trips/TripsIndex.vue"));
+Vue.component("trips-index", () =>
+    import ("./components/trips/TripsIndex.vue"));
+Vue.component("trips-view", () =>
+    import ("./components/trips/ViewTrip.vue"));
 
 //global components
 Vue.component("FilterSidebar", () =>
-    import("./components/UI/FilterSidebar.vue")
+    import ("./components/UI/FilterSidebar.vue")
 );
 
 // vuex store
@@ -134,9 +145,9 @@ $(function() {
             $(this)
                 .children("a")
                 .addClass("active");
-            $(this).parent("ul#sidebarnav").length === 0
-                ? $(this).addClass("active")
-                : $(this).addClass("selected");
+            $(this).parent("ul#sidebarnav").length === 0 ?
+                $(this).addClass("active") :
+                $(this).addClass("selected");
         } else if (!$(this).is("ul") && $(this).children("a").length === 0) {
             $(this).addClass("selected");
         } else if ($(this).is("ul")) {

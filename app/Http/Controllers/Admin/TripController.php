@@ -20,7 +20,9 @@ class TripController extends Controller
     {
         abort_if(Gate::denies('trip_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $trips = Trip::with(['route', 'created_by'])->get();
+        $trips = Trip::with(['route', 'created_by', 'reservations'])
+            ->latest()
+            ->get();
 
         if ($request->ajax()) {
             return new TripResource($trips);
@@ -43,9 +45,15 @@ class TripController extends Controller
     public function store(StoreTripRequest $request)
     {
         $request->merge(["trip_id" => $this->generateTripId()]);
-        return $request->all();
 
         $trip = Trip::create($request->all());
+        $trip->created_by()->associate(auth()->user);
+        $trip->save();
+
+        if ($request->ajax()) {
+            return (new TripResource($trip))->response()
+                ->setStatusCode(Response::HTTP_CREATED);
+        }
 
         return redirect()->route('admin.trips.index');
     }
@@ -74,7 +82,7 @@ class TripController extends Controller
     {
         abort_if(Gate::denies('trip_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $trip->load('route', 'created_by');
+        $trip->load('route','created_by', 'reservations');
 
         return view('admin.trips.show', compact('trip'));
     }
@@ -99,8 +107,8 @@ class TripController extends Controller
     {
         $random = substr(str_shuffle(MD5(microtime())), 0, $length);
         if ($uppercase) {
-           $random = strtoupper($random);
+            $random = strtoupper($random);
         }
-        return $prefix.$random;
+        return $prefix . $random;
     }
 }

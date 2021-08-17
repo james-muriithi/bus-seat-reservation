@@ -168,6 +168,9 @@ export default {
       type: Number,
       default: null,
     },
+    trip_id: {
+      default: null,
+    },
   },
   data() {
     return {
@@ -185,12 +188,11 @@ export default {
       reservations: [
         {
           id: 1,
-          bus_name: "Rello",
-          bus_reg: "KCP 234K",
-          pickup_point: "Nairobi",
+          passenger: "James Muriithi",
+          trip_id: "TR-23SJ349",
+          bus_name: "Rello - KCP 234K",
+          route: "Nairobi - Malindi",
           pickup_time: "16:30",
-          dropoff_point: "Malindi",
-          dropoff_time: "11:00",
           seats: "A25",
           travel_date: "2021-07-21",
           reservation_date: "2021-07-21",
@@ -207,24 +209,24 @@ export default {
     columns() {
       return [
         {
+          label: "Passenger",
+          field: "passenger",
+        },
+        {
+          label: "Trip",
+          field: "trip_id",
+        },
+        {
           label: "Bus Name",
           field: "bus_name",
         },
         {
-          label: "Bus Reg",
-          field: "bus_reg",
-        },
-        {
-          label: "Pickup Point",
-          field: "pickup_point",
+          label: "Route",
+          field: "route",
         },
         {
           label: "Pickup Time",
           field: "pickup_time",
-        },
-        {
-          label: "Dropoff Point",
-          field: "dropoff_point",
         },
         {
           label: "Seats",
@@ -269,6 +271,7 @@ export default {
 
       const params = {
         limit: this.limit,
+        trip: this.trip_id,
         ...this.filter,
       };
 

@@ -13,6 +13,12 @@ class Trip extends Model
     use SoftDeletes;
     use HasFactory;
 
+    public const TRIP_STATUS = [
+        0 => "Cancelled",
+        1 => "Active", 
+        2 => "Departured"
+    ];
+
     public $table = 'trips';
 
     protected $dates = [
@@ -38,6 +44,15 @@ class Trip extends Model
         return $this->belongsTo(Route::class, 'route_id');
     }
 
+    public function created_by()
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+    
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, "trip_id");
+    }
     public function getTravelDateAttribute($value)
     {
         return $value ? Carbon::parse($value)->format(config('panel.date_format')) : null;
@@ -46,11 +61,6 @@ class Trip extends Model
     public function setTravelDateAttribute($value)
     {
         $this->attributes['travel_date'] = $value ? Carbon::createFromFormat(config('panel.date_format'), $value)->format('Y-m-d') : null;
-    }
-
-    public function created_by()
-    {
-        return $this->belongsTo(User::class, 'created_by_id');
     }
 
     protected function serializeDate(DateTimeInterface $date)

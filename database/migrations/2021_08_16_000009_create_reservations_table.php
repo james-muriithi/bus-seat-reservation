@@ -10,7 +10,7 @@ class CreateReservationsTable extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('ref')->nullable();
+            $table->string('ref')->nullable()->unique("reservation ref");
             $table->date('travel_date');
             $table->timestamps();
             $table->softDeletes();

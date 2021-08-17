@@ -50,12 +50,13 @@
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
           <!-- view bus -->
-          <a :href="`/admin/routes/${props.row.id}`" title="View" class="pr-1">
+          <a :href="`/admin/trips/${props.row.id}`" title="View" class="pr-1">
             <i class="ti-eye fs-16 text-info"></i>
           </a>
           <!-- edit bus -->
           <a
-            :href="`/admin/routes/${props.row.id}/edit`"
+            href="#"
+            @click.prevent="editTrip({ ...props.row })"
             title="Edit"
             class="pr-1"
           >
@@ -72,27 +73,34 @@
         </span>
 
         <span v-else-if="props.column.field == 'bus_name'">
-          {{ props.row.bus.bus_name }}
+          <a :href="`/admin/buses/${props.row.route.bus.id}`">
+            {{ props.row.route.bus.bus_name }} -
+            {{ props.row.route.bus.bus_reg_no }}
+          </a>
         </span>
 
-        <span v-else-if="props.column.field == 'fare'">
-          <span
-            class="badge py-1 px-2 badge-success mr-1"
-            v-for="seatClass in props.row.seatClassesFare"
-            :key="seatClass.id"
-          >
-            {{ seatClass.name }} - {{ seatClass.currencyCode
-            }}{{ seatClass.fare }}
-          </span>
+        <span v-else-if="props.column.field == 'route'">
+          <a :href="`/admin/routes/${props.row.route.id}`">
+            {{ props.row.route.board_point }} -
+            {{ props.row.route.drop_point }}
+          </a>
+        </span>
+
+        <span v-else-if="props.column.field == 'board_time'">
+          {{ props.row.route.board_time }}
+        </span>
+
+        <span v-else-if="props.column.field == 'reservations'">
+          {{ props.row.reservations.length }}
         </span>
 
         <span v-else-if="props.column.field == 'status'">
           <span
-            :class="`badge py-1 px-2 badge-outline-${
-              props.row.status ? 'success' : 'danger'
-            }`"
+            :class="`badge py-1 px-2 badge-outline-${tripStatusClass(
+              props.row.status
+            )}`"
           >
-            {{ props.row.status ? "Active" : "Inactive" }}
+            {{ tripStatus(props.row.status) }}
           </span>
         </span>
       </template>
@@ -102,14 +110,16 @@
       :default-route="defaultCreateRoute"
       @update="fetchTrips(false)"
     ></create-trip>
+    <edit-trip :trip="selectedTrip" @update="fetchTrips(false)"></edit-trip>
   </div>
 </template>
 
 <script>
 const CreateTrip = () => import("./CreateTrip.vue");
+const EditTrip = () => import("./EditTrip.vue");
 
 export default {
-  components: { CreateTrip },
+  components: { CreateTrip, EditTrip },
   props: {
     bus_id: {
       default: null,
@@ -119,7 +129,7 @@ export default {
     return {
       isLoading: false,
       trips: [],
-      selectedTrips: {},
+      selectedTrip: {},
       defaultCreateRoute: "",
     };
   },
@@ -141,6 +151,9 @@ export default {
         {
           label: "Travel Date",
           field: "travel_date",
+          type: "date",
+          dateInputFormat: "yyyy-MM-dd",
+          dateOutputFormat: "MMM do yyyy",
         },
         {
           label: "Pickup Time",
@@ -179,6 +192,22 @@ export default {
     },
   },
   methods: {
+    tripStatus(status) {
+      if (status == 1) {
+        return "Active";
+      } else if (status == 2) {
+        return "Departured";
+      }
+      return "Cancelled";
+    },
+    tripStatusClass(status) {
+      if (status == 1) {
+        return "success";
+      } else if (status == 2) {
+        return "info";
+      }
+      return "danger";
+    },
     fetchTrips(pageLoad = true) {
       this.$store.dispatch("startLoading");
       this.isLoading = pageLoad;
@@ -203,6 +232,10 @@ export default {
           this.$store.dispatch("stopLoading");
           this.isLoading = false;
         });
+    },
+    editTrip(trip) {
+      this.selectedTrip = trip;
+      $("#edit-trip").modal("show");
     },
     deleteRoute(route) {
       this.selecteRoute = route;

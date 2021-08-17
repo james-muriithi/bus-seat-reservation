@@ -37,9 +37,9 @@ class Reservation extends Model
         return $this->belongsTo(Trip::class, 'trip_id');
     }
 
-    public function passengers()
+    public function seats()
     {
-        return $this->belongsToMany(Passenger::class);
+        return $this->belongsToMany(Seat::class)->withPivot("amount_paid", "ticket_number");
     }
 
     public function pickup_point()
@@ -47,9 +47,9 @@ class Reservation extends Model
         return $this->belongsTo(PickupPoint::class, 'pickup_point_id');
     }
 
-    public function seats()
+    public function drop_point()
     {
-        return $this->belongsToMany(Seat::class);
+        return $this->belongsTo(DropOffPoint::class, 'drop_off_point');
     }
 
     public function getTravelDateAttribute($value)
