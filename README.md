@@ -1,5 +1,5 @@
 # Bus Seat Reservation System
-Bus seat reservation project, (Laravel + Vue)  
+Bus seat reservation project, (Laravel + Vue)
 
 ## Demo
 <a href="https://mybus.theschemaqhigh.co.ke/login">demo</a>
