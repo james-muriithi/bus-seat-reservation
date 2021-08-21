@@ -1,10 +1,10 @@
 <template>
-  <div class="modal" id="create-price-variation">
+  <div class="modal" id="edit-price-variation">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Create Price Variation</h4>
+          <h4 class="modal-title">Edit Price Variation</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -12,8 +12,8 @@
 
         <!-- Modal body -->
         <div class="modal-body">
-          <validation-observer ref="createPriceVariation">
-            <form @submit.prevent="createPriceVariation" ref="form">
+          <validation-observer ref="editPriceVariation">
+            <form @submit.prevent="editPriceVariation" ref="form">
               <div class="form-row">
                 <div class="col-md-12">
                   <validation-provider
@@ -95,7 +95,7 @@
                   <div class="" v-if="!!!setSeatClassesFare">
                     <validation-provider
                       name="Fare"
-                      :rules="{ required: true, integer: true, min_value: 0 }"
+                      :rules="{ required: true, min_value: 0 }"
                       v-slot="validationContext"
                     >
                       <div class="form-group">
@@ -181,6 +181,12 @@ import "select2-bootstrap-theme/dist/select2-bootstrap.min.css";
 export default {
   components: { Select2 },
   emits: ["update"],
+  props: {
+    priceVariation: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       routes: [],
@@ -189,13 +195,6 @@ export default {
       setSeatClassesFare: false,
       selectedRouteDetails: {},
       seatClasses: [],
-      priceVariation: {
-        route_id: "",
-        pickup_point_id: "",
-        drop_point_id: "",
-        fare: "",
-        seat_classes: [],
-      },
     };
   },
   computed: {
@@ -217,40 +216,43 @@ export default {
         this.populateDropPoints();
       }
     },
+    priceVariation(newValue) {
+      if (!_.isEmpty(newValue)) {
+        this.setSeatClassesFare = false;
+        this.fillData();
+      }
+    },
   },
   methods: {
-    resetForm() {
-      this.priceVariation = {
-        route_id: "",
-        pickup_point_id: "",
-        drop_point_id: "",
-        fare: "",
-        seat_classes: [],
-      };
-      this.$nextTick(() => {
-        this.$refs.createPriceVariation.reset();
-      });
-    },
-    createPriceVariation() {
-      this.$refs.createPriceVariation.validate().then((valid) => {
+    editPriceVariation() {
+      this.$refs.editPriceVariation.validate().then((valid) => {
         if (valid) {
           //submit data
           this.$store.dispatch("startLoading");
+
+          //remove timestamps
+          delete this.editPriceVariation.created_at;
+          delete this.editPriceVariation.updated_at;
+          delete this.editPriceVariation.deleted_at;
+
           axios
-            .post("/admin/route-price-variations", this.priceVariation)
+            .post(`/admin/route-price-variations/${this.priceVariation.id}`, {
+              ...this.priceVariation,
+              _method: "PUT",
+            })
             .then((res) => {
-              //   this.$store.dispatch("stopLoading");
               this.closeModal();
 
               this.$nextTick(() => {
                 this.$emit("update");
-                this.showSuccessToast("price variation created successfully!");
+                this.showSuccessToast("Price variation edited successfully!");
               });
             })
             .catch((res) => {
+              console.log(res);
               this.$store.dispatch("stopLoading");
               this.showErrorToast(
-                "There was a problem creating the price variation!"
+                "There was a problem editing the price variation class!"
               );
             });
         }
@@ -288,7 +290,7 @@ export default {
         .then((res) => {
           this.selectedRouteDetails = res.data.data;
           this.populatePickupPoints();
-          // this.populateDropPoints();
+          this.populateDropPoints();
           this.setSeatClasses();
           this.$store.dispatch("stopLoading");
         })
@@ -346,18 +348,34 @@ export default {
       }
       return "";
     },
+    async fillData() {
+      if (!_.isEmpty(this.priceVariation)) {
+        await this.fetchRoute(this.routeId);
+        // this.selectedBus = this.route.bus_id;
+        this.seatClasses = this.priceVariation?.route?.bus?.seat_classes;
+        this.setSeatClassesFare =
+          this.priceVariation.variation_seat_classes.length > 0;
+      }
+
+      if (this.setSeatClassesFare && this.seatClasses.length > 0) {
+        this.priceVariation.seat_classes = [];
+        this.seatClasses.forEach((seatClass) => {
+          const sclass = this.priceVariation.variation_seat_classes.find(
+            (sclass) => sclass.id == seatClass.id
+          );
+
+          this.priceVariation.seat_classes[seatClass.id] = sclass
+            ? sclass.fare
+            : "";
+        });
+      }
+    },
     closeModal() {
-      $("#create-price-variation").modal("hide");
+      $("#edit-price-variation").modal("hide");
     },
   },
-  created() {
-    const self = this;
-    $(function () {
-      $("#create-price-variation").on("show.bs.modal", function (e) {
-        self.resetForm();
-        self.fetchRoutes();
-      });
-    });
+  async created() {
+    await this.fetchRoutes();
   },
 };
 </script>

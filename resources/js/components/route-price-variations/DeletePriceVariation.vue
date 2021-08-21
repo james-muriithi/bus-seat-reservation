@@ -1,10 +1,10 @@
 <template>
-  <div class="modal" id="delete-seat-class">
+  <div class="modal" id="delete-price-variation">
     <div class="modal-dialog">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Delete Seat Class</h4>
+          <h4 class="modal-title">Delete Price Variation</h4>
           <button type="button" class="close" data-dismiss="modal">
             &times;
           </button>
@@ -14,13 +14,13 @@
         <div class="modal-body">
           <div class="mb-2">
             <p>
-              Are you sure you want to delete <b>{{ seatClass.name }}</b> seat class?
+              Are you sure you want to delete price variation?
             </p>
           </div>
 
           <div class="col-12 mt-3 text-right">
             <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
-            <button class="btn btn-danger" @click="deleteSeatClass">
+            <button class="btn btn-danger" @click="deletePriceVariation">
               Delete
             </button>
           </div>
@@ -43,10 +43,10 @@ export default {
     return {};
   },
   methods: {
-    deleteSeatClass() {
+    deletePriceVariation() {
       this.$store.dispatch("startLoading");
       axios
-        .post(`/admin/bus-seat-classes/${this.seatClass.id}`, {
+        .post(`/admin/route-price-variations/${this.priceVariation.id}`, {
           _method: "DELETE",
         })
         .then((res) => {
@@ -54,17 +54,17 @@ export default {
 
           this.$nextTick(() => {
             this.$emit("update");
-            this.showSuccessToast('Bus seat class deleted successfully!')
+            this.showSuccessToast('Price variation deleted successfully!')
           });
         })
         .catch((res) => {
           this.closeModal();
           this.$store.dispatch("stopLoading");
-          this.showErrorToast('There was an error deleting the seat class!')
+          this.showErrorToast('There was an error deleting the price variation!')
         });
     },
     closeModal() {
-      $("#delete-seat-class").modal("hide");
+      $("#delete-price-variation").modal("hide");
     },
   },
   created() {

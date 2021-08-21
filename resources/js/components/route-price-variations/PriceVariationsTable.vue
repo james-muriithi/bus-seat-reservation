@@ -49,7 +49,7 @@
         <span v-if="props.column.field == 'actions'">
           <a
             href="#"
-            @click.prevent="editSeatClass({ ...props.row })"
+            @click.prevent="editPriceVariation({ ...props.row })"
             title="Edit"
             class="pr-1"
           >
@@ -58,56 +58,66 @@
           <a
             title="Delete"
             href="#"
-            @click.prevent="deleteSeatClass({ ...props.row })"
+            @click.prevent="deletePriceVariation({ ...props.row })"
           >
             <i class="fa fa-trash fs-16 text-danger"></i>
           </a>
         </span>
 
-        <span v-else-if="props.column.field == 'status'">
-          <span
-            :class="`badge py-1 px-2 badge-outline-${
-              props.row.status ? 'success' : 'danger'
-            }`"
-          >
-            {{ props.row.status ? "Active" : "Inactive" }}
-          </span>
+        <span v-else-if="props.column.field == 'route'">
+          {{ props.row.route.bus.formatted_name }}
+          {{ props.row.route.route_name }}
         </span>
 
-        <span v-else-if="props.column.field == 'color'">
-          <div
-            :style="{
-              background: props.row.color,
-              width: '30px',
-              height: '30px',
-              borderRadius: '5px'
-            }"
-          ></div>
+        <span v-else-if="props.column.field == 'pickup_point'">
+          {{ props.row.pickup_point.pickup_point }}
+        </span>
+
+        <span v-else-if="props.column.field == 'drop_point'">
+          {{ props.row.drop_point.drop_off_point }}
+        </span>
+
+        <span v-else-if="props.column.field == 'fare'">
+          <span v-if="props.row.seatClassesFare.length > 0">
+            <span
+              class="badge py-1 px-2 badge-success mr-1"
+              v-for="seatClass in props.row.seatClassesFare"
+              :key="seatClass.id"
+            >
+              {{ seatClass.name }} - {{ seatClass.currencyCode
+              }}{{ seatClass.fare }}
+            </span>
+          </span>
+          <span v-else>
+            {{ props.row.fare }}
+          </span>
         </span>
       </template>
     </vue-good-table>
 
-    <create-price-variation @update="fetchPriceVariations(false)"></create-price-variation>
-
-    <!-- <edit-seat-class
-      :seatClass="selectedSeatClass"
+    <create-price-variation
       @update="fetchPriceVariations(false)"
-    ></edit-seat-class> -->
+    ></create-price-variation>
 
-    <!-- <delete-seat-class
+    <edit-price-variation
+      :priceVariation="selectedPriceVariation"
       @update="fetchPriceVariations(false)"
-      :seatClass="selectedSeatClass"
-    ></delete-seat-class> -->
+    ></edit-price-variation>
+
+    <delete-price-variation
+      @update="fetchPriceVariations(false)"
+      :seatClass="selectedPriceVariation"
+    ></delete-price-variation>
   </div>
 </template>
 
 <script>
-// const EditSeatClass = () => import("./EditSeatClass.vue");
+const EditPriceVariation = () => import("./EditPriceVariation.vue");
 const CreatePriceVariation = () => import("./CreatePriceVariation.vue");
-// const DeleteSeatClass = () => import("./DeleteSeatClass.vue");
+const DeletePriceVariation = () => import("./DeletePriceVariation.vue");
 
 export default {
-  components: { CreatePriceVariation },
+  components: { CreatePriceVariation, EditPriceVariation, DeletePriceVariation },
   data() {
     return {
       isLoading: false,

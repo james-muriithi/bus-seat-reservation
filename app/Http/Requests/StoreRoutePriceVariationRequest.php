@@ -25,11 +25,17 @@ class StoreRoutePriceVariationRequest extends FormRequest
                 'required',
                 'integer',
             ],
-            'seat_classes.*' => [
+            'route_id' => [
+                'required',
                 'integer',
+            ],
+            'fare' => [
+                // 'integer',
+                'required_if:seat_classes.*,null',
             ],
             'seat_classes' => [
                 'array',
+                'required_if:fare,null'
             ],
         ];
     }

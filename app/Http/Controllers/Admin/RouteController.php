@@ -81,12 +81,14 @@ class RouteController extends Controller
             'drop_time' => $request->input('drop_time'),
             'route_id' => $route->id,
             'status' => 1,
+            'main' => 1,
         ]);
         //create board point
         PickupPoint::create([
             'pickup_point' => $request->input('board_point'),
             'pickup_time' => $request->input('board_time'),
             'status' => 1,
+            'main' => 1,
             'route_id' => $route->id,
         ]);
 

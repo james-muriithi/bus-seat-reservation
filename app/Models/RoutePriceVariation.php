@@ -14,6 +14,8 @@ class RoutePriceVariation extends Model
 
     public $table = 'route_price_variations';
 
+    public $appends = ["seatClassesFare"];
+
     protected $dates = [
         'created_at',
         'updated_at',
@@ -24,6 +26,7 @@ class RoutePriceVariation extends Model
         'pickup_point_id',
         'drop_point_id',
         'fare',
+        'route_id',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -44,13 +47,32 @@ class RoutePriceVariation extends Model
         return $this->belongsTo(DropOffPoint::class, 'drop_point_id');
     }
 
-    public function seat_classes()
+    public function variation_seat_classes()
     {
-        return $this->belongsToMany(BusSeatClass::class);
+        return $this->belongsToMany(BusSeatClass::class)->withPivot('fare');
     }
 
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function getSeatClassesFareAttribute()
+    {
+        $seatClasses = $this->variation_seat_classes->map(function ($seatClass) {
+            $seatClass->fare = $this->fare;
+            $seatClass->currencyCode = defaultCurrrency();
+            return $seatClass;
+        });
+
+        if ($this->variation_seat_classes->count() > 0) {
+            return $seatClasses->merge($this->variation_seat_classes->map(function ($seatClass) {
+                $seatClass->fare = floatval(data_get($seatClass, 'pivot.fare') ?? null);
+                $seatClass->currencyCode = defaultCurrrency();
+                return $seatClass;
+            }));
+        } else {
+            return $seatClasses;
+        }
     }
 }
