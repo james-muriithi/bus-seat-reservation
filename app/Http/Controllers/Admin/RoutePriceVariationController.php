@@ -22,7 +22,13 @@ class RoutePriceVariationController extends Controller
         abort_if(Gate::denies('route_price_variation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $routePriceVariations = RoutePriceVariation::query()
-            ->with(['pickup_point', 'drop_point', 'variation_seat_classes', 'route'])->latest()->get();
+            ->with(['pickup_point', 'drop_point', 'variation_seat_classes', 'route']);
+
+        if ($request->query("route_id")) {
+            $routePriceVariations = $routePriceVariations->where('route_id', $request->query('route_id'));
+        }
+
+        $routePriceVariations = $routePriceVariations->latest()->get();
 
         if ($request->ajax()) {
             return new RoutePriceVariationResource($routePriceVariations);
@@ -52,7 +58,7 @@ class RoutePriceVariationController extends Controller
             ->first();
         if ($variationExists) {
             $routePriceVariation = $variationExists->update($request->all());
-        }else{
+        } else {
             $routePriceVariation = new RoutePriceVariation($request->all());
         }
 
@@ -115,7 +121,7 @@ class RoutePriceVariationController extends Controller
             }
 
             $routePriceVariation->variation_seat_classes()->sync($seatClasses);
-        }else {
+        } else {
             $routePriceVariation->variation_seat_classes()->sync([]);
         }
 

@@ -97,6 +97,7 @@
 
     <create-price-variation
       @update="fetchPriceVariations(false)"
+      :defaultRoute="route_id"
     ></create-price-variation>
 
     <edit-price-variation
@@ -117,7 +118,20 @@ const CreatePriceVariation = () => import("./CreatePriceVariation.vue");
 const DeletePriceVariation = () => import("./DeletePriceVariation.vue");
 
 export default {
-  components: { CreatePriceVariation, EditPriceVariation, DeletePriceVariation },
+  components: {
+    CreatePriceVariation,
+    EditPriceVariation,
+    DeletePriceVariation,
+  },
+  props: {
+    route_id: {
+      default: null,
+    },
+    smallTable: {
+      type: Boolean,
+      default: false,
+    }
+  },
   data() {
     return {
       isLoading: false,
@@ -127,7 +141,7 @@ export default {
   },
   computed: {
     columns() {
-      return [
+      let columns = [
         {
           label: "Route",
           field: "route",
@@ -163,6 +177,10 @@ export default {
           sortable: false,
         },
       ];
+      if (this.smallTable) {
+        return columns.filter(col => !['created_at', 'route'].includes(col.field));
+      }
+      return columns;
     },
   },
   methods: {
@@ -170,8 +188,12 @@ export default {
       this.$store.dispatch("startLoading");
       this.isLoading = pageLoad;
 
+      const params = {
+        route_id: this.route_id,
+      };
+
       axios
-        .get("/admin/route-price-variations")
+        .get("/admin/route-price-variations", { params })
         .then((res) => {
           this.priceVariations = res.data.data;
 

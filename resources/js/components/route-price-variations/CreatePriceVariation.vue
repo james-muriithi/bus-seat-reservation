@@ -180,6 +180,11 @@ import "select2-bootstrap-theme/dist/select2-bootstrap.min.css";
 
 export default {
   components: { Select2 },
+  props: {
+    defaultRoute: {
+      default: "",
+    },
+  },
   emits: ["update"],
   data() {
     return {
@@ -190,7 +195,7 @@ export default {
       selectedRouteDetails: {},
       seatClasses: [],
       priceVariation: {
-        route_id: "",
+        route_id: this.defaultRoute,
         pickup_point_id: "",
         drop_point_id: "",
         fare: "",
@@ -221,7 +226,7 @@ export default {
   methods: {
     resetForm() {
       this.priceVariation = {
-        route_id: "",
+        route_id: this.defaultRoute,
         pickup_point_id: "",
         drop_point_id: "",
         fare: "",
@@ -271,6 +276,10 @@ export default {
               text: `${route.bus.formatted_name} ${route.route_name}`,
             });
           });
+
+          if (this.defaultRoute) {
+            this.fetchRoute(this.defaultRoute);
+          }
 
           this.$store.dispatch("stopLoading");
           this.isLoading = false;

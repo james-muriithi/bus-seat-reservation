@@ -69,6 +69,21 @@
 
         <div class="row mt-3">
           <div class="col-md-6">
+            <h4 class="mb-3 font-weight-bold">Price Variations</h4>
+            <div class="mt-2">
+              <price-variations-table :smallTable="true" :route_id="route.id"></price-variations-table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h4 class="mb-3 font-weight-bold">Trips</h4>
+            <div class="mt-2">
+
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-md-6">
             <h4 class="mb-3 font-weight-bold">Drop Off Points</h4>
             <div class="mt-2">
               <drop-off-points-table :smallTable="true" :defaultCreateRoute="route.id"></drop-off-points-table>
@@ -88,11 +103,12 @@
 
 <script>
 import Nprogress from "nprogress";
-import PickupPointsTable from "../pickup/Table.vue";
-import DropOffPointsTable from "../drop-off-point/DropOffPointsTable.vue";
+const PickupPointsTable = () => import("../pickup/Table.vue");
+const DropOffPointsTable = () =>  import("../drop-off-point/DropOffPointsTable.vue");
+const PriceVariationsTable = () => import("../route-price-variations/PriceVariationsTable.vue");
 
 export default {
-  components: { PickupPointsTable, DropOffPointsTable },
+  components: { PickupPointsTable, DropOffPointsTable, PriceVariationsTable },
   props: {
     route: {
       type: Object,
