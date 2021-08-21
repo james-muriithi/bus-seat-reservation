@@ -92,6 +92,10 @@
           {{ props.row.pickup_point.pickup_point }}
         </span>
 
+        <span v-else-if="props.column.field == 'drop_off_point'">
+          {{ props.row.drop_point.drop_off_point }}
+        </span>
+
         <span v-else-if="props.column.field == 'pickup_time'">
           {{ props.row.trip.route.board_time }}
         </span>
@@ -218,19 +222,7 @@ export default {
         travel_date: "",
         reservation_date: "",
       },
-      reservations: [
-        // {
-        //   id: 1,
-        //   passenger: "James Muriithi",
-        //   trip_id: "TR-23SJ349",
-        //   bus_name: "Rello - KCP 234K",
-        //   route: "Nairobi - Malindi",
-        //   pickup_time: "16:30",
-        //   seats: "A25",
-        //   travel_date: "2021-07-21",
-        //   reservation_date: "2021-07-21",
-        // },
-      ],
+      reservations: [],
     };
   },
   computed: {
@@ -240,7 +232,7 @@ export default {
       };
     },
     columns() {
-      return [
+      let columns = [
         {
           label: "Passenger",
           field: "passenger",
@@ -269,10 +261,10 @@ export default {
           label: "Seats",
           field: "seats",
         },
-        // {
-        //   label: "Dropoff Time",
-        //   field: "dropoff_time",
-        // },
+        {
+          label: "Dropoff Point",
+          field: "drop_off_point",
+        },
         {
           label: "Travel Date",
           field: "travel_date",
@@ -300,6 +292,10 @@ export default {
           sortable: false,
         },
       ];
+      if (!!this.trip_id) {
+        columns = columns.filter((col) => !["route"].includes(col.field));
+      }
+      return columns;
     },
   },
   methods: {
@@ -375,16 +371,20 @@ export default {
           dataKey: "bus_name",
         },
         {
-          title: "route",
+          title: "Route",
           dataKey: "route",
         },
         {
-          title: "Pickup Point",
+          title: "Pickup/Time",
           dataKey: "pickup_point",
         },
+        // {
+        //   title: "Pickup Time",
+        //   dataKey: "pickup_time",
+        // },
         {
-          title: "Pickup Time",
-          dataKey: "pickup_time",
+          title: "Drop Point",
+          dataKey: "drop_point",
         },
         {
           title: "Seats",
@@ -401,7 +401,12 @@ export default {
       ];
       autoTable(pdf, {
         columns,
+        startX: 0,
+        margin: {left: 5, right: 5},
         body: self.reservations,
+        bodyStyles: {
+            fontSize: 9,
+        },
         didParseCell: function (data) {
           if (data.column.dataKey === "passenger") {
             if (data.row.raw.seats && typeof data.row.raw.seats === "object") {
@@ -410,27 +415,40 @@ export default {
           } else if (data.column.dataKey === "trip_id") {
             if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
               data.cell.text = data.row.raw.trip.trip_id;
-            } 
+            }
           } else if (data.column.dataKey === "route") {
             if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
               data.cell.text = `${data.row.raw.trip.route.board_point} - ${data.row.raw.trip.route.drop_point}`;
             }
           } else if (data.column.dataKey === "bus_name") {
             if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
-              data.cell.text = `${data.row.raw.trip.route.bus.bus_name} - ${data.row.raw.trip.route.bus.bus_reg_no}`;
+              data.cell.text = `${data.row.raw.trip.route.bus.bus_reg_no}`;
             }
           } else if (data.column.dataKey === "pickup_point") {
-            if (data.row.raw.pickup_point && typeof data.row.raw.pickup_point === "object") {
-              data.cell.text = `${data.row.raw.pickup_point.pickup_point}`;
+            if (
+              data.row.raw.pickup_point &&
+              typeof data.row.raw.pickup_point === "object"
+            ) {
+              data.cell.text = `${data.row.raw.pickup_point.pickup_point} ${data.row.raw.trip.route.board_time}`;
             }
-          }else if (data.column.dataKey === "pickup_time") {
-            if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
-              data.cell.text = `${data.row.raw.trip.route.board_time}`;
+          }else if (data.column.dataKey === "drop_point") {
+            if (
+              data.row.raw.drop_point &&
+              typeof data.row.raw.drop_point === "object"
+            ) {
+              data.cell.text = `${data.row.raw.drop_point.drop_off_point}`;
             }
-          } else if (data.column.dataKey === "seats") {
+          } 
+          // else if (data.column.dataKey === "pickup_time") {
+          //   if (data.row.raw.trip && typeof data.row.raw.trip === "object") {
+          //     data.cell.text = `${data.row.raw.trip.route.board_time}`;
+          //   }
+          // } 
+          else if (data.column.dataKey === "seats") {
             if (data.row.raw.seats && Array.isArray(data.row.raw.seats)) {
-              data.cell.text =
-                data.row.raw.seats.map((seat) => seat.name).join(", ");
+              data.cell.text = data.row.raw.seats
+                .map((seat) => seat.name)
+                .join(", ");
             }
           } else if (data.column.dataKey === "status") {
             if (data.cell.raw == 1 || data.cell.raw == 0) {

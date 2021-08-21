@@ -108,6 +108,20 @@
 
         <div class="row mt-3">
           <div class="col-lg-8">
+            <h4 class="mb-3 font-weight-bold">Bus Trips</h4>
+            <div class="mt-2">
+              <trips-table :bus_id="bus.id"></trips-table>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <h4 class="mb-3 font-weight-bold">Something</h4>
+            <div class="mt-2">
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-lg-8">
             <h4 class="mb-3 font-weight-bold">Bus Routes</h4>
             <div class="mt-2">
               <routes-table :bus_id="bus.id"></routes-table>
@@ -140,9 +154,10 @@ import Nprogress from "nprogress";
 const RatingHistogram = () => import("./modules/RatingHistogram.vue");
 const RoutesTable = () => import("../routes/RoutesTable.vue");
 const SeatLayout = () => import("./modules/SeatLayout.vue");
+const TripsTable = () => import ("../trips/TripsTable.vue");
 
 export default {
-  components: { RatingHistogram, RoutesTable, SeatLayout },
+  components: { RatingHistogram, RoutesTable, SeatLayout, TripsTable },
   provide() {
     return {
       seatClasses: this.bus.seat_classes,

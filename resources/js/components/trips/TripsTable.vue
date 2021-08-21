@@ -124,6 +124,9 @@ export default {
     bus_id: {
       default: null,
     },
+    route_id: {
+      default: null,
+    },
   },
   data() {
     return {
@@ -156,7 +159,7 @@ export default {
           dateOutputFormat: "MMM do yyyy",
         },
         {
-          label: "Pickup Time",
+          label: "Start Time",
           field: "board_time",
         },
         {
@@ -185,8 +188,12 @@ export default {
           sortable: false,
         },
       ];
-      if (this.bus_id) {
-        columns.shift();
+      if (this.route_id) {
+        return columns.filter(
+          (col) => !["bus_name", "route"].includes(col.field)
+        );
+      } else if (this.bus_id) {
+        return columns.filter((col) => !["bus_name"].includes(col.field));
       }
       return columns;
     },
@@ -218,6 +225,9 @@ export default {
 
       if (this.bus_id) {
         params.bus = this.bus_id;
+      }
+      if (this.route_id) {
+        params.route = this.route_id;
       }
 
       axios

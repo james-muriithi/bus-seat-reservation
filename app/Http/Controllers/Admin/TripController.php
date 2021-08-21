@@ -20,8 +20,18 @@ class TripController extends Controller
     {
         abort_if(Gate::denies('trip_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $trips = Trip::with(['route', 'created_by', 'reservations'])
-            ->latest()
+        $trips = Trip::with(['route', 'created_by', 'reservations']);
+
+        if ($request->query("bus")) {
+            $trips = $trips->whereHas('route', function($query) use($request){
+                $query->where('bus_id', $request->query("bus"));
+            });
+        }
+        if ($request->query("route")) {
+            $trips = $trips->where('route_id', $request->query("route"));
+        }
+
+        $trips = $trips->latest()
             ->get();
 
         if ($request->ajax()) {

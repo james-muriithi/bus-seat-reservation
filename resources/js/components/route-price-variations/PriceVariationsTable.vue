@@ -25,7 +25,6 @@
       }"
       :sort-options="{
         enabled: true,
-        initialSortBy: { field: 'created_at', type: 'desc' },
       }"
       styleClass="vgt-table tableOne table-hover"
     >

@@ -52,7 +52,7 @@ class Reservation extends Model
 
     public function drop_point()
     {
-        return $this->belongsTo(DropOffPoint::class, 'drop_off_point');
+        return $this->belongsTo(DropOffPoint::class, 'drop_off_point_id');
     }
 
     public function getTravelDateAttribute($value)

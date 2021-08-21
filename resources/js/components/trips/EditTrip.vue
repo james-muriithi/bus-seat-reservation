@@ -67,7 +67,7 @@
                                                         validationContext
                                                     )}`
                                                 "
-                                                :min="today"
+                                                
                                             />
                                             <div
                                                 id="Pickup-Point-feedback"
