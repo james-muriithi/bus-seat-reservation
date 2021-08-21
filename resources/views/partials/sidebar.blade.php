@@ -93,6 +93,15 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('route_price_variation_access')
+                                <li class="sidebar-item">
+                                    <a href="{{ route('admin.route-price-variations.index') }}" class="sidebar-link"><span
+                                            class="hide-menu">
+                                            {{ trans('cruds.routePriceVariation.title') }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endcan
                             @can('pickup_point_access')
                                 <li class="sidebar-item">
                                     <a href="{{ route('admin.pickup-points.index') }}" class="sidebar-link"><span

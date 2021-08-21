@@ -20,7 +20,8 @@ class Bus extends Model implements HasMedia
 
     protected $appends = [
         'images',
-        'average-rating'
+        'average-rating',
+        'formatted_name',
     ];
 
     protected $dates = [
@@ -85,6 +86,10 @@ class Bus extends Model implements HasMedia
     }
 
     //attributes
+    public function getFormattedNameAttribute()
+    {
+        return $this->attributes['bus_name']. ' '. $this->attributes['bus_reg_no'];
+    }
     public function getImagesAttribute()
     {
         $files = $this->getMedia('images');

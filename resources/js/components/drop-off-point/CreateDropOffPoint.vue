@@ -23,23 +23,19 @@
                   >
                     <div class="form-group">
                       <label for="name">Route</label>
-                      <select
-                        id="max-seats"
-                        aria-describedby="route-feedback"
+                      <select2
+                        id="amenities"
+                        aria-describedby="bus-feedback"
                         v-model.trim="dropOffPoint.route_id"
-                        :class="`form-control ${getValidationState(
-                          validationContext
-                        )}`"
+                        :options="routes"
+                        :settings="{
+                          theme: 'bootstrap',
+                          multiple: false,
+                          closeOnSelect: true,
+                        }"
+                        required
                       >
-                        <option value="" selected>--Select Route--</option>
-                        <option
-                          :value="route.id"
-                          v-for="route in routes"
-                          :key="route.id"
-                        >
-                          {{ route.route_name }}
-                        </option>
-                      </select>
+                      </select2>
                       <div id="route-feedback" class="invalid-feedback w-100">
                         {{ validationContext.errors[0] }}
                       </div>
@@ -180,9 +176,11 @@
 <script>
 import VueTimepicker from "vue2-timepicker";
 import "vue2-timepicker/dist/VueTimepicker.css";
+import Select2 from "v-select2-component";
+import "select2-bootstrap-theme/dist/select2-bootstrap.min.css";
 
 export default {
-  components: { VueTimepicker },
+  components: { VueTimepicker, Select2 },
   props:{
       defaultRoute: {
           default: ""
@@ -240,7 +238,14 @@ export default {
       axios
         .get("/admin/routes")
         .then((res) => {
-          this.routes = res.data.data;
+          this.routes = [];
+
+          res.data.data.map((route) => {
+            this.routes.push({
+              id: route.id,
+              text: `${route.bus.formatted_name} ${route.route_name}`
+            });
+          });
 
           this.$store.dispatch("stopLoading");
           this.isLoading = false;

@@ -92,6 +92,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     //Trips
     Route::resource('trips', 'TripController');
 
+    // Route Price Variation
+    Route::delete('route-price-variations/destroy', 'RoutePriceVariationController@massDestroy')->name('route-price-variations.massDestroy');
+    Route::resource('route-price-variations', 'RoutePriceVariationController');
+
     // Reports
     Route::get('reports/dashboard', 'ReportsController@dashboard')->name('reports.dashboard');
 

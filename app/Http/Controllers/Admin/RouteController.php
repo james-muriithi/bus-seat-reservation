@@ -155,11 +155,15 @@ class RouteController extends Controller
         return redirect()->route('admin.routes.index');
     }
 
-    public function show(Route $route)
+    public function show(Route $route, Request $request)
     {
         abort_if(Gate::denies('route_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $route->load('bus');
+        $route->load('bus', 'route_seat_classes', "drop_off_points", "pickup_points");
+
+        if ($request->ajax()) {
+            return new RouteResource($route);
+        }
 
         return view('admin.routes.show', compact('route'));
     }
