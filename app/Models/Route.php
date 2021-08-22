@@ -42,7 +42,13 @@ class Route extends Model
 
     public function route_seat_classes()
     {
-        return $this->belongsToMany(BusSeatClass::class)->withPivot('fare');
+        return $this->belongsToMany(BusSeatClass::class, 'bus_seat_class_route', 'route_id', 'bus_seat_class_id')
+            ->withPivot('fare');
+    }
+
+    public function fare_variations()
+    {
+        return $this->hasMany(RoutePriceVariation::class, 'route_id');
     }
 
     public function drop_off_points()
@@ -87,6 +93,6 @@ class Route extends Model
 
     public function getRouteNameAttribute()
     {
-        return $this->board_point .'-'. $this->drop_point;
+        return $this->board_point . '-' . $this->drop_point;
     }
 }

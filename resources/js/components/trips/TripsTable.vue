@@ -94,6 +94,22 @@
           {{ props.row.reservations.length }}
         </span>
 
+        <span v-else-if="props.column.field == 'fare'">
+          <span v-if="props.row.seat_classes_fare.length > 0">
+            <span
+              class="badge py-1 px-2 badge-success mr-1"
+              v-for="seatClass in props.row.seat_classes_fare"
+              :key="seatClass.id"
+            >
+              {{ seatClass.name }} - {{ seatClass.currencyCode
+              }}{{ seatClass.fare }}
+            </span>
+          </span>
+          <span v-else>
+            {{ props.row.fare }}
+          </span>
+        </span>
+
         <span v-else-if="props.column.field == 'status'">
           <span
             :class="`badge py-1 px-2 badge-outline-${tripStatusClass(
@@ -165,6 +181,10 @@ export default {
         {
           label: "Reservations",
           field: "reservations",
+        },
+        {
+          label: "Fare",
+          field: "fare",
         },
         {
           label: "Status",

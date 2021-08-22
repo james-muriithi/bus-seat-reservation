@@ -161,7 +161,7 @@ class RouteController extends Controller
     {
         abort_if(Gate::denies('route_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $route->load('bus', 'route_seat_classes', "drop_off_points", "pickup_points");
+        $route->load('bus', 'route_seat_classes', "drop_off_points", "pickup_points", "fare_variations");
 
         if ($request->ajax()) {
             return new RouteResource($route);

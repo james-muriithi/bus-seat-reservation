@@ -20,10 +20,10 @@ class TripController extends Controller
     {
         abort_if(Gate::denies('trip_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $trips = Trip::with(['route', 'created_by', 'reservations']);
+        $trips = Trip::with(['route', 'created_by', 'reservations', 'trip_seat_classes']);
 
         if ($request->query("bus")) {
-            $trips = $trips->whereHas('route', function($query) use($request){
+            $trips = $trips->whereHas('route', function ($query) use ($request) {
                 $query->where('bus_id', $request->query("bus"));
             });
         }
@@ -57,8 +57,22 @@ class TripController extends Controller
         $request->merge(["trip_id" => $this->generateTripId()]);
 
         $trip = Trip::create($request->all());
-        $trip->created_by()->associate(auth()->user);
-        $trip->save();
+        $trip->created_by()->associate(auth()->id());
+
+        if (count($request->input('seat_classes', [])) > 0) {
+            $trip->fare = max($request->input('seat_classes'));
+            $trip->save();
+
+            $seatClasses = [];
+
+            foreach ($request->input('seat_classes') as $index => $fare) {
+                if ($fare) {
+                    $seatClasses[$index] = ['fare' => $fare];
+                }
+            }
+
+            $trip->trip_seat_classes()->sync($seatClasses);
+        }
 
         if ($request->ajax()) {
             return (new TripResource($trip))->response()
@@ -83,7 +97,34 @@ class TripController extends Controller
 
     public function update(UpdateTripRequest $request, Trip $trip)
     {
-        $trip->update($request->all());
+        $trip->update($request->only(['fare', 'status', 'route_id', 'travel_date']));
+
+        if (count($request->input('seat_classes', [])) > 0) {
+            $trip->fare = max($request->input('seat_classes'));
+            $trip->save();
+
+            $seatClasses = [];
+
+            foreach ($request->input('seat_classes') as $index => $fare) {
+                if ($fare) {
+                    $seatClasses[$index] = ['fare' => $fare];
+                }
+            }
+
+            $trip->trip_seat_classes()->sync($seatClasses);
+        } else {
+            if (null == $request->input('fare', null)) {
+                $trip->fare = null;
+                $trip->save();
+            }
+            $trip->trip_seat_classes()->sync([]);
+        }
+
+        if ($request->ajax()) {
+            return (new TripResource($trip))
+                ->response()
+                ->setStatusCode(Response::HTTP_ACCEPTED);
+        }
 
         return redirect()->route('admin.trips.index');
     }
@@ -92,7 +133,7 @@ class TripController extends Controller
     {
         abort_if(Gate::denies('trip_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $trip->load('route','created_by', 'reservations');
+        $trip->load('route', 'created_by', 'reservations');
 
         return view('admin.trips.show', compact('trip'));
     }

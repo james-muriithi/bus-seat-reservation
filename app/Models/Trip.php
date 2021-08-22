@@ -15,11 +15,13 @@ class Trip extends Model
 
     public const TRIP_STATUS = [
         0 => "Cancelled",
-        1 => "Active", 
+        1 => "Active",
         2 => "Departured"
     ];
 
     public $table = 'trips';
+
+    public $appends = ["seat_classes_fare"];
 
     protected $dates = [
         'travel_date',
@@ -31,6 +33,7 @@ class Trip extends Model
     protected $fillable = [
         'trip_id',
         'route_id',
+        'fare',
         'travel_date',
         'status',
         'created_by_id',
@@ -44,11 +47,17 @@ class Trip extends Model
         return $this->belongsTo(Route::class, 'route_id');
     }
 
+    public function trip_seat_classes()
+    {
+        return $this->belongsToMany(BusSeatClass::class, 'bus_seat_class_trip', 'trip_id', 'bus_seat_class_id')
+            ->withPivot('fare');
+    }
+
     public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by_id');
     }
-    
+
     public function reservations()
     {
         return $this->hasMany(Reservation::class, "trip_id");
@@ -66,5 +75,31 @@ class Trip extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+
+    // attributes
+    public function getSeatClassesFareAttribute()
+    {
+        $seatClasses = $this->route->bus->seat_classes->map(function ($seatClass) {
+            $seatClass->fare = $this->fare;
+            $seatClass->currencyCode = defaultCurrrency();
+            return $seatClass;
+        });
+
+        if ($this->trip_seat_classes->count() > 0) {
+            return $seatClasses->merge($this->trip_seat_classes->map(function ($seatClass) {
+                $seatClass->fare = floatval(data_get($seatClass, 'pivot.fare') ?? null);
+                $seatClass->currencyCode = defaultCurrrency();
+                return $seatClass;
+            }));
+        } else {
+            return $seatClasses;
+        }
+    }
+
+    public function getFareAttribute()
+    {
+        return !empty($this->attributes['fare']) ?  floatval($this->attributes['fare']) : $this->route->fare;
     }
 }

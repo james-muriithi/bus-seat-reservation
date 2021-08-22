@@ -17,7 +17,7 @@
               <div class="form-row">
                 <div class="col-md-12">
                   <validation-provider
-                    name="Route"
+                    name="Routew"
                     :rules="{ required: true }"
                     v-slot="validationContext"
                   >
@@ -82,6 +82,104 @@
                       </label>
                     </div>
                   </div>
+
+                  <div v-if="!!routeId">
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          v-model="editFare"
+                        />
+                        Change Trip fare </label
+                      ><br />
+                      <small
+                        >Check this if you want to change trip fare. Leave as it
+                        is if the fare is the same as indicated in route
+                        fare.</small
+                      >
+                    </div>
+
+                    <!-- Fare -->
+                    <div class="" v-if="!!!setSeatClassesFare && editFare">
+                      <validation-provider
+                        name="Fare"
+                        :rules="{
+                          required: true,
+                          integer: true,
+                          min_value: 0,
+                        }"
+                        v-slot="validationContext"
+                      >
+                        <div class="form-group">
+                          <label for="drop-point"
+                            >Fare (for all seat classes)</label
+                          >
+                          <input
+                            type="text"
+                            placeholder="Fare"
+                            id="fare"
+                            aria-describedby="fare-feedback"
+                            v-model.trim="trip.fare"
+                            :class="`form-control ${getValidationState(
+                              validationContext
+                            )}`"
+                          />
+                          <div
+                            id="fare-feedback"
+                            class="invalid-feedback w-100"
+                          >
+                            {{ validationContext.errors[0] }}
+                          </div>
+                        </div>
+                      </validation-provider>
+                    </div>
+
+                    <!-- set each seat class fare -->
+                    <div class="mb-2" v-if="!!editFare">
+                      <div class="form-group">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="status"
+                              v-model="setSeatClassesFare"
+                            />
+                            Set each seat class fare
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- each seat class are -->
+                    <div class="row" v-if="!!setSeatClassesFare && editFare">
+                      <div
+                        class="col-md-6 mb-2"
+                        v-for="seatClass in seatClasses"
+                        :key="seatClass.id"
+                      >
+                        <div class="form-group">
+                          <label for="drop-point"
+                            >Fare for {{ seatClass.name }} Class</label
+                          >
+                          <input
+                            type="number"
+                            min="0"
+                            placeholder="Fare"
+                            :id="`fare${seatClass.id}`"
+                            :key="seatClass.id"
+                            v-model="trip.seat_classes[seatClass.id]"
+                            :class="`form-control`"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                  </div>
                 </div>
               </div>
 
@@ -110,10 +208,16 @@ export default {
   emits: ["update"],
   data() {
     return {
+      editFare: false,
+      setSeatClassesFare: false,
+      seatClasses: [],
+      selectedRouteDetails: {},
       trip: {
         route_id: this.defaultRoute,
         status: 1,
         travel_date: "",
+        fare: "",
+        seat_classes: []
       },
       routes: [],
     };
@@ -122,14 +226,46 @@ export default {
     today() {
       return moment().format("YYYY-MM-DD");
     },
+    routeId() {
+      return this.trip.route_id;
+    },
+  },
+  watch:{
+    routeId(newValue){
+      if (newValue) {
+        this.fetchRoute(newValue);
+      }
+    },
+    selectedRouteDetails(newValue){
+      if (newValue) {
+        this.trip.fare = newValue.fare ?? '';
+        this.seatClasses = newValue?.bus?.seat_classes ?? [];
+      }
+    },
+    setSeatClassesFare(newValue){
+      this.trip.seat_classes = [];
+      if (newValue && this.selectedRouteDetails.seatClassesFare.length > 0) {
+        this.selectedRouteDetails.seatClassesFare.forEach((sclass) => {
+          this.trip.seat_classes[sclass.id] = sclass.fare;
+        })
+      }
+    }
   },
   methods: {
     resetForm() {
       this.trip = {
         route_id: this.defaultRoute,
         status: 1,
-        pickup_time: "",
+        travel_date: "",
+        fare: "",
+        seat_classes: []
       };
+
+      this.editFare= false
+      this.setSeatClassesFare = false
+      this.seatClasses = []
+      this.selectedRouteDetails = {}
+
       this.$nextTick(() => {
         this.$refs.createTrip.reset();
       });
@@ -153,9 +289,7 @@ export default {
             })
             .catch((res) => {
               this.$store.dispatch("stopLoading");
-              this.showErrorToast(
-                "There was an error creating the trip"
-              );
+              this.showErrorToast("There was an error creating the trip");
             });
         }
       });
@@ -193,6 +327,19 @@ export default {
     },
     closeModal() {
       $("#create-trip").modal("hide");
+    },
+    fetchRoute(routeId) {
+      this.$store.dispatch("startLoading");
+
+      axios
+        .get("/admin/routes/" + routeId)
+        .then((res) => {
+          this.selectedRouteDetails = res.data.data;
+          this.$store.dispatch("stopLoading");
+        })
+        .catch((res) => {
+          this.$store.dispatch("stopLoading");
+        });
     },
   },
   created() {
