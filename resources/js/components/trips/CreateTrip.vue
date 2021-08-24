@@ -17,7 +17,7 @@
               <div class="form-row">
                 <div class="col-md-12">
                   <validation-provider
-                    name="Routew"
+                    name="Route"
                     :rules="{ required: true }"
                     v-slot="validationContext"
                   >
@@ -25,7 +25,7 @@
                       <label for="name">Route</label>
 
                       <select2
-                        id="route"
+                        id="route-c"
                         aria-describedby="bus-feedback"
                         v-model.trim="trip.route_id"
                         :options="routes"

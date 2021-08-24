@@ -185,6 +185,9 @@
                     </li>
                 @endcan
 
+                <li class="list-divider"></li>
+                <li class="nav-small-cap"><span class="hide-menu">{{ trans('cruds.setting.title') }}</span></li>
+
                 @can('setting_access')
                     <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
                             aria-expanded="false"><i class="ti-settings"></i><span class="hide-menu">
