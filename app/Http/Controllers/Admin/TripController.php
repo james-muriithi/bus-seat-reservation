@@ -202,6 +202,8 @@ class TripController extends Controller
     {
         $tt = new TestTicket();
         $tt->print();
+
+        return back();
     }
 
     public function generateTripId($length = 7, $prefix = 'TR-', $uppercase = true)
