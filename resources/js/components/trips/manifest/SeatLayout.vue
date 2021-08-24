@@ -126,9 +126,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-table{
-  /* transform: rotate(-90deg); */
-}
-</style>
