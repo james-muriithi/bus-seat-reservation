@@ -165,10 +165,7 @@ class TripController extends Controller
     public function manifest(Trip $trip, Request $request)
     {
         $manifests =collect([]);
-        $reservations = $trip->with('reservations.seats')
-            ->get()
-            ->pluck('reservations')
-            ->flatten();
+        $reservations = $trip->reservations->load('seats');
 
         foreach ($reservations as $reservation) {
 
@@ -185,7 +182,9 @@ class TripController extends Controller
                     "reservation_date" => $reservation->created_at,
                     "pickup_point" => $reservation->pickup_point->pickup_point,
                     "drop_point" => $reservation->drop_point->drop_off_point,
-                    "bus" => $trip->bus
+                    "bus" => $trip->bus,
+                    "passenger" => $seat->reservation->passenger,
+                    "passenger_name" => $seat->reservation->passenger->name,
                 ];
 
                 $manifests->push($manifest);

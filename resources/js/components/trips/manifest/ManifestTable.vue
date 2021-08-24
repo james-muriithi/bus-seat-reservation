@@ -83,16 +83,22 @@ import autoTable from "jspdf-autotable";
 
 export default {
   props: {
-    trip_id: {
+    manifest: {
       required: true,
+      type: Array,
+    },
+    trip: {
+      type: Object,
+      required: true,
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {
-      isLoading: false,
       selectedTrip: {},
-      manifest: [],
-      trip: {},
     };
   },
   computed: {
@@ -104,6 +110,10 @@ export default {
     },
     columns() {
       let columns = [
+        {
+          label: "Passenger",
+          field: "passenger_name",
+        },
         {
           label: "Ticket Number",
           field: "ticket_number",
@@ -158,45 +168,6 @@ export default {
     },
   },
   methods: {
-    fetchManifest(pageLoad = true) {
-      this.$store.dispatch("startLoading");
-      this.isLoading = pageLoad;
-
-      let url = `/admin/trips/${this.trip_id}/manifest`;
-
-      let params = {};
-
-      axios
-        .get(url, { params })
-        .then((res) => {
-          this.manifest = res.data.data;
-
-          this.$store.dispatch("stopLoading");
-          this.isLoading = false;
-        })
-        .catch((res) => {
-          this.$store.dispatch("stopLoading");
-          this.isLoading = false;
-        });
-    },
-    fetchTrip() {
-      this.$store.dispatch("startLoading");
-
-      let url = `/admin/trips/${this.trip_id}`;
-
-      let params = {};
-
-      axios
-        .get(url, { params })
-        .then((res) => {
-          this.trip = res.data.data;
-
-          this.$store.dispatch("stopLoading");
-        })
-        .catch((res) => {
-          this.$store.dispatch("stopLoading");
-        });
-    },
     Manifests_PDF() {
       var self = this;
 
@@ -254,9 +225,6 @@ export default {
       );
     },
   },
-  created() {
-    this.fetchManifest();
-    this.fetchTrip();
-  },
+  created() {},
 };
 </script>

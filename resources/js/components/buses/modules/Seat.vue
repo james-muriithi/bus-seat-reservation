@@ -1,5 +1,5 @@
 <template>
-  <span :style="seatClassColors" :title="seatTooltip">
+  <span :style="seatClassColors()" :title="seatTooltip()">
     <svg
       id="Layer_1"
       data-name="Layer 1"
@@ -60,6 +60,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    seatTitle: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -76,14 +80,38 @@ export default {
         this.defaultSeatClassId = value;
       },
     },
-    seatTooltip() {
-      return this.seat.disabled
-        ? `Disabled seat`
-        : `${this.seat.class.name} class`;
+  },
+  watch: {
+    // seat() {
+    //   this.defaultSeatClass = this.seat.class.id;
+    // }
+  },
+  methods: {
+    seatCentre(r, c) {
+      let seat = this.getSeatWithRC(r, c);
+      if (seat != null) {
+        if (seat.disabled || seat.booked) {
+          return "cls-ra cls-disabled ";
+        }
+        return "cls-fa";
+      }
+    },
+    classifier(r, c) {
+      let seat = this.getSeatWithRC(r, c);
+      if (seat != null) {
+        if (seat.disabled || seat.booked) {
+          return "cls-ra cls-disabled ";
+        }
+
+        return "cls-ra";
+      }
+    },
+    getSeatClass(id) {
+      return this.seatClasses.find((seatClass) => seatClass.id == id);
     },
     seatClassColors() {
       let data = {};
-      if (this.seat.disabled) {
+      if (this.seat.disabled || !!this.seat.booked) {
         data = {
           "--disabled-stroke": "#ada9a9",
           "--disabled-fill": "#ada9a9",
@@ -98,34 +126,24 @@ export default {
 
       return data;
     },
-  },
-  watch: {
-    // seat() {
-    //   this.defaultSeatClass = this.seat.class.id;
-    // }
-  },
-  methods: {
-    seatCentre(r, c) {
-      let seat = this.getSeatWithRC(r, c);
-      if (seat != null) {
-        if (seat.disabled) {
-          return "cls-ra cls-disabled ";
-        }
-        return "cls-fa";
+    seatTooltip() {
+      let title = "";
+      if (this.seat.disabled) {
+        title = `Disabled | `;
+      } else if (!!this.seat.booked) {
+        title = "Booked | ";
       }
-    },
-    classifier(r, c) {
-      let seat = this.getSeatWithRC(r, c);
-      if (seat != null) {
-        if (seat.disabled) {
-          return "cls-ra cls-disabled ";
-        }
 
-        return "cls-ra";
+      title += `${this.seat.seat_number}`;
+
+      if (!this.seat.disabled) {
+        title += ` | ${this.seat.class.name}`;
       }
-    },
-    getSeatClass(id) {
-      return this.seatClasses.find((seatClass) => seatClass.id == id);
+
+      if (this.seat.booked && this.seat.passenger) {
+        title += ` | ${this.seat.passenger}`;
+      }
+      return title;
     },
   },
 };

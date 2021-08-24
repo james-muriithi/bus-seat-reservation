@@ -76,7 +76,52 @@
           <div class="col-lg-12">
             <h4 class="mb-3 font-weight-bold">Trip Manifest</h4>
             <div class="mt-2">
-              <manifest-table :trip_id="1" />
+              <ul class="nav nav-pills">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    data-toggle="pill"
+                    href="#trips-table"
+                    >Table</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="pill" href="#seat-layout"
+                    >Seat Layout</a
+                  >
+                </li>
+              </ul>
+
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div class="tab-pane active" id="trips-table">
+                  <manifest-table
+                    :isLoading="manifestTableLoading"
+                    :manifest="manifest"
+                    :trip="trip"
+                  />
+                </div>
+                <div class="tab-pane fade" id="seat-layout">
+                  <seat-layout
+                    v-if="showBusSeatLayout"
+                    :seats="trip.route.bus.seat_layout.details.seats"
+                    :bookedSeats="bookedSeats"
+                    :cols="trip.route.bus.seat_layout.columns"
+                    :rows="trip.route.bus.seat_layout.rows"
+                    :aisleColumns="
+                      trip.route.bus.seat_layout.details.aisleColumns
+                    "
+                    :aisleRows="trip.route.bus.seat_layout.details.aisleRows"
+                    :disabledSeats="
+                      trip.route.bus.seat_layout.details.disabledSeats
+                    "
+                    :gaps="trip.route.bus.seat_layout.details.gaps"
+                    :seat_prefix="
+                      trip.route.bus.seat_layout.details.seat_prefix
+                    "
+                  ></seat-layout>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -98,14 +143,26 @@
 import Nprogress from "nprogress";
 const BookingTable = () => import("../booking/BookingTable.vue");
 const ManifestTable = () => import("../trips/manifest/ManifestTable");
+const SeatLayout = () => import("./manifest/SeatLayout.vue");
 
 export default {
-  components: { BookingTable, ManifestTable },
+  components: { BookingTable, ManifestTable, SeatLayout },
+  provide() {
+    return {
+      seatClasses: this.trip.route.bus.seat_classes,
+    };
+  },
   props: {
     trip: {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      manifest: [],
+      manifestTableLoading: false,
+    };
   },
   computed: {
     loading() {
@@ -113,6 +170,19 @@ export default {
     },
     createdBy() {
       return this.trip.created_by?.name;
+    },
+    showBusSeatLayout() {
+      return !_.isEmpty(this.trip.route.bus.seat_layout);
+    },
+    bookedSeats() {
+      let booked = [];
+      this.manifest.forEach((reserve) => {
+        booked.push({
+          seat_number: reserve.seat_number,
+          passenger_name: reserve.passenger_name,
+        });
+      });
+      return booked;
     },
   },
   watch: {
@@ -126,6 +196,27 @@ export default {
     },
   },
   methods: {
+    fetchManifest(pageLoad = true) {
+      this.$store.dispatch("startLoading");
+      this.manifestTableLoading = pageLoad;
+
+      let url = `/admin/trips/${this.trip.id}/manifest`;
+
+      let params = {};
+
+      axios
+        .get(url, { params })
+        .then((res) => {
+          this.manifest = res.data.data;
+
+          this.$store.dispatch("stopLoading");
+          this.manifestTableLoading = false;
+        })
+        .catch((res) => {
+          this.$store.dispatch("stopLoading");
+          this.manifestTableLoading = false;
+        });
+    },
     tripStatus(status) {
       if (status == 1) {
         return "Active";
@@ -142,6 +233,9 @@ export default {
       }
       return "danger";
     },
+  },
+  created() {
+    this.fetchManifest();
   },
 };
 </script>

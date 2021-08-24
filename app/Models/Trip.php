@@ -44,7 +44,7 @@ class Trip extends Model
 
     public function route()
     {
-        return $this->belongsTo(Route::class, 'route_id');
+        return $this->belongsTo(Route::class, 'route_id')->with("bus.seat_layout");
     }
 
     public function trip_seat_classes()
