@@ -31,6 +31,10 @@ class TripController extends Controller
             $trips = $trips->where('route_id', $request->query("route"));
         }
 
+        if ($request->query("travel_date")) {
+            $trips = $trips->whereDate('travel_date', $request->query("travel_date"));
+        }
+
         $trips = $trips->latest()
             ->get();
 

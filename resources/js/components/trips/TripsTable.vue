@@ -143,6 +143,10 @@ export default {
     route_id: {
       default: null,
     },
+    filters: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -241,7 +245,7 @@ export default {
 
       let url = "/admin/trips";
 
-      let params = {};
+      let params = {...this.filters};
 
       if (this.bus_id) {
         params.bus = this.bus_id;
