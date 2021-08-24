@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\FPDF\Ticket;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyTripRequest;
 use App\Http\Requests\StoreTripRequest;
@@ -197,6 +198,12 @@ class TripController extends Controller
         }
     }
 
+    public function ticket()
+    {
+        $tt = new TestTicket();
+        $tt->print();
+    }
+
     public function generateTripId($length = 7, $prefix = 'TR-', $uppercase = true)
     {
         $random = substr(str_shuffle(MD5(microtime())), 0, $length);
@@ -204,5 +211,36 @@ class TripController extends Controller
             $random = strtoupper($random);
         }
         return $prefix . $random;
+    }
+}
+
+
+class TestTicket
+{
+
+    public $pdf;
+
+    protected $pdfWidth = 105;
+    protected $pdfHeight = 200;
+
+    public function print()
+    {
+        $this->pdf = new Ticket('L', 'mm', array($this->pdfWidth, $this->pdfHeight));
+
+        $this->pdf->AddPage();
+        $this->pdf->SetAutoPageBreak(false);
+
+        $this->pdf->SetFillColor(240, 240, 240);
+        $this->pdf->Rect(0, 0, $this->pdf->getPageWidth(),    $this->pdf->getPageHeight(), 'F');
+
+
+        $this->pdf->addHeader();
+
+        $this->pdf->addBody();
+
+        // footer
+        $this->pdf->addFooter();
+
+        $this->pdf->Output('D', 'tickets/test.pdf');
     }
 }

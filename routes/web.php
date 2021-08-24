@@ -90,6 +90,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('payments', 'PaymentController');
 
     //Trips
+    Route::get('trips/ticket', 'TripController@ticket')->name("trips.ticket");
     Route::get('trips/{trip}/manifest', 'TripController@manifest')->name("trips.manifest");
     Route::resource('trips', 'TripController');
 
