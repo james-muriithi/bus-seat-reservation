@@ -102,4 +102,9 @@ class Trip extends Model
     {
         return !empty($this->attributes['fare']) ?  floatval($this->attributes['fare']) : $this->route->fare;
     }
+
+    public function getBusAttribute()
+    {
+        return $this->route->bus;
+    }
 }

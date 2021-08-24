@@ -1,6 +1,6 @@
 <template>
   <div class="mx-2 mx-md-3 mt-2">
-    <manifest-table />
+    <manifest-table :trip_id="1" />
   </div>
 </template>
 

@@ -129,11 +129,15 @@ class TripController extends Controller
         return redirect()->route('admin.trips.index');
     }
 
-    public function show(Trip $trip)
+    public function show(Trip $trip, Request $request)
     {
         abort_if(Gate::denies('trip_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $trip->load('route', 'created_by', 'reservations');
+
+        if ($request->ajax()) {
+            return new TripResource($trip);
+        }
 
         return view('admin.trips.show', compact('trip'));
     }
@@ -152,6 +156,42 @@ class TripController extends Controller
         Trip::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function manifest(Trip $trip, Request $request)
+    {
+        $manifests =collect([]);
+        $reservations = $trip->with('reservations.seats')
+            ->get()
+            ->pluck('reservations')
+            ->flatten();
+
+        foreach ($reservations as $reservation) {
+
+            foreach ($reservation->seats as $seat) {
+                $manifest = [
+                    "ticket_number" => $seat->reservation->ticket_number,
+                    "reservation_ref" => $reservation->ref,
+                    "route" => $trip->route,
+                    "route_name" => $trip->route->route_name,
+                    "seat_number"=> $seat->name,
+                    "travel_date" => $trip->travel_date,
+                    "board_time" => $trip->route->board_time,
+                    "amount_paid" => $seat->reservation->amount_paid,
+                    "reservation_date" => $reservation->created_at,
+                    "pickup_point" => $reservation->pickup_point->pickup_point,
+                    "drop_point" => $reservation->drop_point->drop_off_point,
+                    "bus" => $trip->bus
+                ];
+
+                $manifests->push($manifest);
+            }
+        }
+        $manifests->sortByDesc('reservation_date');
+
+        if ($request->ajax()) {
+            return new TripResource($manifests);
+        }
     }
 
     public function generateTripId($length = 7, $prefix = 'TR-', $uppercase = true)

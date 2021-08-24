@@ -76,7 +76,7 @@
           <div class="col-lg-12">
             <h4 class="mb-3 font-weight-bold">Trip Manifest</h4>
             <div class="mt-2">
-              <manifest-table />
+              <manifest-table :trip_id="1" />
             </div>
           </div>
         </div>

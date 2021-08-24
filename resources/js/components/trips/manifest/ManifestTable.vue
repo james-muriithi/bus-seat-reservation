@@ -7,7 +7,7 @@
     <vue-good-table
       v-else
       :columns="columns"
-      :rows="booked"
+      :rows="manifest"
       :search-options="{
         placeholder: 'Search this table',
         enabled: true,
@@ -32,82 +32,45 @@
         <button class="btn btn-danger btn-sm">Delete</button>
       </div>
       <div slot="table-actions" class="mt-2 mb-3">
-        <button class="btn btn-sm btn-outline-success ripple m-1">
+        <button
+          class="btn btn-sm btn-outline-success ripple m-1"
+          @click="Manifests_PDF"
+        >
           <i class="fa fa-file-pdf"></i> PDF
         </button>
       </div>
 
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field == 'actions'">
-          <!-- view bus -->
+          <!-- view -->
           <a :href="`/admin/trips/${props.row.id}`" title="View" class="pr-1">
             <i class="ti-eye fs-16 text-info"></i>
           </a>
-          <!-- edit bus -->
-          <a
-            href="#"
-            @click.prevent="editTrip({ ...props.row })"
-            title="Edit"
-            class="pr-1"
-          >
-            <i class="fa fa-pencil-alt fs-16 text-success"></i>
-          </a>
-          <!-- delete bus -->
-          <a
-            title="Delete"
-            href="#"
-            @click.prevent="deleteRoute({ ...props.row })"
-          >
-            <i class="fa fa-trash fs-16 text-danger"></i>
+          <!-- download ticket -->
+          <a href="#" title="download ticket" class="pr-1">
+            <i class="ti-download text-success fs-16"></i>
           </a>
         </span>
 
         <span v-else-if="props.column.field == 'bus_name'">
-          <a :href="`/admin/buses/${props.row.route.bus.id}`">
-            {{ props.row.route.bus.bus_name }} -
-            {{ props.row.route.bus.bus_reg_no }}
+          <a :href="`/admin/buses/${props.row.bus.id}`">
+            {{ props.row.bus.formatted_name }}
           </a>
         </span>
 
         <span v-else-if="props.column.field == 'route'">
           <a :href="`/admin/routes/${props.row.route.id}`">
-            {{ props.row.route.board_point }} -
-            {{ props.row.route.drop_point }}
+            {{ props.row.route_name }}
           </a>
         </span>
-
-        <span v-else-if="props.column.field == 'board_time'">
-          {{ props.row.route.board_time }}
+        <span v-else-if="props.column.field == 'travel_date'">
+          {{ props.row.travel_date }} {{ props.row.board_time }}
         </span>
 
-        <span v-else-if="props.column.field == 'reservations'">
-          {{ props.row.reservations.length }}
-        </span>
-
-        <span v-else-if="props.column.field == 'fare'">
-          <span v-if="props.row.seat_classes_fare.length > 0">
-            <span
-              class="badge py-1 px-2 badge-success mr-1"
-              v-for="seatClass in props.row.seat_classes_fare"
-              :key="seatClass.id"
-            >
-              {{ seatClass.name }} - {{ seatClass.currencyCode
-              }}{{ seatClass.fare }}
-            </span>
-          </span>
-          <span v-else>
-            {{ props.row.fare }}
-          </span>
-        </span>
-
-        <span v-else-if="props.column.field == 'status'">
-          <span
-            :class="`badge py-1 px-2 badge-outline-${tripStatusClass(
-              props.row.status
-            )}`"
-          >
-            {{ tripStatus(props.row.status) }}
-          </span>
+        <span v-else-if="props.column.field == 'seat_number'">
+          <span class="badge badge-pill badge-primary mx-1 px-10 py-1">{{
+            props.row.seat_number
+          }}</span>
         </span>
       </template>
     </vue-good-table>
@@ -115,23 +78,30 @@
 </template>
 
 <script>
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 export default {
   props: {
-    bus_id: {
-      default: null,
-    },
-    route_id: {
-      default: null,
+    trip_id: {
+      required: true,
     },
   },
   data() {
     return {
       isLoading: false,
-      booked: [],
       selectedTrip: {},
+      manifest: [],
+      trip: {},
     };
   },
   computed: {
+    manifestBus() {
+      return this.trip?.route?.bus?.bus_reg_no ?? "";
+    },
+    travelDate() {
+      return this.trip?.travel_date ?? "";
+    },
     columns() {
       let columns = [
         {
@@ -151,6 +121,10 @@ export default {
           field: "pickup_point",
         },
         {
+          label: "Drop Point",
+          field: "drop_point",
+        },
+        {
           label: "Seat Number",
           field: "seat_number",
         },
@@ -160,19 +134,16 @@ export default {
           type: "date",
           dateInputFormat: "yyyy-MM-dd",
           dateOutputFormat: "MMM do yyyy",
+          thClass: "text-center",
         },
-        {
-          label: "Start Time",
-          field: "board_time",
-        },
-        {
-          label: "Amount Paid",
-          field: "fare",
-        },
-        {
-          label: "Status",
-          field: "status",
-        },
+        // {
+        //   label: "Amount Paid",
+        //   field: "amount_paid",
+        // },
+        // {
+        //   label: "Status",
+        //   field: "status",
+        // },
         {
           label: "Actions",
           field: "actions",
@@ -182,17 +153,110 @@ export default {
           sortable: false,
         },
       ];
-      if (this.route_id) {
-        return columns.filter(
-          (col) => !["bus_name", "route"].includes(col.field)
-        );
-      } else if (this.bus_id) {
-        return columns.filter((col) => !["bus_name"].includes(col.field));
-      }
+
       return columns;
     },
   },
-  methods: {},
-  created() {},
+  methods: {
+    fetchManifest(pageLoad = true) {
+      this.$store.dispatch("startLoading");
+      this.isLoading = pageLoad;
+
+      let url = `/admin/trips/${this.trip_id}/manifest`;
+
+      let params = {};
+
+      axios
+        .get(url, { params })
+        .then((res) => {
+          this.manifest = res.data.data;
+
+          this.$store.dispatch("stopLoading");
+          this.isLoading = false;
+        })
+        .catch((res) => {
+          this.$store.dispatch("stopLoading");
+          this.isLoading = false;
+        });
+    },
+    fetchTrip() {
+      this.$store.dispatch("startLoading");
+
+      let url = `/admin/trips/${this.trip_id}`;
+
+      let params = {};
+
+      axios
+        .get(url, { params })
+        .then((res) => {
+          this.trip = res.data.data;
+
+          this.$store.dispatch("stopLoading");
+        })
+        .catch((res) => {
+          this.$store.dispatch("stopLoading");
+        });
+    },
+    Manifests_PDF() {
+      var self = this;
+
+      let pdf = new jsPDF("p", "pt");
+      let columns = [
+        {
+          title: "Ticket Number",
+          dataKey: "ticket_number",
+        },
+        {
+          title: "Bus Name",
+          dataKey: "bus_name",
+        },
+        {
+          title: "Route",
+          dataKey: "route_name",
+        },
+        {
+          title: "Pickup Point",
+          dataKey: "pickup_point",
+        },
+        {
+          title: "Drop Point",
+          dataKey: "drop_point",
+        },
+        {
+          title: "Seat Number",
+          dataKey: "seat_number",
+        },
+        {
+          title: "Travel Date",
+          dataKey: "travel_date",
+        },
+      ];
+      autoTable(pdf, {
+        columns,
+        body: self.manifest,
+        margin: { left: 10, right: 10 },
+        didParseCell: function (data) {
+          if (data.column.dataKey === "travel_date") {
+            if (data.row.raw.bus && typeof data.row.raw.bus === "object") {
+              data.cell.text = `${data.row.raw.travel_date} ${data.row.raw.board_time}`;
+            }
+          } else if (data.column.dataKey === "bus_name") {
+            if (data.row.raw.bus && typeof data.row.raw.bus === "object") {
+              data.cell.text = `${data.row.raw.bus.formatted_name}`;
+            }
+          }
+        },
+      });
+      pdf.text(`Passenger Manifest Of ${self.manifestBus}`, 30, 25);
+      this.addPdfFooters(pdf);
+      pdf.save(
+        `Passenger_Manifest_of${self.manifestBus}_on_${self.travelDate}.pdf`
+      );
+    },
+  },
+  created() {
+    this.fetchManifest();
+    this.fetchTrip();
+  },
 };
 </script>

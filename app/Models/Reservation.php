@@ -16,7 +16,7 @@ class Reservation extends Model
     public $table = 'reservations';
 
     protected $dates = [
-        'reservation_date',
+        'travel_date',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -58,6 +58,11 @@ class Reservation extends Model
     public function getTravelDateAttribute($value)
     {
         return $value ? Carbon::parse($value)->format(config('panel.date_format')) : null;
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null;
     }
 
     public function setTravelDateAttribute($value)
