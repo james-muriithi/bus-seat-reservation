@@ -226,7 +226,6 @@ export default {
   },
   watch: {
     trip(newValue) {
-        console.log(newValue?.route?.bus?.seat_classes);
       this.seatClasses = newValue?.route?.bus?.seat_classes ?? [];
       if (newValue?.trip_seat_classes?.length > 0) {
         this.fetchRoute(newValue.route_id);
@@ -243,7 +242,6 @@ export default {
     selectedRouteDetails(newValue) {
       if (newValue) {
         if (newValue.id && newValue.id != this.trip.route_id) {
-          console.log(newValue.id, this.trip.route_id);
           this.trip.fare = newValue.fare ?? "";
         }
         this.seatClasses = newValue?.bus?.seat_classes ?? [];

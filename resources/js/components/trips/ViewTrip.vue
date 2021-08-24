@@ -74,9 +74,18 @@
 
         <div class="row mt-3">
           <div class="col-lg-12">
+            <h4 class="mb-3 font-weight-bold">Trip Manifest</h4>
+            <div class="mt-2">
+              <manifest-table />
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-lg-12">
             <h4 class="mb-3 font-weight-bold">Reservations</h4>
             <div class="mt-2">
-                <booking-table :trip_id="trip.id" />
+              <booking-table :trip_id="trip.id" />
             </div>
           </div>
         </div>
@@ -88,9 +97,10 @@
 <script>
 import Nprogress from "nprogress";
 const BookingTable = () => import("../booking/BookingTable.vue");
+const ManifestTable = () => import("../trips/manifest/ManifestTable");
 
 export default {
-  components: {BookingTable},
+  components: { BookingTable, ManifestTable },
   props: {
     trip: {
       type: Object,
@@ -101,9 +111,9 @@ export default {
     loading() {
       return this.$store.getters.loading;
     },
-    createdBy(){
-        return this.trip.created_by?.name
-    }
+    createdBy() {
+      return this.trip.created_by?.name;
+    },
   },
   watch: {
     loading(newValue) {
