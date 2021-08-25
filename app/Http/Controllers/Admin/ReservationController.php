@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\FPDF\Ticket;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyReservationRequest;
 use App\Http\Requests\StoreReservationRequest;
@@ -110,5 +111,51 @@ class ReservationController extends Controller
         Reservation::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function tickets(Reservation $reservation)
+    {
+        $manifests = collect([]);
+        $reservation->load('seats', 'trip');
+
+        foreach ($reservation->seats as $seat) {
+            $manifest = [
+                "ticket_number" => $seat->reservation->ticket_number,
+                "reservation_ref" => $reservation->ref,
+                "route_name" => $reservation->trip->route->route_name,
+                "seat_number" => $seat->name,
+                "travel_date" => $reservation->trip->travel_date,
+                "pickup_time" => $reservation->trip->route->board_time,
+                "amount_paid" => $seat->reservation->amount_paid,
+                "reservation_date" => $reservation->created_at,
+                "pickup_point" => $reservation->pickup_point->pickup_point,
+                "drop_point" => $reservation->drop_point->drop_off_point,
+                "bus" => $reservation->trip->bus->bus_reg_no,
+                "passenger_name" => $seat->reservation->passenger->name,
+            ];
+
+            $manifests->push($manifest);
+        }
+
+
+        $tt = new Ticket();
+
+        foreach ($manifests as $manifest) {
+            $manifest = (object) $manifest;
+            $tt->print(
+                $manifest->passenger_name,
+                $manifest->pickup_point,
+                $manifest->drop_point,
+                $manifest->ticket_number,
+                $manifest->travel_date,
+                $manifest->pickup_time,
+                floatval($manifest->amount_paid),
+                $manifest->seat_number,
+            );
+        }
+
+        $tt->save();
+
+        echo json_encode($manifests);
     }
 }

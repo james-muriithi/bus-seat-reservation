@@ -64,6 +64,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('passengers', 'PassengerController');
 
     // Reservation
+    Route::get('reservations/{reservation}/tickets', 'ReservationController@tickets')->name('reservations.tickets');
     Route::delete('reservations/destroy', 'ReservationController@massDestroy')->name('reservations.massDestroy');
     Route::resource('reservations', 'ReservationController');
 
@@ -90,13 +91,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('payments', 'PaymentController');
 
     //Trips
-    Route::get('trips/ticket', 'TripController@ticket')->name("trips.ticket");
     Route::get('trips/{trip}/manifest', 'TripController@manifest')->name("trips.manifest");
     Route::resource('trips', 'TripController');
 
     // Route Price Variation
     Route::delete('route-price-variations/destroy', 'RoutePriceVariationController@massDestroy')->name('route-price-variations.massDestroy');
     Route::resource('route-price-variations', 'RoutePriceVariationController');
+
+    //tickets
+    Route::get('ticket/{ticket_number}/download', 'TicketController@download')->name("ticket.download");
 
     // Reports
     Route::get('reports/dashboard', 'ReportsController@dashboard')->name('reports.dashboard');

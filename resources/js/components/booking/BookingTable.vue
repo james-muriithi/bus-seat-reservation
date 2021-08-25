@@ -59,8 +59,15 @@
           <a href="#" title="Edit" class="pr-1">
             <i class="fa fa-pencil-alt fs-16 text-success"></i>
           </a>
-          <a title="Delete" href="#">
+          <a title="Delete" href="#" class="pr-1">
             <i class="fa fa-trash fs-16 text-danger"></i>
+          </a>
+          <!-- download ticket -->
+          <a
+            :href="`/admin/reservations/${props.row.id}/tickets`"
+            title="download ticket"
+          >
+            <i class="ti-download text-success fs-16"></i>
           </a>
         </span>
 
@@ -233,6 +240,10 @@ export default {
     },
     columns() {
       let columns = [
+        {
+          label: "Ref",
+          field: "ref",
+        },
         {
           label: "Passenger",
           field: "passenger",

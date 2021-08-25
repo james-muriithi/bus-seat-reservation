@@ -20,14 +20,30 @@ class ReservationSeat extends Pivot
         'ticket_number',
     ];
 
-    public function passenger()
+    // public function passenger()
+    // {
+    //     return $this->belongsTo(Passenger::class, 'passenger_id');
+    // }
+
+    public function reservation()
     {
-        return $this->belongsTo(Passenger::class, 'passenger_id');
+        return $this->belongsTo(Reservation::class, 'reservation_id');
+    }
+
+    public function seat()
+    {
+        return $this->belongsTo(Seat::class, 'seat_id');
     }
 
     public function getPassengerAttribute()
     {
         return array_key_exists("passenger_id", $this->attributes)
             ?  Passenger::find($this->attributes["passenger_id"]) : "{}";
+    }
+
+    public function getReservationAttribute()
+    {
+        return array_key_exists("reservation_id", $this->attributes)
+            ?  Reservation::find($this->attributes["reservation_id"]) : "{}";
     }
 }

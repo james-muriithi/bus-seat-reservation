@@ -47,7 +47,11 @@
             <i class="ti-eye fs-16 text-info"></i>
           </a>
           <!-- download ticket -->
-          <a href="/admin/trips/ticket" title="download ticket" class="pr-1">
+          <a
+            :href="`/admin/ticket/${props.row.ticket_number}/download`"
+            title="download ticket"
+            class="pr-1"
+          >
             <i class="ti-download text-success fs-16"></i>
           </a>
         </span>
