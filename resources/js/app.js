@@ -105,7 +105,11 @@ Vue.component("trips-view", () =>
 
 // route price variations
 Vue.component("price-variations-index", () =>
-    import ("./components/route-price-variations/PriceVariationIndex"));
+    import ("./components/route-price-variations/PriceVariationIndex.vue"));
+
+// payments
+Vue.component("payment-index", () =>
+    import ("./components/payment/PaymentIndex.vue"));
 
 //global components
 Vue.component("FilterSidebar", () =>

@@ -15,6 +15,8 @@ class Reservation extends Model
 
     public $table = 'reservations';
 
+    public $appends = ['first_passenger'];
+
     protected $dates = [
         'travel_date',
         'created_at',
@@ -55,6 +57,11 @@ class Reservation extends Model
         return $this->belongsTo(DropOffPoint::class, 'drop_off_point_id');
     }
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'reservation_id');
+    }
+
     public function getTravelDateAttribute($value)
     {
         return $value ? Carbon::parse($value)->format(config('panel.date_format')) : null;
@@ -73,5 +80,10 @@ class Reservation extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function getFirstPassengerAttribute()
+    {
+        return $this->seats[0]->reservation->passenger ?? '{}';
     }
 }
