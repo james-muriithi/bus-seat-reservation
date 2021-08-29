@@ -51,6 +51,11 @@ class Route extends Model
         return $this->hasMany(RoutePriceVariation::class, 'route_id');
     }
 
+    public function trips()
+    {
+        return $this->hasMany(Trip::class, 'route_id');
+    }
+
     public function drop_off_points()
     {
         return $this->hasMany(DropOffPoint::class, 'route_id');

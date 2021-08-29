@@ -50,4 +50,10 @@ class Seat extends Model
     {
         $this->attributes['details'] = json_encode($value);
     }
+
+    //scopes
+    public function scopeNotDisabled($query)
+    {
+        $query->where('details->disabled', 'false');
+    }
 }

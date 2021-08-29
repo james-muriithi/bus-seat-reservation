@@ -235,7 +235,7 @@ export default {
   computed: {
     reservationViewUrl() {
       return function (reservationId) {
-        return `/reservations/${reservationId}/view`;
+        return `/admin/reservations/${reservationId}`;
       };
     },
     columns() {

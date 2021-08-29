@@ -92,7 +92,7 @@ class ReservationController extends Controller
     {
         abort_if(Gate::denies('reservation_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $reservation->load('passengers', 'pickup_point', 'trip', 'seats');
+        $reservation->load('pickup_point', 'trip', 'seats');
 
         return view('admin.reservations.show', compact('reservation'));
     }

@@ -20,7 +20,7 @@ class Bus extends Model implements HasMedia
 
     protected $appends = [
         'images',
-        'average-rating',
+        'average_rating',
         'formatted_name',
     ];
 

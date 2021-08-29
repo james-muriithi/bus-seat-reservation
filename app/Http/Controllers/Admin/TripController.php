@@ -12,6 +12,7 @@ use App\Models\Trip;
 use App\Models\User;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 
 class TripController extends Controller
@@ -205,5 +206,115 @@ class TripController extends Controller
         }
         return $prefix . $random;
     }
-}
 
+    public function search($from, $to, Request $request)
+    {
+        $travelDate = "2021-08-24";
+
+        $trips = Trip::active()->whereHas('route', function ($query) use ($from, $to) {
+            $query->whereHas('pickup_points', function ($query) use ($from) {
+                $query->where("pickup_point", $from);
+            })->whereHas('drop_off_points', function ($query) use ($to) {
+                $query->where("drop_off_point", $to);
+            });
+        })
+            ->with('route.fare_variations')
+            ->with('route.bus.amenities')
+            ->whereDate("travel_date", $travelDate)
+            ->get();
+
+        $formattedTrips = collect([
+            "search" => [
+                "from" => $from,
+                "to" => $to
+            ],
+            "trips_count" => $trips->count() 
+        ]);
+
+        foreach ($trips as $trip) {
+
+            $pickup_time = $trip->route->board_time;
+
+            $tripPriceList = [];
+
+            // fare variations
+            $fareVariation = $trip->route->fare_variations()
+                ->whereHas('pickup_point', function ($query) use ($from) {
+                    $query->where('pickup_point', $from);
+                })->whereHas('drop_point', function ($query) use ($to) {
+                    $query->where('drop_off_point', $to);
+                })->first();
+
+            if ($fareVariation) {
+                if ($fareVariation->seatClassesFare->count() > 0) {
+                    $tripPriceList = $fareVariation->seatClassesFare
+                        ->map(function ($seatClass) {
+                            return [
+                                'fare' => $seatClass->fare,
+                                'color' => $seatClass->color,
+                                'currencyCode' => $seatClass->currencyCode ?? 'Ksh',
+                                'seatType' => $seatClass->name
+                            ];
+                        });
+                } else {
+                    $tripPriceList = $trip->route->bus->seat_classes
+                        ->map(function ($seatClass) use ($fareVariation) {
+                            return [
+                                'fare' => $fareVariation->fare,
+                                'color' => $seatClass->color,
+                                'currencyCode' => $seatClass->currencyCode ?? 'Ksh',
+                                'seatType' => $seatClass->name,
+                            ];
+                        });
+                }
+            } else {
+                $tripPriceList = $trip->route->seatClassesFare
+                    ->map(function ($seatClass) {
+                        return [
+                            'fare' => $seatClass->fare,
+                            'color' => $seatClass->color,
+                            'currencyCode' => $seatClass->currencyCode ?? 'Ksh',
+                            'seatType' => $seatClass->name
+                        ];
+                    });
+            }
+
+
+            // pickup point
+            $pickup_point = $trip->route->pickup_points()
+                ->where("pickup_point", $from)->first();
+
+            if ($pickup_point) {
+                $pickup_time = $pickup_point->pickup_time;
+            }
+
+
+            $formattedTrip = [
+                "trip_id" => $trip->trip_id,
+                "average_rating" => $trip->route->bus->average_rating['avg_bus_rating'],
+                "bus_type" => $trip->route->bus->bus_type->bus_type,
+                "travel_date" => $trip->travel_date,
+                "amenities" => $trip->route->bus->amenities->map->only('name', 'icon'),
+                "available_seat_count" => $trip->available_seat_count,
+                "trip_price_list" => $tripPriceList,
+                'pickup_time' => $pickup_time,
+                "bus" => [
+                    "id" => $trip->route->bus->id,
+                    "bus_name" => $trip->route->bus->formatted_name,
+                    "images" => $trip->route->bus->images->map->only('url', 'path', 'preview', 'thumbnail')
+                ],
+                "route" => [
+                    "id" => $trip->route->id,
+                    "pickup_point" => $trip->route->board_point,
+                    "pickup_time" => $trip->route->board_time,
+                    "drop_point" => $trip->route->drop_point,
+                    "drop_time" => $trip->route->drop_time,
+                ],
+            ];
+
+            $formattedTrips->push($formattedTrip);
+        }
+
+        echo json_encode($formattedTrips);
+    }
+}

@@ -21,7 +21,7 @@ class Trip extends Model
 
     public $table = 'trips';
 
-    public $appends = ["seat_classes_fare"];
+    public $appends = ["seat_classes_fare", "available_seat_count"];
 
     protected $dates = [
         'travel_date',
@@ -106,5 +106,24 @@ class Trip extends Model
     public function getBusAttribute()
     {
         return $this->route->bus;
+    }
+
+    public function getAvailableSeatCountAttribute()
+    {
+        $availableSeats = $this->bus->seats()
+            ->notDisabled()
+            ->get()
+            ->count();
+
+        $bookedSeats = $this->reservations->pluck('seats')
+            ->flatten()
+            ->count();
+        return $availableSeats - $bookedSeats;
+    }
+
+    // scopes
+    public function scopeActive($query)
+    {
+        $query->where('status', 1);
     }
 }
