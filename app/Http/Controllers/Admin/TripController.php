@@ -209,7 +209,7 @@ class TripController extends Controller
 
     public function search($from, $to, Request $request)
     {
-        $travelDate = "2021-08-24";
+        $travelDate = "2021-08-30";
 
         $trips = Trip::active()->whereHas('route', function ($query) use ($from, $to) {
             $query->whereHas('pickup_points', function ($query) use ($from) {
@@ -228,12 +228,13 @@ class TripController extends Controller
                 "from" => $from,
                 "to" => $to
             ],
-            "trips_count" => $trips->count() 
+            "trips_count" => $trips->count()
         ]);
 
         foreach ($trips as $trip) {
 
             $pickup_time = $trip->route->board_time;
+            $drop_time = $trip->route->drop_time;
 
             $tripPriceList = [];
 
@@ -252,7 +253,7 @@ class TripController extends Controller
                             return [
                                 'fare' => $seatClass->fare,
                                 'color' => $seatClass->color,
-                                'currencyCode' => $seatClass->currencyCode ?? 'Ksh',
+                                'currencyCode' => $seatClass->currencyCode ?? defaultCurrrency(),
                                 'seatType' => $seatClass->name
                             ];
                         });
@@ -262,18 +263,18 @@ class TripController extends Controller
                             return [
                                 'fare' => $fareVariation->fare,
                                 'color' => $seatClass->color,
-                                'currencyCode' => $seatClass->currencyCode ?? 'Ksh',
+                                'currencyCode' => $seatClass->currencyCode ?? defaultCurrrency(),
                                 'seatType' => $seatClass->name,
                             ];
                         });
                 }
             } else {
-                $tripPriceList = $trip->route->seatClassesFare
+                $tripPriceList = $trip->seatClassesFare
                     ->map(function ($seatClass) {
                         return [
                             'fare' => $seatClass->fare,
                             'color' => $seatClass->color,
-                            'currencyCode' => $seatClass->currencyCode ?? 'Ksh',
+                            'currencyCode' => $seatClass->currencyCode ?? defaultCurrrency(),
                             'seatType' => $seatClass->name
                         ];
                     });
@@ -288,6 +289,18 @@ class TripController extends Controller
                 $pickup_time = $pickup_point->pickup_time;
             }
 
+            //drop points
+            $drop_point = $trip->route->drop_off_points()
+                ->where("drop_off_point", $to)->first();
+
+            if ($drop_point) {
+                $drop_time = $drop_point->drop_time;
+            }
+
+            $tripDuration = Carbon::parse($drop_time)
+                ->diff(Carbon::parse($pickup_time))
+                ->format('%H:%I:%S');
+
 
             $formattedTrip = [
                 "trip_id" => $trip->trip_id,
@@ -298,6 +311,8 @@ class TripController extends Controller
                 "available_seat_count" => $trip->available_seat_count,
                 "trip_price_list" => $tripPriceList,
                 'pickup_time' => $pickup_time,
+                'drop_time' => $drop_time,
+                'trip_duration' => $tripDuration,
                 "bus" => [
                     "id" => $trip->route->bus->id,
                     "bus_name" => $trip->route->bus->formatted_name,
