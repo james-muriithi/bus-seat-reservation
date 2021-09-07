@@ -2,7 +2,9 @@
 
 namespace App\Helpers\FPDF;
 
+use Illuminate\Http\File;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File as FacadesFile;
 use LaravelQRCode\Facades\QRCode;
 
 class MyPdf extends exFPDF
@@ -193,12 +195,17 @@ class MyPdf extends exFPDF
         $codeContents = $ticket_no;
         // QRcode::png($codeContents, 'temp/james.png', QR_ECLEVEL_L, 3);
 
+        if (!FacadesFile::exists(public_path('images/qrs'))) {
+            FacadesFile::makeDirectory(public_path('images/qrs'));
+        }
+
         QRCode::text($ticket_no)
             ->setOutfile(public_path('images/qrs/qr.png'))
             ->setSize(4)
             ->png();
-
-        $this->image(public_path('images/qrs/qr.png'), $this->GetPageWidth() - 50, 37, 41, 41);
+        if (FacadesFile::exists(public_path('images/qrs/qr.png'))) {
+            $this->image(public_path('images/qrs/qr.png'), $this->GetPageWidth() - 50, 37, 41, 41);
+        }
     }
 
     public function RoundedRect($x, $y, $w, $h, $r, $corners = '1234', $style = '')
