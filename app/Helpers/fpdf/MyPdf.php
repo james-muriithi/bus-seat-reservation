@@ -2,9 +2,8 @@
 
 namespace App\Helpers\FPDF;
 
-use Illuminate\Http\File;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\File as FacadesFile;
+use Illuminate\Support\Facades\File;
 use LaravelQRCode\Facades\QRCode;
 
 class MyPdf extends exFPDF
@@ -195,15 +194,15 @@ class MyPdf extends exFPDF
         $codeContents = $ticket_no;
         // QRcode::png($codeContents, 'temp/james.png', QR_ECLEVEL_L, 3);
 
-        if (!FacadesFile::exists(public_path('images/qrs'))) {
-            FacadesFile::makeDirectory(public_path('images/qrs'));
+        if (!File::isDirectory(public_path('images/qrs/'))) {
+            File::makeDirectory(public_path('images/qrs/'));
         }
 
-        QRCode::text($ticket_no)
+        QRCode::text($codeContents)
             ->setOutfile(public_path('images/qrs/qr.png'))
             ->setSize(4)
             ->png();
-        if (FacadesFile::exists(public_path('images/qrs/qr.png'))) {
+        if (File::exists(public_path('images/qrs/qr.png'))) {
             $this->image(public_path('images/qrs/qr.png'), $this->GetPageWidth() - 50, 37, 41, 41);
         }
     }
