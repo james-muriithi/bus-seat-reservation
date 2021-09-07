@@ -199,11 +199,12 @@ class MyPdf extends exFPDF
         }
 
         QRCode::text($codeContents)
-            ->setOutfile(public_path('images/qrs/qr.png'))
+            ->setOutfile(public_path("images/qrs/$ticket_no.png"))
             ->setSize(4)
             ->png();
-        if (File::exists(public_path('images/qrs/qr.png'))) {
-            $this->image(public_path('images/qrs/qr.png'), $this->GetPageWidth() - 50, 37, 41, 41);
+
+        if (File::exists(public_path("images/qrs/$ticket_no.png"))) {
+            $this->image(public_path("images/qrs/$ticket_no.png"), $this->GetPageWidth() - 50, 37, 41, 41);
         }
     }
 
