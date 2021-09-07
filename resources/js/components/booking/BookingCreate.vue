@@ -9,6 +9,9 @@
             @search="fetchTrips"
           />
         </div>
+        <div class="col-md-7">
+          <trips-section />
+        </div>
       </div>
     </div>
   </div>
@@ -17,6 +20,7 @@
 <script>
 import Nprogress from "nprogress";
 import SearchSection from "./modules/SearchSection.vue";
+import TripsSection from './modules/TripsSection.vue';
 
 export default {
   name: "BookingCreate",
@@ -30,7 +34,7 @@ export default {
       default: () => [],
     },
   },
-  components: { SearchSection },
+  components: { SearchSection, TripsSection },
   computed: {
     loading() {
       return this.$store.getters.loading;
