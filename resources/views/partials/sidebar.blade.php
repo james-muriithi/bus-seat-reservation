@@ -133,7 +133,7 @@
                         <ul aria-expanded="false" class="collapse  first-level base-level-line">
                             @can('currency_access')
                                 <li class="sidebar-item">
-                                    <a href="{{ route('admin.reservations.index') }}" class="sidebar-link"><span
+                                    <a href="{{ route('admin.reservations.create') }}" class="sidebar-link"><span
                                             class="hide-menu">
                                             Reserve
                                         </span>

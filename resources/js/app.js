@@ -16,9 +16,15 @@ Vue.component("bread-crumb", () =>
     import ("./components/UI/BreadCrumb.vue"));
 Vue.component("spinner", () =>
     import ("./components/UI/Spinner.vue"));
+
+// booking    
 Vue.component("booking-index", () =>
     import ("./components/booking/BookingIndex.vue")
 );
+Vue.component("booking-create", () =>
+    import ("./components/booking/BookingCreate.vue")
+);
+
 Vue.component("bus-type-index", () =>
     import ("./components/bus-type/BusTypeIndex.vue")
 );

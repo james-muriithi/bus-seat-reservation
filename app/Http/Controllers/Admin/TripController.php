@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyTripRequest;
+use App\Http\Requests\SearchTripRequest;
 use App\Http\Requests\StoreTripRequest;
 use App\Http\Requests\UpdateTripRequest;
 use App\Http\Resources\Admin\TripResource;
@@ -207,9 +208,11 @@ class TripController extends Controller
         return $prefix . $random;
     }
 
-    public function search($from, $to, Request $request)
+    public function search(SearchTripRequest $request)
     {
-        $travelDate = "2021-08-30";
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $travelDate = $request->input('travel_date');
 
         $trips = Trip::active()->whereHas('route', function ($query) use ($from, $to) {
             $query->whereHas('pickup_points', function ($query) use ($from) {
@@ -223,13 +226,7 @@ class TripController extends Controller
             ->whereDate("travel_date", $travelDate)
             ->get();
 
-        $formattedTrips = collect([
-            "search" => [
-                "from" => $from,
-                "to" => $to
-            ],
-            "trips_count" => $trips->count()
-        ]);
+        $formattedTrips = collect([]);
 
         foreach ($trips as $trip) {
 
@@ -328,8 +325,18 @@ class TripController extends Controller
             ];
 
             $formattedTrips->push($formattedTrip);
+            
+            $data = [
+                "trips" => $formattedTrips,
+                "search" => [
+                    "from" => $from,
+                    "to" => $to,
+                    "travel_date" => $travelDate
+                ],
+                "trips_count" => $trips->count(),
+            ];
         }
 
-        echo json_encode($formattedTrips);
+        echo json_encode($data);
     }
 }

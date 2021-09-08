@@ -8,6 +8,7 @@ use App\Http\Requests\MassDestroyReservationRequest;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
 use App\Http\Resources\Admin\ReservationResource;
+use App\Models\DropOffPoint;
 use App\Models\Passenger;
 use App\Models\PickupPoint;
 use App\Models\Reservation;
@@ -42,15 +43,24 @@ class ReservationController extends Controller
     {
         abort_if(Gate::denies('reservation_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $passengers = Passenger::pluck('name', 'id');
+        // $passengers = Passenger::pluck('name', 'id');
 
-        $pickup_points = PickupPoint::pluck('pickup_point', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $pickup_points = PickupPoint::select('pickup_point AS text')
+            ->distinct()
+            ->get()->map(function ($pp) {
+                return ['id' => $pp->text, "text" => $pp->text];
+            });
+        $drop_points = DropOffPoint::select('drop_off_point AS text')
+            ->distinct()
+            ->get()->map(function ($dp) {
+                return ['id' => $dp->text, "text" => $dp->text];
+            });;
 
-        $trips = Trip::pluck('trip', 'id')->prepend(trans('global.pleaseSelect'), '');
+        // $trips = Trip::pluck('trip', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $seats = Seat::pluck('row', 'id');
+        // $seats = Seat::pluck('row', 'id');
 
-        return view('admin.reservations.create', compact('passengers', 'pickup_points', 'trips', 'seats'));
+        return view('admin.reservations.create', compact('pickup_points', 'drop_points'));
     }
 
     public function store(StoreReservationRequest $request)

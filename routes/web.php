@@ -91,7 +91,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('payments', 'PaymentController');
 
     //Trips
-    Route::get('trips/search/{from}/{to}/', 'TripController@search');
+    Route::get('trips/search', 'TripController@search');
     Route::get('trips/{trip}/manifest', 'TripController@manifest')->name("trips.manifest");
     Route::resource('trips', 'TripController');
 
