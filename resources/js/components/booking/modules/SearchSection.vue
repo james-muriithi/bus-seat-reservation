@@ -50,7 +50,7 @@
                       <select2
                         id="drop_point"
                         v-model.trim="to"
-                        :options="drop_points"
+                        :options="local_drop_points"
                         :settings="{
                           theme: 'bootstrap',
                           multiple: false,
@@ -139,13 +139,21 @@ export default {
         return {
             from: '',
             to: '',
-            travel_date: ''
+            travel_date: '',
+            local_drop_points: this.drop_points,
         }
     },
     computed: {
       today() {
         return moment().format("YYYY-MM-DD");
       },
+    },
+    watch:{
+      from(newValue){
+        if (newValue) {
+          this.local_drop_points = this.drop_points.filter(point => point.text != newValue);
+        }
+      }
     },
     methods: {
         //---- Validation State Form

@@ -2,15 +2,15 @@
   <div class="mx-2 mx-md-3 mt-3">
     <div>
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-lg-5">
           <search-section
             :pickup_points="pickup_points"
             :drop_points="drop_points"
             @search="fetchTrips"
           />
         </div>
-        <div class="col-md-7">
-          <trips-section />
+        <div class="col-lg-7">
+          <trips-section :tripsData="tripsData" />
         </div>
       </div>
     </div>
@@ -20,7 +20,7 @@
 <script>
 import Nprogress from "nprogress";
 import SearchSection from "./modules/SearchSection.vue";
-import TripsSection from './modules/TripsSection.vue';
+import TripsSection from "./modules/TripsSection.vue";
 
 export default {
   name: "BookingCreate",
@@ -35,6 +35,11 @@ export default {
     },
   },
   components: { SearchSection, TripsSection },
+  data() {
+    return {
+      tripsData: {},
+    };
+  },
   computed: {
     loading() {
       return this.$store.getters.loading;
@@ -52,7 +57,6 @@ export default {
   },
   methods: {
     fetchTrips(from, to, travel_date) {
-      console.log(from,to,travel_date);
       this.$store.dispatch("startLoading");
 
       let url = "/admin/trips/search";
@@ -66,8 +70,7 @@ export default {
       axios
         .get(url, { params })
         .then((res) => {
-          // this.trips = res.data.data;
-          console.log(res.data.data);
+          this.tripsData = res.data;
           this.$store.dispatch("stopLoading");
         })
         .catch((res) => {

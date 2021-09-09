@@ -312,7 +312,10 @@ class TripController extends Controller
                 'trip_duration' => $tripDuration,
                 "bus" => [
                     "id" => $trip->route->bus->id,
-                    "bus_name" => $trip->route->bus->formatted_name,
+                    "bus_name" => $trip->route->bus->bus_name,
+                    "bus_reg_no" => $trip->route->bus->bus_reg_no,
+                    "formatted_bus_name" => $trip->route->bus->formatted_name,
+                    "bus_type" =>  $trip->route->bus->bus_type->bus_type,
                     "images" => $trip->route->bus->images->map->only('url', 'path', 'preview', 'thumbnail')
                 ],
                 "route" => [
