@@ -87,8 +87,15 @@ class Trip extends Model
             return $seatClass;
         });
 
+
         if ($this->trip_seat_classes->count() > 0) {
             return $seatClasses->merge($this->trip_seat_classes->map(function ($seatClass) {
+                $seatClass->fare = floatval(data_get($seatClass, 'pivot.fare') ?? null);
+                $seatClass->currencyCode = defaultCurrrency();
+                return $seatClass;
+            }));
+        } else if ($this->route->route_seat_classes->count() > 0) {
+            return $seatClasses->merge($this->route->route_seat_classes->map(function ($seatClass) {
                 $seatClass->fare = floatval(data_get($seatClass, 'pivot.fare') ?? null);
                 $seatClass->currencyCode = defaultCurrrency();
                 return $seatClass;

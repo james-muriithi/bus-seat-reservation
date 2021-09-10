@@ -20,9 +20,13 @@ if (!function_exists('defaultCurrency')) {
 }
 
 if (!function_exists('getPercent')) {
-    function getPercent($value, $total, $appendPercent=true)
+    function getPercent($value, $total, $appendPercent = true)
     {
-        $percent = ($value / $total) * 100;
+        if ($total == 0) {
+            $percent = 0;
+        } else {
+            $percent = ($value / $total) * 100;
+        }
         if ($appendPercent) {
             $percent .= '%';
         }

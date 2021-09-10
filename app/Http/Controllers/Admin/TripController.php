@@ -210,21 +210,22 @@ class TripController extends Controller
 
     public function search(SearchTripRequest $request)
     {
-        $from = $request->input('from');
+        $from = trim($request->input('from'));
         $to = $request->input('to');
         $travelDate = $request->input('travel_date');
 
         $trips = Trip::active()->whereHas('route', function ($query) use ($from, $to) {
-            $query->whereHas('pickup_points', function ($query) use ($from) {
-                $query->where("pickup_point", $from);
-            })->whereHas('drop_off_points', function ($query) use ($to) {
-                $query->where("drop_off_point", $to);
+            $query->whereHas('pickup_points', function ($query1) use ($from) {
+                $query1->where("pickup_points.pickup_point", $from);
+            })->whereHas('drop_off_points', function ($query2) use ($to) {
+                $query2->where("drop_off_points.drop_off_point", $to);
             });
         })
             ->with('route.fare_variations')
             ->with('route.bus.amenities')
-            ->whereDate("travel_date", $travelDate)
-            ->get();
+            ->whereDate("travel_date", $travelDate);
+        $sql = $trips->toSql();
+        $trips = $trips->get();
 
         $formattedTrips = collect([]);
 
@@ -328,17 +329,18 @@ class TripController extends Controller
             ];
 
             $formattedTrips->push($formattedTrip);
-            
-            $data = [
-                "trips" => $formattedTrips,
-                "search" => [
-                    "from" => $from,
-                    "to" => $to,
-                    "travel_date" => $travelDate
-                ],
-                "trips_count" => $trips->count(),
-            ];
         }
+
+        $data = [
+            "trips" => $formattedTrips,
+            "search" => [
+                "from" => $from,
+                "to" => $to,
+                "travel_date" => $travelDate
+            ],
+            "trips_count" => $trips->count(),
+            "sql" => $sql,
+        ];
 
         echo json_encode($data);
     }
