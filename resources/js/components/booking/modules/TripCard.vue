@@ -35,7 +35,7 @@
               :key="priceList.seatType"
             >
               <span>{{ priceList.seatType }}:</span>
-              <span class="ml-auto">
+              <span class="ml-auto font-weight-bold">
                 {{ priceList.currencyCode }} {{ priceList.fare }}
               </span>
             </div>

@@ -17,9 +17,9 @@ class UpdateTripRequest extends FormRequest
     public function rules()
     {
         return [
-            'trip_id' => [
-                'string',
-                'nullable',
+            'route_id' => [
+                'integer',
+                'exists:routes,id',
             ],
             'travel_date' => [
                 'required',

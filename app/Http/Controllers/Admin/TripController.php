@@ -62,6 +62,34 @@ class TripController extends Controller
     {
         $request->merge(["trip_id" => $this->generateTripId()]);
 
+        // check if bus has another trip at the provided time
+
+        $route = Route::with('trips')->find($request->input('route_id'));
+
+        $newTripPickupDate = Carbon::parse($request->input('travel_date') . ' ' . $route->board_time);
+
+        if (Carbon::now()->greaterThan($newTripPickupDate)) {
+            return response()->json([
+                'error' => true,
+                'message' => 'The trip pickup time has already passed'
+            ], 422);
+        }
+
+        if ($route->trips()->active()->count() > 0) {
+            $existingTrips = Route::whereHas('trips', function ($query) use ($request) {
+                $query->where('travel_date', $request->input('travel_date'));
+            })
+                ->whereTime('drop_time', '>=', $route->drop_time)
+                ->get();
+
+            if ($existingTrips->count() > 0) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'The bus already has a trip at that time'
+                ], 422);
+            }
+        }
+
         $trip = Trip::create($request->all());
         $trip->created_by()->associate(auth()->id());
 
@@ -214,18 +242,25 @@ class TripController extends Controller
         $to = $request->input('to');
         $travelDate = $request->input('travel_date');
 
-        $trips = Trip::active()->whereHas('route', function ($query) use ($from, $to) {
-            $query->whereHas('pickup_points', function ($query1) use ($from) {
-                $query1->where("pickup_points.pickup_point", $from);
-            })->whereHas('drop_off_points', function ($query2) use ($to) {
-                $query2->where("drop_off_points.drop_off_point", $to);
-            });
+        $trips = Trip::active()->whereHas('route', function ($query) use ($from, $to, $travelDate) {
+            if (Carbon::parse($travelDate)->isToday()) {
+                $query->whereHas('pickup_points', function ($query1) use ($from) {
+                    $query1->where("pickup_points.pickup_point", $from);
+                })->whereHas('drop_off_points', function ($query2) use ($to) {
+                    $query2->where("drop_off_points.drop_off_point", $to);
+                })->whereTime('board_time', '>', now()->format('H:i:s'));
+            } else {
+                $query->whereHas('pickup_points', function ($query1) use ($from) {
+                    $query1->where("pickup_points.pickup_point", $from);
+                })->whereHas('drop_off_points', function ($query2) use ($to) {
+                    $query2->where("drop_off_points.drop_off_point", $to);
+                });
+            }
         })
             ->with('route.fare_variations')
             ->with('route.bus.amenities')
-            ->whereDate("travel_date", $travelDate);
-        $sql = $trips->toSql();
-        $trips = $trips->get();
+            ->whereDate("travel_date", $travelDate)
+            ->get();
 
         $formattedTrips = collect([]);
 
@@ -338,8 +373,7 @@ class TripController extends Controller
                 "to" => $to,
                 "travel_date" => $travelDate
             ],
-            "trips_count" => $trips->count(),
-            "sql" => $sql,
+            "trips_count" => $trips->count()
         ];
 
         echo json_encode($data);

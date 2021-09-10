@@ -128,6 +128,16 @@ class Trip extends Model
         return $availableSeats - $bookedSeats;
     }
 
+    public function getPickupTimeAttribute()
+    {
+        return $this->route->board_time;
+    }
+
+    public function getDropTimeAttribute()
+    {
+        return $this->route->drop_time;
+    }
+
     // scopes
     public function scopeActive($query)
     {

@@ -287,9 +287,13 @@ export default {
                 this.showSuccessToast("Trip created successfully");
               });
             })
-            .catch((res) => {
+            .catch((error) => {
               this.$store.dispatch("stopLoading");
-              this.showErrorToast("There was an error creating the trip");
+              if (error?.response?.data?.error) {
+                this.showErrorToast(error.response.data.message);
+              }else{
+                this.showErrorToast("There was an error creating the trip");
+              }
             });
         }
       });
